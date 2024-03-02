@@ -10,6 +10,9 @@ public class BoneJointsConnector : MonoBehaviour
     [SerializeField] private SpringJointSettings StructuralJoint;
     [SerializeField] private float ColliderRadius = 0.15f;
     [SerializeField] private float ColliderOffset = 0.0f;
+    [SerializeField] private bool SyncPosition = false;
+
+    private Rigidbody2D[] bodies;
 
     public enum GenerationMethod
     {
@@ -37,35 +40,22 @@ public class BoneJointsConnector : MonoBehaviour
                 childs[i].gameObject.AddComponent<Rigidbody2D>();
     }
 
-    private void OnValidate()
-    {
-        if(!TryGetComponent(out SpriteSkin skin))
-        {
-            //удаляем трансформы которые насрал SpriteSkin при его пересоздании
-            var childs = GetComponentsInChildren<Transform>();
-
-            foreach (var child in childs)
-                if (child != transform)
-                    Destroy(child.gameObject);
-        }
-    }
-
     private void Awake()
     {
-        var childs = GetComponentsInChildren<Rigidbody2D>();
+        bodies = GetComponentsInChildren<Rigidbody2D>();
 
         switch (generationMethod)
         {
             case GenerationMethod.NeighboursAndOpposite:
                 {
-                    var half = childs.Length / 2;
+                    var half = bodies.Length / 2;
 
-                    for (int i = 0; i < childs.Length; i++)
+                    for (int i = 0; i < bodies.Length; i++)
                     {
-                        var current = childs[i];
-                        var next = childs[LoopIndex(i + 1, childs.Length)];
-                        var previous = childs[LoopIndex(i - 1, childs.Length)];
-                        var opposite = childs[LoopIndex(i + half, childs.Length)];
+                        var current = bodies[i];
+                        var next = bodies[LoopIndex(i + 1, bodies.Length)];
+                        var previous = bodies[LoopIndex(i - 1, bodies.Length)];
+                        var opposite = bodies[LoopIndex(i + half, bodies.Length)];
 
                         Link(current, next, EdgeJoint);
                         Link(current, previous, EdgeJoint);
@@ -77,19 +67,45 @@ public class BoneJointsConnector : MonoBehaviour
                 }
             case GenerationMethod.AllToAll:
                 {
-                    for (int i = 0; i < childs.Length; i++)
+                    for (int i = 0; i < bodies.Length; i++)
                     {
-                        var current = childs[i];
+                        var current = bodies[i];
                         AddBaseComponents(current);
 
-                        for (int j = 0; j < childs.Length; j++)
+                        for (int j = 0; j < bodies.Length; j++)
                         {
-                            Link(current, childs[j], StructuralJoint);
+                            Link(current, bodies[j], StructuralJoint);
                         }
                     }
                     break;
                 }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        //полное дерьмо но не знаю как лучше двигать рут не двигая чилдов (это в целом не нужно)
+        //оставил тут на случай если позицию игрока по тем или иным причинам нужно будет юзать
+        if(!SyncPosition)
+            return;
+
+        var pos = Vector2.zero;
+
+        for (int i = 0; i < bodies.Length; i++)
+        {
+            pos += bodies[i].position;
+        }
+
+        pos /= bodies.Length;
+
+        var movement = (Vector3)pos - transform.position;
+
+        for (int i = 0; i < bodies.Length; i++)
+        {
+            bodies[i].transform.position -= movement;
+        }
+
+        transform.position += movement;
     }
 
     private void AddBaseComponents(Rigidbody2D obj)
