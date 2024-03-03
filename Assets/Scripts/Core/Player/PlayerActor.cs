@@ -11,7 +11,7 @@ namespace GameLogic
         [SerializeField] private BoneJointsConnector _body;
 
         [SerializeField] private float _moveForce;
-        [SerializeField][Range(0, 1)] private float _slowdownFactor;
+        [SerializeField] private float _slowdownFactor;
         [SerializeField] private float _boostForce;
 
         public Vector2 Position => _body.position;
@@ -29,9 +29,8 @@ namespace GameLogic
         {
             var direction = (this as IActor).DesiredMoveDirection;
 
-            var fixedsPerSecond = 1 / Time.fixedDeltaTime;
-
-            _body.AddForce(-_body.velocity * _slowdownFactor * fixedsPerSecond + direction * _moveForce * Time.fixedDeltaTime);
+            //чем больше фикседов тем меньше за фиксед должно быть изменение
+            _body.AddForce((-_body.velocity * _slowdownFactor + direction * _moveForce) * Time.fixedDeltaTime);
         }
 
         private void OnControllerAction(ControllerAction action)
