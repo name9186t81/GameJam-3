@@ -10,7 +10,10 @@ public class BoneJointsConnector : MonoBehaviour
     [SerializeField] private SpringJointSettings StructuralJoint;
     [SerializeField] private float ColliderRadius = 0.15f;
     [SerializeField] private float ColliderOffset = 0.0f;
-    [SerializeField] private bool SyncPosition = false;
+    [SerializeField] private bool SyncRootTransformPosition = false;
+
+    [HideInInspector] public Vector2 position;
+    [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
 
     private Rigidbody2D[] bodies;
 
@@ -86,19 +89,22 @@ public class BoneJointsConnector : MonoBehaviour
     {
         //полное дерьмо но не знаю как лучше двигать рут не двигая чилдов (это в целом не нужно)
         //оставил тут на случай если позицию игрока по тем или иным причинам нужно будет юзать
-        if(!SyncPosition)
-            return;
-
-        var pos = Vector2.zero;
+        position = Vector2.zero;
+        velocity = Vector3.zero;
 
         for (int i = 0; i < bodies.Length; i++)
         {
-            pos += bodies[i].position;
+            position += bodies[i].position;
+            velocity += bodies[i].velocity;
         }
 
-        pos /= bodies.Length;
+        position /= bodies.Length;
+        velocity /= bodies.Length;
 
-        var movement = (Vector3)pos - transform.position;
+        if (!SyncRootTransformPosition)
+            return;
+
+        var movement = (Vector3)position - transform.position;
 
         for (int i = 0; i < bodies.Length; i++)
         {
@@ -106,6 +112,14 @@ public class BoneJointsConnector : MonoBehaviour
         }
 
         transform.position += movement;
+    }
+
+    public void AddForce(Vector3 force, ForceMode2D forceMode = ForceMode2D.Force)
+    {
+        for (int i = 0; i < bodies.Length; i++)
+        {
+            bodies[i].AddForce(force, forceMode);
+        }
     }
 
     private void AddBaseComponents(Rigidbody2D obj)
