@@ -12,7 +12,8 @@ namespace GameLogic
 
         [SerializeField] private float _moveForce;
         [SerializeField] private float _slowdownFactor;
-        [SerializeField] private float _boostForce;
+        [SerializeField] private float _dashForceMult = 80;
+        [SerializeField] private AnimationCurve _dashForce;
 
         public Vector2 Position => _body.position;
 
@@ -29,8 +30,8 @@ namespace GameLogic
         {
             var direction = (this as IActor).DesiredMoveDirection;
 
-            //чем больше фикседов тем меньше за фиксед должно быть изменение
-            _body.AddForce((-_body.velocity * _slowdownFactor + direction * _moveForce) * Time.fixedDeltaTime);
+            _body.AddForceToAll(-_body.velocity * _slowdownFactor * Time.fixedDeltaTime);
+            _body.AddForce(direction * _moveForce * Time.fixedDeltaTime);
         }
 
         private void OnControllerAction(ControllerAction action)
@@ -38,7 +39,7 @@ namespace GameLogic
             switch (action)
             {
                 case ControllerAction.Dash:
-                    _body.AddForce(Controller.DesiredMoveDirection * _boostForce, ForceMode2D.Impulse);
+                    _body.AddForceToAll(Controller.DesiredMoveDirection * _dashForce.Evaluate(_body.Size) * _dashForceMult, ForceMode2D.Impulse);
                     break;
             }
         }
