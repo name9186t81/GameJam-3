@@ -33,7 +33,7 @@ namespace GameLogic
 
         private void OnValidate()
         {
-            if(Application.isPlaying)
+            if(Application.isPlaying && _bones != null)
                 Size = testSize;
         }
         #endregion
