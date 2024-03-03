@@ -4,57 +4,60 @@ using System.Collections.Generic;
 using UnityEngine;
 using Core;
 
-public class PlayerActor : MonoBehaviour, IActor
+namespace GameLogic
 {
-    [SerializeField] private BoneJointsConnector body;
-
-    [SerializeField] private float MoveForce;
-    [SerializeField] [Range(0,1)] private float SlowDownCoefficient;
-    [SerializeField] private float BoostForce;
-
-    public Vector2 Position => body.position;
-
-    public IController Controller => controller;
-    private IController controller = new PlayerInputController();
-
-    public event Action<ControllerAction> OnAction;
-
-    private void Awake()
+    public class PlayerActor : MonoBehaviour, IActor
     {
-        OnAction += OnControllerAction;
-    }
+        [SerializeField] private BoneJointsConnector _body;
 
-    private void Update()
-    {
-        //для теста
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        [SerializeField] private float _moveForce;
+        [SerializeField][Range(0, 1)] private float _slowdownFactor;
+        [SerializeField] private float _boostForce;
+
+        public Vector2 Position => _body.position;
+
+        public IController Controller => controller;
+        private IController controller = new PlayerInputController();
+
+        public event Action<ControllerAction> OnAction;
+
+        private void Awake()
         {
-            OnAction?.Invoke(ControllerAction.boost);
+            OnAction += OnControllerAction;
         }
-    }
 
-    private void FixedUpdate()
-    {
-        var direction = controller.DesiredMoveDirection;
-
-        var fixedsPerSecond = 1 / Time.fixedDeltaTime;
-
-        body.AddForce(-body.velocity * SlowDownCoefficient * fixedsPerSecond + direction * MoveForce * Time.fixedDeltaTime);
-    }
-
-    private void OnControllerAction(ControllerAction action)
-    {
-        switch(action)
+        private void Update()
         {
-            case ControllerAction.boost: 
-                body.AddForce(controller.DesiredMoveDirection * BoostForce, ForceMode2D.Impulse); 
-                break;
+            //для теста
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                OnAction?.Invoke(ControllerAction.Dash);
+            }
         }
-    }
 
-    public bool TryChangeController(in IController controller)
-    {
-        this.controller = controller;
-        return true;
+        private void FixedUpdate()
+        {
+            var direction = controller.DesiredMoveDirection;
+
+            var fixedsPerSecond = 1 / Time.fixedDeltaTime;
+
+            _body.AddForce(-_body.velocity * _slowdownFactor * fixedsPerSecond + direction * _moveForce * Time.fixedDeltaTime);
+        }
+
+        private void OnControllerAction(ControllerAction action)
+        {
+            switch (action)
+            {
+                case ControllerAction.Dash:
+                    _body.AddForce(controller.DesiredMoveDirection * _boostForce, ForceMode2D.Impulse);
+                    break;
+            }
+        }
+
+        public bool TryChangeController(in IController controller)
+        {
+            this.controller = controller;
+            return true;
+        }
     }
 }

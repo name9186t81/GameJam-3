@@ -3,53 +3,55 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 
-public class BoneJointsConnector : MonoBehaviour
+namespace GameLogic
 {
-    [SerializeField] private GenerationMethod generationMethod;
-    [SerializeField] private SpringJointSettings EdgeJoint;
-    [SerializeField] private SpringJointSettings StructuralJoint;
-    [SerializeField] private float ColliderRadius = 0.15f;
-    [SerializeField] private float ColliderOffset = 0.0f;
-    [SerializeField] private bool SyncRootTransformPosition = false;
-
-    [HideInInspector] public Vector2 position;
-    [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
-
-    private Rigidbody2D[] bodies;
-
-    public enum GenerationMethod
+    public class BoneJointsConnector : MonoBehaviour
     {
-        NeighboursAndOpposite,
-        AllToAll //попробовал для теста, говно
-    }
+        [SerializeField] private GenerationMethod generationMethod;
+        [SerializeField] private SpringJointSettings EdgeJoint;
+        [SerializeField] private SpringJointSettings StructuralJoint;
+        [SerializeField] private float ColliderRadius = 0.15f;
+        [SerializeField] private float ColliderOffset = 0.0f;
+        [SerializeField] private bool SyncRootTransformPosition = false;
 
-    [System.Serializable] //хотел делать структурой но она не поддерживает значения по умолчанию и пустые конструкторы (говно)
-    private class SpringJointSettings
-    {
-        [Range(0.0f, 1.0f)]
-        public float JointDamper = 0;
-        public float JointFrequency = 3;
-    }
+        [HideInInspector] public Vector2 position;
+        [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
 
-    [InspectorButton(nameof(generateRigidbodies))]
-    [SerializeField] private bool GenerateRigidbodies;
+        private Rigidbody2D[] bodies;
 
-    private void generateRigidbodies()
-    {
-        var childs = GetComponentsInChildren<Transform>();
-
-        for (int i = 0; i < childs.Length; i++)
-            if(childs[i] != transform && !childs[i].TryGetComponent(out Rigidbody2D b))
-                childs[i].gameObject.AddComponent<Rigidbody2D>();
-    }
-
-    private void Awake()
-    {
-        bodies = GetComponentsInChildren<Rigidbody2D>();
-
-        switch (generationMethod)
+        public enum GenerationMethod
         {
-            case GenerationMethod.NeighboursAndOpposite:
+            NeighboursAndOpposite,
+            AllToAll //попробовал для теста, говно
+        }
+
+        [System.Serializable] //хотел делать структурой но она не поддерживает значения по умолчанию и пустые конструкторы (говно)
+        private class SpringJointSettings
+        {
+            [Range(0.0f, 1.0f)]
+            public float JointDamper = 0;
+            public float JointFrequency = 3;
+        }
+
+        [InspectorButton(nameof(GenerateRIgidbodies))]
+        [SerializeField] private bool _generateRigidbodies;
+
+        private void GenerateRIgidbodies()
+        {
+            var childs = GetComponentsInChildren<Transform>();
+
+            for (int i = 0; i < childs.Length; i++)
+                if (childs[i] != transform && !childs[i].TryGetComponent(out Rigidbody2D b))
+                    childs[i].gameObject.AddComponent<Rigidbody2D>();
+        }
+
+        private void Awake()
+        {
+            bodies = GetComponentsInChildren<Rigidbody2D>();
+
+            switch (generationMethod)
+            {
+                case GenerationMethod.NeighboursAndOpposite:
                 {
                     var half = bodies.Length / 2;
 
@@ -68,7 +70,7 @@ public class BoneJointsConnector : MonoBehaviour
                     }
                     break;
                 }
-            case GenerationMethod.AllToAll:
+                case GenerationMethod.AllToAll:
                 {
                     for (int i = 0; i < bodies.Length; i++)
                     {
@@ -82,70 +84,71 @@ public class BoneJointsConnector : MonoBehaviour
                     }
                     break;
                 }
+            }
         }
-    }
 
-    private void FixedUpdate()
-    {
-        //полное дерьмо но не знаю как лучше двигать рут не двигая чилдов (это в целом не нужно)
-        //оставил тут на случай если позицию игрока по тем или иным причинам нужно будет юзать
-        position = Vector2.zero;
-        velocity = Vector3.zero;
-
-        for (int i = 0; i < bodies.Length; i++)
+        private void FixedUpdate()
         {
-            position += bodies[i].position;
-            velocity += bodies[i].velocity;
+            //полное дерьмо но не знаю как лучше двигать рут не двигая чилдов (это в целом не нужно)
+            //оставил тут на случай если позицию игрока по тем или иным причинам нужно будет юзать
+            position = Vector2.zero;
+            velocity = Vector3.zero;
+
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                position += bodies[i].position;
+                velocity += bodies[i].velocity;
+            }
+
+            position /= bodies.Length;
+            velocity /= bodies.Length;
+
+            if (!SyncRootTransformPosition)
+                return;
+
+            var delta = (Vector3)position - transform.position;
+
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                bodies[i].transform.position -= delta;
+            }
+
+            transform.position += delta;
         }
 
-        position /= bodies.Length;
-        velocity /= bodies.Length;
-
-        if (!SyncRootTransformPosition)
-            return;
-
-        var movement = (Vector3)position - transform.position;
-
-        for (int i = 0; i < bodies.Length; i++)
+        public void AddForce(Vector3 force, ForceMode2D forceMode = ForceMode2D.Force)
         {
-            bodies[i].transform.position -= movement;
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                bodies[i].AddForce(force, forceMode);
+            }
         }
 
-        transform.position += movement;
-    }
-
-    public void AddForce(Vector3 force, ForceMode2D forceMode = ForceMode2D.Force)
-    {
-        for (int i = 0; i < bodies.Length; i++)
+        private void AddBaseComponents(Rigidbody2D obj)
         {
-            bodies[i].AddForce(force, forceMode);
+            var col = obj.gameObject.AddComponent<CircleCollider2D>();
+            col.offset = Vector2.right * ColliderOffset;
+            col.radius = ColliderRadius;
         }
-    }
 
-    private void AddBaseComponents(Rigidbody2D obj)
-    {
-        var col = obj.gameObject.AddComponent<CircleCollider2D>();
-        col.offset = Vector2.right * ColliderOffset;
-        col.radius = ColliderRadius;
-    }
+        private void Link(Rigidbody2D a, Rigidbody2D b, SpringJointSettings s)
+        {
+            var joint = a.gameObject.AddComponent<SpringJoint2D>();
+            joint.connectedBody = b;
 
-    private void Link(Rigidbody2D a, Rigidbody2D b, SpringJointSettings s)
-    {
-        var joint = a.gameObject.AddComponent<SpringJoint2D>();
-        joint.connectedBody = b;
+            joint.dampingRatio = s.JointDamper;
+            joint.frequency = s.JointFrequency;
 
-        joint.dampingRatio = s.JointDamper;
-        joint.frequency = s.JointFrequency;
+            //думаю что что-то из этого можно убрать но мне лень
+            joint.autoConfigureConnectedAnchor = true;
+            joint.autoConfigureConnectedAnchor = false;
+            joint.autoConfigureDistance = true;
+            joint.autoConfigureDistance = false;
+        }
 
-        //думаю что что-то из этого можно убрать но мне лень
-        joint.autoConfigureConnectedAnchor = true;
-        joint.autoConfigureConnectedAnchor = false;
-        joint.autoConfigureDistance = true;
-        joint.autoConfigureDistance = false;
-    }
-
-    private int LoopIndex(int index, int count)
-    {
-        return (int)Mathf.Repeat(index, count);
+        private int LoopIndex(int index, int count)
+        {
+            return (int)Mathf.Repeat(index, count);
+        }
     }
 }
