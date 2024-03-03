@@ -18,6 +18,7 @@ namespace GameLogic
         [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
 
         private Rigidbody2D[] bodies;
+        private bool useInterpolation;
 
         public enum GenerationMethod
         {
@@ -48,6 +49,9 @@ namespace GameLogic
         private void Awake()
         {
             bodies = GetComponentsInChildren<Rigidbody2D>();
+
+            if (bodies.Length > 0)
+                useInterpolation = bodies[0].interpolation != RigidbodyInterpolation2D.None;
 
             switch (generationMethod)
             {
@@ -87,7 +91,19 @@ namespace GameLogic
             }
         }
 
+        private void Update()
+        {
+            if(useInterpolation)
+                UpdateData();
+        }
+
         private void FixedUpdate()
+        {
+            if (!useInterpolation)
+                UpdateData();
+        }
+
+        private void UpdateData()
         {
             //полное дерьмо но не знаю как лучше двигать рут не двигая чилдов (это в целом не нужно)
             //оставил тут на случай если позицию игрока по тем или иным причинам нужно будет юзать
@@ -96,7 +112,7 @@ namespace GameLogic
 
             for (int i = 0; i < bodies.Length; i++)
             {
-                position += bodies[i].position;
+                position += (Vector2)bodies[i].transform.position;
                 velocity += bodies[i].velocity;
             }
 

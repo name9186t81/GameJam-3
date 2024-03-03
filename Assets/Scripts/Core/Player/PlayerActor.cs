@@ -16,8 +16,7 @@ namespace GameLogic
 
         public Vector2 Position => _body.position;
 
-        public IController Controller => controller;
-        private IController controller = new PlayerInputController();
+        public IController Controller { get; private set; }
 
         public event Action<ControllerAction> OnAction;
 
@@ -26,18 +25,9 @@ namespace GameLogic
             OnAction += OnControllerAction;
         }
 
-        private void Update()
-        {
-            //для теста
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                OnAction?.Invoke(ControllerAction.Dash);
-            }
-        }
-
         private void FixedUpdate()
         {
-            var direction = controller.DesiredMoveDirection;
+            var direction = (this as IActor).DesiredMoveDirection;
 
             var fixedsPerSecond = 1 / Time.fixedDeltaTime;
 
@@ -49,15 +39,24 @@ namespace GameLogic
             switch (action)
             {
                 case ControllerAction.Dash:
-                    _body.AddForce(controller.DesiredMoveDirection * _boostForce, ForceMode2D.Impulse);
+                    _body.AddForce(Controller.DesiredMoveDirection * _boostForce, ForceMode2D.Impulse);
                     break;
             }
         }
 
         public bool TryChangeController(in IController controller)
         {
-            this.controller = controller;
+            if(Controller != null)
+                Controller.OnAction -= Act;
+
+            this.Controller = controller;
+            controller.OnAction += Act;
             return true;
+        }
+
+        private void Act(ControllerAction obj)
+        {
+            OnAction?.Invoke(obj);
         }
     }
 }

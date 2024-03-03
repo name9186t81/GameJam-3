@@ -3,20 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Core;
 using System;
+using GameLogic;
 
-public class PlayerInputController : IController
+public class PlayerInputController : MonoBehaviour, IController
 {
-    public Vector2 DesiredMoveDirection => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
+    [SerializeField] private PlayerActor _player;
+    public Vector2 DesiredMoveDirection { get; private set; }
     public Vector2 DesiredRotation => throw new NotImplementedException();
 
     public event Action<ControllerAction> OnAction;
 
+    private void Awake()
+    {
+        _player.TryChangeController(this);
+    }
+
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift))
+        DesiredMoveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            //todo
+            OnAction?.Invoke(ControllerAction.Dash);
         }
     }
 }

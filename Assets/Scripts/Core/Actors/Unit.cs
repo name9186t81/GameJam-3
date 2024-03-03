@@ -26,6 +26,7 @@ namespace Core
 		{
 			_transform.position = (Vector2)_transform.position + (this as IActor).DesiredMoveDirection * Time.deltaTime * _speed;
 			//изменять позицию нужно в моторе там не нужен каст
+			//а в чем проблема получать направление и поворот у контроллера без кастов?
 			var rot = (this as IActor).DesiredRotation;
 			_transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(rot.y, rot.x));
 		}
