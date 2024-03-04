@@ -82,5 +82,6 @@ public class InGameUI : MonoBehaviour
     {
         _pausePanel.SetActive(false);
         Time.timeScale = 1f;
+        pause = false;
     }
 }
