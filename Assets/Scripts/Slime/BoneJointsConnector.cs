@@ -7,6 +7,7 @@ namespace GameLogic
 {
     public class BoneJointsConnector : MonoBehaviour
     {
+        [SerializeField] private PhysicsMaterial2D _physicsMaterial;
         [SerializeField] private SpringJointSettings EdgeJoint;
         [SerializeField] private SpringJointSettings StructuralJoint;
         [SerializeField] private float ColliderRadius = 0.15f;
@@ -20,15 +21,18 @@ namespace GameLogic
 
         [HideInInspector] public Vector2 position;
         [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
-        [HideInInspector] public float Size { get { return currentSize; } set { SetSize(value); } }
+        [HideInInspector] public float Size { get { return _currentSize; } set { SetSize(value); } }
+
+        public event System.Action<float> OnSizeChanged;
+        public float CurrentScale => map(_currentSize, 0, 1, MinSize, MaxSize);
 
         private Bone[] _bones;
         private bool _useInterpolation;
-        private float currentSize = 0;
-        private float currentScale => map(currentSize, 0, 1, MinSize, MaxSize);
+        private float _currentSize = 0;
 
         #region test
 
+        [Range(0, 1)]
         [SerializeField] private float testSize;
 
         private void OnValidate()
@@ -106,6 +110,7 @@ namespace GameLogic
 
             for (int i = 0; i < bodies.Length; i++)
             {
+                bodies[i].sharedMaterial = _physicsMaterial;
                 var current = bodies[i];
                 var next = bodies[LoopIndex(i + 1, bodies.Length)];
                 var previous = bodies[LoopIndex(i - 1, bodies.Length)];
@@ -162,7 +167,7 @@ namespace GameLogic
 
         public void AddArea(float area)
         {
-            area += currentScale * currentScale;
+            area += CurrentScale * CurrentScale;
             var scale = Mathf.Sqrt(area);
             var size = map(scale, MinSize, MaxSize, 0, 1);
             SetSize(size);
@@ -170,14 +175,16 @@ namespace GameLogic
 
         private void SetSize(float newSize)
         {
-            currentSize = newSize;
+            _currentSize = newSize;
 
             for (int i = 0; i < _bones.Length; i++)
             {
-                _bones[i].UpdateJoints(EdgeJoint, StructuralJoint, currentSize);
+                _bones[i].UpdateJoints(EdgeJoint, StructuralJoint, _currentSize);
             }
 
-            transform.localScale = Vector3.one * currentScale;
+            transform.localScale = Vector3.one * CurrentScale;
+
+            OnSizeChanged?.Invoke(newSize);
         }
 
         public void AddForceToAll(Vector3 force, ForceMode2D forceMode = ForceMode2D.Force)
@@ -197,7 +204,7 @@ namespace GameLogic
                 //bodies[i].AddForce(force * map(mult, 0, 1, _forceToEdgeBonesMult, 1), forceMode);
                 _bones[i].body.AddForce(force, forceMode);
                 //_bones[i].structuralSpring.connectedAnchor = _bones[i].startStrucuralSpringAnchor * map(mult, 0, 1, _forceToEdgeBonesMult, 1);
-                _bones[i].body.AddForce(vec.normalized * force.magnitude * _forceToEdgeBonesMult.Evaluate(currentSize) * mult, forceMode);
+                _bones[i].body.AddForce(vec.normalized * force.magnitude * _forceToEdgeBonesMult.Evaluate(_currentSize) * mult, forceMode);
             }
         }
 
@@ -219,7 +226,7 @@ namespace GameLogic
             var joint = a.gameObject.AddComponent<SpringJoint2D>();
             joint.connectedBody = b;
 
-            s.Apply(joint, currentSize);
+            s.Apply(joint, _currentSize);
 
             //думаю что что-то из этого можно убрать но мне лень
             joint.autoConfigureConnectedAnchor = true;

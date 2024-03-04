@@ -10,10 +10,16 @@ namespace GameLogic
     {
         [SerializeField] private BoneJointsConnector _body;
 
+        [SerializeField] private Camera _camera;
+        [SerializeField] private AnimationCurve _cameraSize;
+        [SerializeField] private float _cameraSizeMult = 5;
+
         [SerializeField] private float _moveForce;
         [SerializeField] private float _slowdownFactor;
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
+
+        [SerializeField] private float _startBodySize;
 
         public Vector2 Position => _body.position;
 
@@ -24,6 +30,18 @@ namespace GameLogic
         private void Awake()
         {
             OnAction += OnControllerAction;
+            _body.OnSizeChanged += OnBodySizeChanged;
+        }
+
+        private void Start()
+        {
+            _body.Size = _startBodySize;
+        }
+
+        private void OnBodySizeChanged(float size)
+        {
+            var scale = _body.CurrentScale;
+            _camera.orthographicSize = scale * _cameraSize.Evaluate(size) * _cameraSizeMult;
         }
 
         private void FixedUpdate()
