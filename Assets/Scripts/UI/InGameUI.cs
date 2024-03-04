@@ -1,3 +1,4 @@
+using GameLogic;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,13 @@ using UnityEngine.UI;
 
 public class InGameUI : MonoBehaviour
 {
+    [SerializeField] private PlayerActor _player;
+
+    [Header("Main UI")]
+    [SerializeField] private Text _playerScore;
+    [SerializeField] private float _playerScoreMult = 1f;
+    [SerializeField][Range(0, 1)] private float _scoreLerp = 0.1f;
+
     [Header("Pause menu")]
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private Text _time;
@@ -14,6 +22,7 @@ public class InGameUI : MonoBehaviour
 
     private bool pause = false;
     private float startTime;
+    private float currentScore;
 
     private void Awake()
     {
@@ -30,6 +39,13 @@ public class InGameUI : MonoBehaviour
             else
                 ClosePauseMenu();
         }
+    }
+
+    private void FixedUpdate()
+    {
+        currentScore = Mathf.Lerp(currentScore, _player.CurrentScore * _playerScoreMult, _scoreLerp);
+
+        _playerScore.text = Mathf.Round(currentScore).ToString();
     }
 
     public void OnRestartButton()

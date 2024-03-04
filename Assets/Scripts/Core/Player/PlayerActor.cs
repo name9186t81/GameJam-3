@@ -13,16 +13,19 @@ namespace GameLogic
         [SerializeField] private Camera _camera;
         [SerializeField] private AnimationCurve _cameraSize;
         [SerializeField] private float _cameraSizeMult = 5;
+        [SerializeField] private float _cameraSizeSmoothTime = 0.1f;
 
         [SerializeField] private float _moveForce;
         [SerializeField] private float _slowdownFactor;
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
-
         [SerializeField] private float _startBodySize;
+        [SerializeField] private float _testAreaPerCollision = 0.1f;
+
+        private float _cameraSizeVelocity = 0f;
 
         public Vector2 Position => _body.position;
-
+        public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
         public IController Controller { get; private set; }
 
         public event Action<ControllerAction> OnAction;
@@ -30,18 +33,12 @@ namespace GameLogic
         private void Awake()
         {
             OnAction += OnControllerAction;
-            _body.OnSizeChanged += OnBodySizeChanged;
+            _body.OnCollisionEnter += OnBodyCollisionEnter;
         }
 
         private void Start()
         {
             _body.Size = _startBodySize;
-        }
-
-        private void OnBodySizeChanged(float size)
-        {
-            var scale = _body.CurrentScale;
-            _camera.orthographicSize = scale * _cameraSize.Evaluate(size) * _cameraSizeMult;
         }
 
         private void FixedUpdate()
@@ -50,6 +47,16 @@ namespace GameLogic
 
             _body.AddForceToAll(-_body.velocity * _slowdownFactor * Time.fixedDeltaTime);
             _body.AddForce(direction * _moveForce * Time.fixedDeltaTime);
+        }
+
+        private void Update()
+        {
+            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _body.CurrentScale * _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
+        }
+
+        private void OnBodyCollisionEnter(Collision2D collision)
+        {
+            _body.AddArea(_testAreaPerCollision);
         }
 
         private void OnControllerAction(ControllerAction action)

@@ -23,6 +23,10 @@ namespace GameLogic
         [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
         [HideInInspector] public float Size { get { return _currentSize; } set { SetSize(value); } }
 
+        public event System.Action<Collision2D> OnCollisionEnter;
+        public event System.Action<Collision2D> OnCollisionStay;
+        public event System.Action<Collision2D> OnCollisionExit;
+
         public event System.Action<float> OnSizeChanged;
         public float CurrentScale => map(_currentSize, 0, 1, MinSize, MaxSize);
 
@@ -219,7 +223,18 @@ namespace GameLogic
             var col = obj.gameObject.AddComponent<CircleCollider2D>();
             col.offset = Vector2.right * ColliderOffset;
             col.radius = ColliderRadius;
+
+            var callbacks = obj.gameObject.AddComponent<CollisionCallbackRethrow>();
+            callbacks.OnCollisionEnter += _onCollisionEnter;
+            callbacks.OnCollisionStay += _onCollisionStay;
+            callbacks.OnCollisionExit += _onCollisionExit;
         }
+
+        private void _onCollisionEnter(Collision2D collision) => OnCollisionEnter?.Invoke(collision);
+
+        private void _onCollisionStay(Collision2D collision) => OnCollisionStay?.Invoke(collision);
+
+        private void _onCollisionExit(Collision2D collision) => OnCollisionExit?.Invoke(collision);
 
         private SpringJoint2D Link(Rigidbody2D a, Rigidbody2D b, SpringJointSettings s)
         {
