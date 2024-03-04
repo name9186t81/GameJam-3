@@ -3263,6 +3263,7 @@ GameObject:
   m_Component:
   - component: {fileID: 671165459}
   - component: {fileID: 671165460}
+  - component: {fileID: 671165461}
   m_Layer: 5
   m_Name: ComboPanel
   m_TagString: Untagged
@@ -3302,6 +3303,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 671165458}
   m_CullTransparentMesh: 1
+--- !u!114 &671165461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671165458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0637dbbcdc652f546a6b8a4935174019, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _comboAnim: {fileID: 1258617346}
+  _comboAnimPeakTime: 0.05
+  _comboCountText: {fileID: 1258617344}
+  _comboScoreText: {fileID: 1293565795}
+  _comboTime: 3
+  _alphaOverTime:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.4
+      value: 1
+      inSlope: 0.0066021536
+      outSlope: 0.0066021536
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.4968503
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -4.6147947
+      outSlope: -4.6147947
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.1593231
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _scoreSmoothTime: 0.15
+  _comboSmoothTime: 0.1
 --- !u!1 &684012278
 GameObject:
   m_ObjectHideFlags: 0
@@ -4864,8 +4908,9 @@ GameObject:
   - component: {fileID: 1258617345}
   - component: {fileID: 1258617344}
   - component: {fileID: 1258617343}
+  - component: {fileID: 1258617346}
   m_Layer: 5
-  m_Name: Score
+  m_Name: Combo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4938,7 +4983,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 20X
+  m_Text: 0X
 --- !u!222 &1258617345
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4947,6 +4992,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1258617341}
   m_CullTransparentMesh: 1
+--- !u!111 &1258617346
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1258617341}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 134faa20e6d2ea4459b2237bf078a987, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 134faa20e6d2ea4459b2237bf078a987, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &1268409773
 GameObject:
   m_ObjectHideFlags: 0
@@ -5599,7 +5660,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: +1500
+  m_Text: 
 --- !u!222 &1293565796
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7326,7 +7387,8 @@ MonoBehaviour:
   _player: {fileID: 1291513521}
   _playerScore: {fileID: 1166680940}
   _playerScoreMult: 100
-  _scoreLerp: 0.1
+  _scoreSmoothTime: 0.15
+  _comboUI: {fileID: 671165461}
   _pausePanel: {fileID: 1930585234}
   _time: {fileID: 5852238609874012117}
   _volumeSlider: {fileID: 358565317}

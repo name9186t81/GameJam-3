@@ -29,6 +29,7 @@ namespace GameLogic
         public IController Controller { get; private set; }
 
         public event Action<ControllerAction> OnAction;
+        public event Action<float> OnAddScore;
 
         private void Awake()
         {
@@ -56,7 +57,13 @@ namespace GameLogic
 
         private void OnBodyCollisionEnter(Collision2D collision)
         {
-            _body.AddArea(_testAreaPerCollision);
+            AddScore(_testAreaPerCollision);
+        }
+
+        public void AddScore(float score)
+        {
+            _body.AddArea(score);
+            OnAddScore?.Invoke(score);
         }
 
         private void OnControllerAction(ControllerAction action)
