@@ -48,6 +48,7 @@ public class AbilitySelectPanel : MonoBehaviour
     public struct AbilityUIData
     {
         public string Name;
+        public string ReloadingPanelName;
         [TextArea]
         public string Desc;
         public Sprite Preview;

@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DashAbility : AbilitiesContainer.Ability
+namespace abilities
 {
-    public override void update()
+    public class DashAbility : AbilitiesContainer.Ability
     {
-        if (TryUse())
+        private protected override void update()
         {
-            _player.Act(Core.ControllerAction.Dash);
+            if (TryUse())
+            {
+                _player.Act(Core.ControllerAction.Dash);
+            }
         }
     }
 }

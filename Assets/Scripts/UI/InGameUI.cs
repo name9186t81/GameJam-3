@@ -30,7 +30,6 @@ public class InGameUI : MonoBehaviour
         _startTime = Time.time;
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
         _player.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); };
-        _comboUI.OnComboCountChanged += _player.OnComboCountChanged; //da
     }
 
     private void Update()

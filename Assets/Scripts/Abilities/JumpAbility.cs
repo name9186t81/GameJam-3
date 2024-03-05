@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JumpAbility : AbilitiesContainer.Ability
+namespace abilities
 {
-    public override void update()
+    public class JumpAbility : AbilitiesContainer.Ability
     {
-        if(TryUse())
+        private protected override void update()
         {
-            Debug.Log("da");
-            //_player.
+            if (TryUse())
+            {
+                Debug.Log("da");
+                //_player.
+            }
         }
     }
 }
