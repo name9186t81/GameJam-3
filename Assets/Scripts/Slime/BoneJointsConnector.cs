@@ -15,6 +15,8 @@ namespace GameLogic
         [SerializeField] private AnimationCurve _forceToEdgeBonesMult;
         [SerializeField] private float _forceToEdgeBonesPow = 2f;
         [SerializeField] private bool _syncRootTransformPosition = true;
+        [SerializeField] private AnimationCurve _massOverSize;
+        [SerializeField] private float _massOverSizeMult = 10;
 
         [SerializeField] private float MinSize;
         [SerializeField] private float MaxSize;
@@ -33,6 +35,7 @@ namespace GameLogic
         private Bone[] _bones;
         private bool _useInterpolation;
         private float _currentSize = 0;
+        private float _currentMass = 1;
 
         #region test
 
@@ -72,11 +75,12 @@ namespace GameLogic
             public readonly SpringJoint2D neighbourSpring1;
             public readonly SpringJoint2D neighbourSpring2;
 
-            public void UpdateJoints(SpringJointSettings edges, SpringJointSettings structural, float currentSize)
+            public void UpdateSize(SpringJointSettings edges, SpringJointSettings structural, float currentSize, float mass)
             {
                 edges.Apply(neighbourSpring1, currentSize);
                 edges.Apply(neighbourSpring2, currentSize);
                 structural.Apply(structuralSpring, currentSize);
+                body.mass = mass;
             }
 
             public Bone(Rigidbody2D body, Vector2 startStrucuralSpringDistance, SpringJoint2D structuralSpring, SpringJoint2D neighbourSpring1, SpringJoint2D neighbourSpring2)
@@ -181,9 +185,11 @@ namespace GameLogic
         {
             _currentSize = newSize;
 
+            _currentMass = _massOverSize.Evaluate(newSize) * _massOverSizeMult;
+
             for (int i = 0; i < _bones.Length; i++)
             {
-                _bones[i].UpdateJoints(EdgeJoint, StructuralJoint, _currentSize);
+                _bones[i].UpdateSize(EdgeJoint, StructuralJoint, _currentSize, _currentMass);
             }
 
             transform.localScale = Vector3.one * CurrentScale;
@@ -195,7 +201,7 @@ namespace GameLogic
         {
             for (int i = 0; i < _bones.Length; i++)
             {
-                _bones[i].body.AddForce(force, forceMode);
+                _bones[i].body.AddForce(force * _currentMass, forceMode);
             }
         }
         
@@ -206,9 +212,9 @@ namespace GameLogic
                 var vec = position - (Vector2)_bones[i].body.transform.position;
                 var mult = Mathf.Pow(1 - Mathf.Abs(Vector2.Dot(force.normalized, vec.normalized)), _forceToEdgeBonesPow);
                 //bodies[i].AddForce(force * map(mult, 0, 1, _forceToEdgeBonesMult, 1), forceMode);
-                _bones[i].body.AddForce(force, forceMode);
+                _bones[i].body.AddForce(force * _currentMass, forceMode);
                 //_bones[i].structuralSpring.connectedAnchor = _bones[i].startStrucuralSpringAnchor * map(mult, 0, 1, _forceToEdgeBonesMult, 1);
-                _bones[i].body.AddForce(vec.normalized * force.magnitude * _forceToEdgeBonesMult.Evaluate(_currentSize) * mult, forceMode);
+                _bones[i].body.AddForce(vec.normalized * force.magnitude * _forceToEdgeBonesMult.Evaluate(_currentSize) * mult * _currentMass, forceMode);
             }
         }
 
