@@ -92,7 +92,7 @@ namespace GameLogic
             return true;
         }
 
-        private void Act(ControllerAction obj)
+        public void Act(ControllerAction obj)
         {
             OnAction?.Invoke(obj);
         }

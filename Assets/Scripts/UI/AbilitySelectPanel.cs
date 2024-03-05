@@ -10,17 +10,6 @@ public class AbilitySelectPanel : MonoBehaviour
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private float _alphaSmoothTime = 0.1f;
 
-    #region test
-    [SerializeField] private AbilityUIData _testData;
-    [InspectorButton(nameof(testInit))]
-    [SerializeField] private bool _testInit;
-
-    private void testInit()
-    {
-        Init(_testData, _testData, null);
-    }
-    #endregion
-
     private float _alphaVel = 0;
     private float _targetAlpha = 0;
 

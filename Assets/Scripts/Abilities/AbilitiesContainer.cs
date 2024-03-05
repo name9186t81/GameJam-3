@@ -10,10 +10,18 @@ public class AbilitiesContainer : MonoBehaviour
     [SerializeField] private PlayerActor _player;
     [SerializeField] private AbilitySelectPanel _selectPanel;
 
-    public List<Ability> SelectedAbilities = new List<Ability>(); //публик не нужен но оставлю для дебага
+    [SerializeField] private List<Ability> _selectedAbilities = new List<Ability>();
 
     private int alreadySelectedAbilitiesIndex = -1;
     private int _selectionsPendingCount = 0; //чтобы не показывать следующий выбор способности пока предыдущий еще не выбран
+
+    private void Start()
+    {
+        for (int i = 0; i < _selectedAbilities.Count; i++)
+        {
+            _selectedAbilities[i].OnSelectedBy(null, _player);
+        }
+    }
 
     private void Update()
     {
@@ -35,15 +43,15 @@ public class AbilitiesContainer : MonoBehaviour
             _selectionsPendingCount++;
         }
 
-        for (int i = 0; i < SelectedAbilities.Count; i++)
+        for (int i = 0; i < _selectedAbilities.Count; i++)
         {
-            SelectedAbilities[i].update();
+            _selectedAbilities[i].update();
         }
     }
 
     private void OnAbilitySelected(Ability ability)
     {
-        SelectedAbilities.Add(ability);
+        _selectedAbilities.Add(ability);
         _selectionsPendingCount--;
     }
 
@@ -83,7 +91,7 @@ public class AbilitiesContainer : MonoBehaviour
 
         public void OnSelectedBy(AbilitySelection selection, PlayerActor player)
         {
-            if(_useKey == KeyCode.None)
+            if(selection != null && _useKey == KeyCode.None)
                 _useKey = selection.AbilityKey;
             _selected = true;
             _player = player;

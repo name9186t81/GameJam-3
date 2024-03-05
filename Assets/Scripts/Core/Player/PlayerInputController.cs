@@ -21,10 +21,5 @@ public class PlayerInputController : MonoBehaviour, IController
     private void Update()
     {
         DesiredMoveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            OnAction?.Invoke(ControllerAction.Dash);
-        }
     }
 }
