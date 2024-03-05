@@ -16,6 +16,8 @@ namespace GameLogic
         [SerializeField] private float _cameraSizeSmoothTime = 0.1f;
 
         [SerializeField] private float _moveForce;
+        [SerializeField] private float _moveForcePerCombo = 100;
+        [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private float _slowdownFactor;
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
@@ -23,6 +25,7 @@ namespace GameLogic
         [SerializeField] private float _testAreaPerCollision = 0.1f;
 
         private float _cameraSizeVelocity = 0f;
+        private int _currentComboCount = 0;
 
         public Vector2 Position => _body.position;
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
@@ -47,7 +50,7 @@ namespace GameLogic
             var direction = (this as IActor).DesiredMoveDirection;
 
             _body.AddForceToAll(-_body.velocity * _slowdownFactor * Time.fixedDeltaTime);
-            _body.AddForce(direction * _moveForce * Time.fixedDeltaTime);
+            _body.AddForce(direction * (_moveForce + _moveForcePerCombo * _currentComboCount) * Time.fixedDeltaTime);
         }
 
         private void Update()
@@ -60,8 +63,11 @@ namespace GameLogic
             AddScore(_testAreaPerCollision);
         }
 
+        public void OnComboCountChanged(int comboCount) => _currentComboCount = comboCount;
+
         public void AddScore(float score)
         {
+            score = score * _scoreMultPerCombo.Evaluate(_currentComboCount);
             _body.AddArea(score);
             OnAddScore?.Invoke(score);
         }

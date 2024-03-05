@@ -10,7 +10,10 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        OnChangeVolumeSlider(_volumeSlider.value);   
+        if(AudioListener.volume == 1)
+            OnChangeVolumeSlider(_volumeSlider.value);
+        else
+            _volumeSlider.value = AudioListener.volume;
     }
 
     public void OnStartButton()

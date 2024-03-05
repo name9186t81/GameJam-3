@@ -12,7 +12,7 @@ public class InGameUI : MonoBehaviour
 
     [Header("Main UI")]
     [SerializeField] private Text _playerScore;
-    [SerializeField] private float _playerScoreMult = 1f;
+    [SerializeField] private float _visualScoreMult = 100f;
     [SerializeField] private float _scoreSmoothTime = 0.2f;
     [SerializeField] private ComboUI _comboUI;
 
@@ -29,7 +29,8 @@ public class InGameUI : MonoBehaviour
     {
         _startTime = Time.time;
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
-        _player.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _playerScoreMult); };
+        _player.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); };
+        _comboUI.OnComboCountChanged += _player.OnComboCountChanged; //da
     }
 
     private void Update()
@@ -43,7 +44,7 @@ public class InGameUI : MonoBehaviour
                 ClosePauseMenu();
         }
 
-        _playerScore.text = Mathf.Round(_scoreSmooth.Update(_player.CurrentScore * _playerScoreMult)).ToString();
+        _playerScore.text = Mathf.Round(_scoreSmooth.Update(_player.CurrentScore * _visualScoreMult)).ToString();
     }
 
     public void OnRestartButton()
@@ -73,7 +74,7 @@ public class InGameUI : MonoBehaviour
         _pausePanel.SetActive(true);
         Time.timeScale = 0f; //пока так
         _volumeSlider.value = AudioListener.volume;
-        _time.text = "Time: " + (new TimeSpan(10000L * 1000L * (long)(Time.time - _startTime)).ToString()); //da
+        _time.text = "Время: " + (new TimeSpan(10000L * 1000L * (long)(Time.time - _startTime)).ToString()); //da
     }
 
     private void ClosePauseMenu()
