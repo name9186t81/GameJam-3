@@ -85,9 +85,31 @@ public class AbilitiesContainer : MonoBehaviour
     public abstract class Ability : MonoBehaviour
     {
         public AbilitySelectPanel.AbilityUIData UIData;
-        [SerializeField] private protected KeyCode _useKey = KeyCode.None;
+        [SerializeField] private KeyCode _useKey = KeyCode.None;
         private protected PlayerActor _player;
         private protected bool _selected = false;
+
+        [SerializeField] private float _reloadTime = 0.1f;
+        private float _lastUseTime;
+        private protected bool TryUse()
+        {
+            if(!_selected)
+                return false;
+
+            if(!Input.GetKey(_useKey))
+                return false;
+
+            bool result = Time.time - _lastUseTime > _reloadTime;
+            if(result)
+                _lastUseTime = Time.time;
+
+            return result;
+        }
+
+        public float GetReloadProgress()
+        {
+            return Mathf.Clamp01((Time.time - _lastUseTime) / _reloadTime);
+        }
 
         public void OnSelectedBy(AbilitySelection selection, PlayerActor player)
         {

@@ -6566,6 +6566,7 @@ MonoBehaviour:
       \u041F\u0440\u043E\u0431\u0435\u043B \u0447\u0442\u043E\u0431\u044B \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C"
     Preview: {fileID: 21300000, guid: 233505512e356a64fb616c8a68c08a97, type: 3}
   _useKey: 32
+  _reloadTime: 5
 --- !u!114 &1738327390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6583,9 +6584,9 @@ MonoBehaviour:
     Desc: "\u041C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E\u0435 \u0443\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u0435
       \u0432 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0438 WASD\n\u041D\u0430\u0436\u043C\u0438\u0442\u0435
       Shift \u0447\u0442\u043E\u0431\u044B \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C"
-    Preview: {fileID: 0}
+    Preview: {fileID: 21300000, guid: 0fbcba179f7c83b488c1c332828cdcf4, type: 3}
   _useKey: 304
-  _reloadTime: 1
+  _reloadTime: 2
 --- !u!1 &1772759573
 GameObject:
   m_ObjectHideFlags: 0

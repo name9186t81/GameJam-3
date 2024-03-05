@@ -6,7 +6,7 @@ public class JumpAbility : AbilitiesContainer.Ability
 {
     public override void update()
     {
-        if(Input.GetKeyDown(_useKey))
+        if(TryUse())
         {
             Debug.Log("da");
             //_player.

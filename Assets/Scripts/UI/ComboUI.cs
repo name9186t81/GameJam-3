@@ -15,7 +15,7 @@ public class ComboUI : MonoBehaviour
     [SerializeField] private float _scoreSmoothTime = 0.15f;
     [SerializeField] private float _comboSmoothTime = 0.15f;
 
-    public int ComboCount { get; private set; }
+    public static int ComboCount { get; private set; }
     public float NewScoreCount { get; private set; }
     public event Action<int> OnComboCountChanged;
 
@@ -27,6 +27,7 @@ public class ComboUI : MonoBehaviour
     {
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
         _comboSmooth = new FloatSmoothDamp(_comboSmoothTime);
+        ComboCount = 0;
     }
 
     public void OnCombo(float score)
