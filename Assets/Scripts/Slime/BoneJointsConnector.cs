@@ -68,7 +68,7 @@ namespace GameLogic
         public event System.Action<Collision2D> OnCollisionExit;
 
         public event System.Action<float> OnSizeChanged;
-        public float CurrentScale => map(_currentSize, 0, 1, MinSize, MaxSize);
+        public float CurrentScale => _currentSize.map(0, 1, MinSize, MaxSize);
 
         private Bone[] _bones;
         private bool _useInterpolation;
@@ -233,7 +233,7 @@ namespace GameLogic
         {
             area += CurrentScale * CurrentScale;
             var scale = Mathf.Sqrt(area);
-            var size = map(scale, MinSize, MaxSize, 0, 1);
+            var size = scale.map(MinSize, MaxSize, 0, 1);
             SetSize(size);
         }
 
@@ -282,10 +282,6 @@ namespace GameLogic
         }
 
         //лень класс расширений писать
-        private float map(float X, float A, float B, float C, float D)
-        {
-            return (X - A) / (B - A) * (D - C) + C;
-        }
 
         private CircleCollider2D AddBaseComponents(Rigidbody2D obj)
         {

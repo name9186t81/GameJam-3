@@ -72,6 +72,7 @@ namespace PlayerAbilities
 
                     if(timeSinceStart >= _jumpTime)
                     {
+                        DoDamageInRadius();
                         _player.SetFlyingState(false);
                         ChangeState(State.Waiting);
                         ResetTimer();
@@ -91,7 +92,16 @@ namespace PlayerAbilities
         private void DoDamageInRadius()
         {
             var damageRadius = _player.Radius;
-            Debug.LogError("todo!!!");
+            var position = _player.Position;
+
+            var colliders = Physics2D.OverlapCircleAll(position, damageRadius);
+
+            foreach(var col in colliders)
+            {
+
+            }
+
+            Debug.LogError("еда сделай IHealth!!!");
         }
 
         private void ChangeState(State newState)
