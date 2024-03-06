@@ -7,7 +7,7 @@ using Movement;
 
 namespace GameLogic
 {
-    public class PlayerActor : MonoBehaviour, IActor, IMovable
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>
     {
         [SerializeField] private BoneJointsConnector _body;
         [SerializeField] private CircleCollider2D _collider;
@@ -34,9 +34,11 @@ namespace GameLogic
         private float _startRadius = 1;
         private float _startFlyingSize;
 
-        public Vector2 Position { get { return _body.Position; } set { _body.Position = value; } }
-        public Vector2 Velocity { get { return _body.Velocity; } set { _body.Velocity = value; } }
-        public float Rotation { get { return 0; } set { } }
+        public Motor Value { get; private set; }
+
+        public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
+        public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
+        public float Rotation { get => 0; set { } }
         public float Radius => _startRadius * _body.CurrentScale;
 
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
@@ -51,6 +53,32 @@ namespace GameLogic
             _body.OnCollisionEnter += OnBodyCollisionEnter;
             _startRadius = _collider.radius;
             _defaultSpriteSortingLayer = _bodySprite.sortingOrder;
+
+            Value = new Motor(0, 0, this, this); //0 потому что перс двигается не через мотор и мотор нужен для взрывов всяких
+            /*
+               _        _
+              ( `-.__.-' )
+               `-.    .-'
+                  \  /
+                   ||
+                   ||
+                  //\\
+                 //  \\
+                ||    ||
+                ||____||
+                ||====||
+                 \\  //
+                  \\//
+                   ||
+                   ||
+                   ||
+                   ||
+                   ||
+                   ||
+                   ||
+                   ||
+                   []
+            */
         }
 
         private void Start()

@@ -68,7 +68,7 @@ namespace GameLogic
         public event System.Action<Collision2D> OnCollisionExit;
 
         public event System.Action<float> OnSizeChanged;
-        public float CurrentScale => _currentSize.map(0, 1, MinSize, MaxSize);
+        public float CurrentScale => _currentSize.map01(MinSize, MaxSize);
 
         private Bone[] _bones;
         private bool _useInterpolation;
