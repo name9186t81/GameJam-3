@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Abilities
 {
-    public class DashAbility : AbilitiesContainer.Ability
+    public class DashAbilityOld : AbilitiesContainer.Ability
     {
         private protected override void update()
         {
