@@ -34,6 +34,9 @@ namespace Movement
 
 			Vector2 movementForce = _actor.DesiredMoveDirection * _baseMovementSpeed * dt;
 			_body.velocity = movementForce + totalForce;
+
+			float angle = Mathf.Atan2(_actor.DesiredRotation.y, _actor.DesiredRotation.x) * Mathf.Rad2Deg;
+			_body.rotation = Mathf.MoveTowardsAngle(_body.rotation, angle, _baseRotationSpeed * dt);
 		}
 
 		private void UpdateForces()
@@ -49,6 +52,22 @@ namespace Movement
 			}
 
 			_forces = forces;
+		}
+
+		public void AddForce(IForce force)
+		{
+			_forces.Add(force);
+			force.State = ForceState.Running;
+		}
+
+		public bool RemoveForce(IForce force)
+		{
+			if (_forces.Contains(force))
+			{
+				force.State = ForceState.Finished;
+				return true;
+			}
+			return false;
 		}
 	}
 }
