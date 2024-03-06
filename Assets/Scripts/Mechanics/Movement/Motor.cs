@@ -9,12 +9,12 @@ namespace Movement
 	public sealed class Motor
 	{
 		private List<IForce> _forces = new List<IForce>();
-		private readonly Rigidbody2D _body;
+		private readonly IMovable _body;
 		private readonly IActor _actor;
 		private readonly float _baseMovementSpeed;
 		private readonly float _baseRotationSpeed;
 
-		public Motor(float baseMovementSpeed, float baseRotationSpeed, Rigidbody2D body, IActor actor)
+		public Motor(float baseMovementSpeed, float baseRotationSpeed, IMovable body, IActor actor)
 		{
 			_baseMovementSpeed = baseMovementSpeed;
 			_baseRotationSpeed = baseRotationSpeed;

@@ -6,8 +6,8 @@ namespace Movement
 {
     public interface IMovable
     {
-        public Vector2 Position { get; }
-        public Vector2 Rotation { get; }
-        public Vector2 Velocity { get; }
+        public Vector2 position { get; }
+        public float rotation { get; set; }
+        public Vector2 velocity { get; set; }
     }
 }

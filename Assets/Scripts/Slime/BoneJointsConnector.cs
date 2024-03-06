@@ -22,7 +22,21 @@ namespace GameLogic
         [SerializeField] private float MaxSize;
 
         [HideInInspector] public Vector2 position;
-        [HideInInspector] public Vector2 velocity; //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
+        [HideInInspector] public Vector2 velocity { 
+            get { return _velocity; } 
+            set 
+            {
+                var delta = value - _velocity;
+                for (int i = 0; i < _bones.Length; i++)
+                {
+                    _bones[i].body.velocity += delta;
+                }
+                _velocity = value;
+            } 
+        } 
+        //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
+
+        private Vector2 _velocity;
         [HideInInspector] public float Size { get { return _currentSize; } set { SetSize(value); } }
 
         public event System.Action<Collision2D> OnCollisionEnter;
@@ -68,6 +82,7 @@ namespace GameLogic
         private struct Bone
         {
             public readonly Rigidbody2D body;
+            public readonly Collider2D collider;
 
             public readonly Vector2 startStrucuralSpringAnchor;
 
@@ -83,9 +98,10 @@ namespace GameLogic
                 body.mass = mass;
             }
 
-            public Bone(Rigidbody2D body, Vector2 startStrucuralSpringDistance, SpringJoint2D structuralSpring, SpringJoint2D neighbourSpring1, SpringJoint2D neighbourSpring2)
+            public Bone(Rigidbody2D body, Collider2D col, Vector2 startStrucuralSpringDistance, SpringJoint2D structuralSpring, SpringJoint2D neighbourSpring1, SpringJoint2D neighbourSpring2)
             {
                 this.body = body;
+                this.collider = col;
                 this.startStrucuralSpringAnchor = startStrucuralSpringDistance;
                 this.structuralSpring = structuralSpring;
                 this.neighbourSpring1 = neighbourSpring1;
@@ -128,9 +144,17 @@ namespace GameLogic
                 var n2 = Link(current, previous, EdgeJoint);
                 var structSpring = Link(current, opposite, StructuralJoint);
 
-                AddBaseComponents(current);
+                var col = AddBaseComponents(current);
 
-                _bones[i] = new Bone(bodies[i], structSpring.connectedAnchor, structSpring, n1, n2);
+                _bones[i] = new Bone(bodies[i], col, structSpring.connectedAnchor, structSpring, n1, n2);
+            }
+
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                for (int j = 0; j < bodies.Length; j++)
+                {
+                    Physics2D.IgnoreCollision(_bones[i].collider, _bones[j].collider, true);
+                }
             }
         }
 
@@ -149,16 +173,16 @@ namespace GameLogic
         private void UpdateData()
         {
             position = Vector2.zero;
-            velocity = Vector3.zero;
+            _velocity = Vector3.zero;
 
             for (int i = 0; i < _bones.Length; i++)
             {
                 position += (Vector2)_bones[i].body.transform.position;
-                velocity += _bones[i].body.velocity;
+                _velocity += _bones[i].body.velocity;
             }
 
             position /= _bones.Length;
-            velocity /= _bones.Length;
+            _velocity /= _bones.Length;
 
             if (!_syncRootTransformPosition)
                 return;
@@ -224,7 +248,7 @@ namespace GameLogic
             return (X - A) / (B - A) * (D - C) + C;
         }
 
-        private void AddBaseComponents(Rigidbody2D obj)
+        private CircleCollider2D AddBaseComponents(Rigidbody2D obj)
         {
             var col = obj.gameObject.AddComponent<CircleCollider2D>();
             col.offset = Vector2.right * ColliderOffset;
@@ -234,6 +258,8 @@ namespace GameLogic
             callbacks.OnCollisionEnter += _onCollisionEnter;
             callbacks.OnCollisionStay += _onCollisionStay;
             callbacks.OnCollisionExit += _onCollisionExit;
+
+            return col;
         }
 
         private void _onCollisionEnter(Collision2D collision) => OnCollisionEnter?.Invoke(collision);
