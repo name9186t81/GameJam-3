@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Movement
 {
+    //дорогой хмук прошу теб€ соблюдать ѕаскал ейс дл€ свойств в интерфейсах
     public interface IMovable
     {
         public Vector2 Position { get; }
