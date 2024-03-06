@@ -13,6 +13,8 @@ namespace Core
 		public Vector2 DesiredMoveDirection => _direction;
 		public Vector2 DesiredRotation => _rotation;
 
+		public ControllerType Type => ControllerType.Player;
+
 		public event Action<ControllerAction> OnAction;
 
 		private void Awake()

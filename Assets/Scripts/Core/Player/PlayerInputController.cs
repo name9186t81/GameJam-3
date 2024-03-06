@@ -11,7 +11,9 @@ public class PlayerInputController : MonoBehaviour, IController
     public Vector2 DesiredMoveDirection { get; private set; }
     public Vector2 DesiredRotation => throw new NotImplementedException();
 
-    public event Action<ControllerAction> OnAction;
+	public ControllerType Type => ControllerType.Player;
+
+	public event Action<ControllerAction> OnAction;
 
     private void Awake()
     {
