@@ -29,7 +29,7 @@ namespace Movement
 			Vector2 totalForce = Vector2.zero;
 			for(int i = 0, length = _forces.Count; i < length; ++i)
 			{
-				totalForce += _forces[i].GetForce(_body.position);
+				totalForce += _forces[i].GetForce(_body.Position);
 			}
 
 			Vector2 movementForce = _actor.DesiredMoveDirection * _baseMovementSpeed * dt;

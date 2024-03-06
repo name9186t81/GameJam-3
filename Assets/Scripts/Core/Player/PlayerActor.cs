@@ -28,7 +28,7 @@ namespace GameLogic
 
         private float _cameraSizeVelocity = 0f;
 
-        public Vector2 position => _body.position;
+        public Vector2 Position => _body.position;
         public Vector2 velocity { get { return _body.velocity; } set { _body.velocity = value; } }
         public float rotation { get { return 0; } set { } }
 

@@ -12,7 +12,7 @@ namespace Core
 		[SerializeField] private float _speed;
 		private Transform _transform;
 		private IController _controller;
-		public Vector2 position => _transform.position;
+		public Vector2 Position => _transform.position;
 
 		public IController Controller => _controller;
 
