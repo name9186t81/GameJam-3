@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Abilities
+namespace abilities
 {
-    public class DashAbilityOld : AbilitiesContainer.Ability
+    public class PlayerJumpAbility : AbilitiesContainer.Ability
     {
         private protected override void update()
         {
             if (TryUse())
             {
-                _player.Act(Core.ControllerAction.Dash);
+                Debug.Log("da");
+                //_player.
             }
         }
     }

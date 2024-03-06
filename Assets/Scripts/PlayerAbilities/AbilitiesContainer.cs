@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Abilities
+namespace abilities
 {
     public class AbilitiesContainer : MonoBehaviour
     {

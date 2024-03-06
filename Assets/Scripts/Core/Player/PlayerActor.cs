@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Core;
+using Movement;
 
 namespace GameLogic
 {
-    public class PlayerActor : MonoBehaviour, IActor
+    public class PlayerActor : MonoBehaviour, IActor, IMovable
     {
         [SerializeField] private BoneJointsConnector _body;
 
@@ -28,6 +29,9 @@ namespace GameLogic
         private float _cameraSizeVelocity = 0f;
 
         public Vector2 Position => _body.position;
+        public Vector2 Rotation => Vector2.up;
+        public Vector2 Velocity => _body.velocity;
+
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
         public IController Controller { get; private set; }
 
