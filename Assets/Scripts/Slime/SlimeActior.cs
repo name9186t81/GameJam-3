@@ -14,9 +14,9 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable
 
     public Motor Value { get; private set; }
 
-    public Vector2 Position => _body.position;
-    public Vector2 velocity { get { return _body.velocity; } set { _body.velocity = value; } }
-    public float rotation { get { return 0; } set { } }
+    public Vector2 Position => _body.Position;
+    public Vector2 Velocity { get { return _body.Velocity; } set { _body.Velocity = value; } }
+    public float Rotation { get { return 0; } set { } }
 
     public IController Controller { get; private set; }
 

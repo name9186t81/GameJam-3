@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class InGameUI : MonoBehaviour
+public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 {
     [SerializeField] private PlayerActor _player;
 
@@ -25,11 +25,14 @@ public class InGameUI : MonoBehaviour
     private float _startTime;
     private FloatSmoothDamp _scoreSmooth;
 
+    public float TimeScale => _pause ? 0 : 1;
+
     private void Awake()
     {
         _startTime = Time.time;
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
         _player.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); };
+        TimeScaleController.Add(this);
     }
 
     private void Update()
@@ -71,7 +74,6 @@ public class InGameUI : MonoBehaviour
     private void OpenPauseMenu()
     {
         _pausePanel.SetActive(true);
-        Time.timeScale = 0f; //пока так
         _volumeSlider.value = AudioListener.volume;
         _time.text = "Время: " + (new TimeSpan(10000L * 1000L * (long)(Time.time - _startTime)).ToString()); //da
     }
@@ -79,11 +81,16 @@ public class InGameUI : MonoBehaviour
     private void ClosePauseMenu()
     {
         _pausePanel.SetActive(false);
-        Time.timeScale = 1f;
         _pause = false;
+    }
+
+    private void OnDestroy()
+    {
+        TimeScaleController.Remove(this);
     }
 }
 
+//еда не спрашивай почему все что ниже находится в скрипте UI
 public class FloatSmoothDamp
 {
     private float _velocity;
@@ -92,14 +99,38 @@ public class FloatSmoothDamp
     public float SmoothTime;
     public float Value { get { return _value; } set { _value = value; _velocity = 0; } }
 
-    public float Update(float target)
+    public float Update(float target, float dt = -1)
     {
-        _value = Mathf.SmoothDamp(_value, target, ref _velocity, SmoothTime);
+        if (dt == -1)
+            dt = Time.deltaTime;
+
+        _value = Mathf.SmoothDamp(_value, target, ref _velocity, SmoothTime, float.MaxValue, dt);
         return _value;
     }
 
-    public FloatSmoothDamp(float time)
+    public FloatSmoothDamp(float time, float startValue = 0)
     {
         SmoothTime = time;
+        _value = startValue;
+    }
+}
+
+public class Vector2SmoothDamp
+{
+    private FloatSmoothDamp _x;
+    private FloatSmoothDamp _y;
+
+    public float SmoothTime { get { return _x.SmoothTime; } set { _x.SmoothTime = value; _y.SmoothTime = value; } }
+    public Vector2 Value { get { return new Vector2(_x.Value, _y.Value); } set { _x.Value = value.x; _y.Value = value.y; } }
+
+    public Vector2SmoothDamp(float time, Vector2 startValue)
+    {
+        _x = new FloatSmoothDamp(time, startValue.x);
+        _y = new FloatSmoothDamp(time, startValue.y);
+    }
+
+    public Vector2 Update(Vector2 target)
+    {
+        return new Vector2(_x.Update(target.x), _y.Update(target.y));
     }
 }

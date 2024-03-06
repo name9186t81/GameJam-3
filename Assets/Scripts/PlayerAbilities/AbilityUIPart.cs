@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace abilities
+namespace PlayerAbilities
 {
     public class AbilityUIPart : MonoBehaviour
     {

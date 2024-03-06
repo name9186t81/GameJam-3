@@ -14,15 +14,37 @@ namespace GameLogic
         [SerializeField] private float ColliderOffset = 0.0f;
         [SerializeField] private AnimationCurve _forceToEdgeBonesMult;
         [SerializeField] private float _forceToEdgeBonesPow = 2f;
-        [SerializeField] private bool _syncRootTransformPosition = true;
+        [SerializeField] private Transform _transformToMove;
+        [SerializeField] private bool _syncTransformPosition = false;
         [SerializeField] private AnimationCurve _massOverSize;
         [SerializeField] private float _massOverSizeMult = 10;
 
         [SerializeField] private float MinSize;
         [SerializeField] private float MaxSize;
 
-        [HideInInspector] public Vector2 position;
-        [HideInInspector] public Vector2 velocity { 
+        [HideInInspector]
+        public Vector2 Position
+        {
+            get { return _position; }
+            set
+            {
+                var delta = value - _position;
+
+                if (_ignoreCollisions) //так надо
+                {
+                    transform.position += (Vector3)delta;
+                }
+                else
+                {
+                    for (int i = 0; i < _bones.Length; i++)
+                    {
+                        _bones[i].body.position += delta;
+                    }
+                }
+                _position = value;
+            }
+        }
+        [HideInInspector] public Vector2 Velocity { 
             get { return _velocity; } 
             set 
             {
@@ -33,10 +55,12 @@ namespace GameLogic
                 }
                 _velocity = value;
             } 
-        } 
-        //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
-
+        } //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
         private Vector2 _velocity;
+        private Vector2 _position;
+        private Vector2 _transformPosition;
+        private bool _ignoreCollisions = false;
+
         [HideInInspector] public float Size { get { return _currentSize; } set { SetSize(value); } }
 
         public event System.Action<Collision2D> OnCollisionEnter;
@@ -172,29 +196,37 @@ namespace GameLogic
 
         private void UpdateData()
         {
-            position = Vector2.zero;
+            _position = Vector2.zero;
             _velocity = Vector3.zero;
+            _transformPosition = Vector3.zero;
 
             for (int i = 0; i < _bones.Length; i++)
             {
-                position += (Vector2)_bones[i].body.transform.position;
+                _position += (Vector2)_bones[i].body.position;
+                _transformPosition += (Vector2)_bones[i].body.transform.position;
                 _velocity += _bones[i].body.velocity;
             }
 
-            position /= _bones.Length;
+            _position /= _bones.Length;
+            _transformPosition /= _bones.Length;
             _velocity /= _bones.Length;
 
-            if (!_syncRootTransformPosition)
+            if (!_syncTransformPosition)
                 return;
 
-            var delta = (Vector3)position - transform.position;
+            _transformToMove.position = _transformPosition;
+        }
+
+        public void SetIgnoreWorldCollision(bool ignore)
+        {
+            _ignoreCollisions = ignore;
+
+            var layers = ignore ? -1 : 0;
 
             for (int i = 0; i < _bones.Length; i++)
             {
-                _bones[i].body.transform.position -= delta;
+                _bones[i].collider.excludeLayers = layers;
             }
-
-            transform.position += delta;
         }
 
         public void AddArea(float area)
@@ -207,6 +239,8 @@ namespace GameLogic
 
         private void SetSize(float newSize)
         {
+            //UpdateData();
+
             _currentSize = newSize;
 
             _currentMass = _massOverSize.Evaluate(newSize) * _massOverSizeMult;
@@ -216,7 +250,12 @@ namespace GameLogic
                 _bones[i].UpdateSize(EdgeJoint, StructuralJoint, _currentSize, _currentMass);
             }
 
-            transform.localScale = Vector3.one * CurrentScale;
+            var pos = _transformToMove.position;
+
+            var delta = CurrentScale / transform.localScale.x;
+            transform.localScale *= delta;
+
+            transform.position -= _transformToMove.position - pos;
 
             OnSizeChanged?.Invoke(newSize);
         }
@@ -233,7 +272,7 @@ namespace GameLogic
         {
             for (int i = 0; i < _bones.Length; i++)
             {
-                var vec = position - (Vector2)_bones[i].body.transform.position;
+                var vec = Position - (Vector2)_bones[i].body.transform.position;
                 var mult = Mathf.Pow(1 - Mathf.Abs(Vector2.Dot(force.normalized, vec.normalized)), _forceToEdgeBonesPow);
                 //bodies[i].AddForce(force * map(mult, 0, 1, _forceToEdgeBonesMult, 1), forceMode);
                 _bones[i].body.AddForce(force * _currentMass, forceMode);

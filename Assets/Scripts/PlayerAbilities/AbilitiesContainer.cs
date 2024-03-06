@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace abilities
+namespace PlayerAbilities
 {
     public class AbilitiesContainer : MonoBehaviour
     {
@@ -101,7 +101,8 @@ namespace abilities
 
             [SerializeField] private float _reloadTime = 0.1f;
             private float _timerReload;
-            private protected bool TryUse()
+
+            private protected bool TryUse(bool autoReset = true)
             {
                 if (!_selected)
                     return false;
@@ -110,10 +111,15 @@ namespace abilities
                     return false;
 
                 bool result = _timerReload > _reloadTime;
-                if (result)
-                    _timerReload = 0;
+                if (result && autoReset)
+                    ResetTimer();
 
                 return result;
+            }
+
+            private protected void ResetTimer()
+            {
+                _timerReload = 0;
             }
 
             public float GetReloadProgress()
