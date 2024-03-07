@@ -33,8 +33,9 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IH
 
     public event Action<DamageArgs> OnDeath;
     public event Action<DamageArgs> OnDamage;
+	public event Action OnInit;
 
-    public bool TryChangeController(in IController controller)
+	public bool TryChangeController(in IController controller)
     {
         if (Controller != null)
             Controller.OnAction -= Act;

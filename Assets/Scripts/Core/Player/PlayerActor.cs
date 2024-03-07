@@ -59,8 +59,9 @@ namespace GameLogic
 
         public event Action<DamageArgs> OnDeath;
         public event Action<DamageArgs> OnDamage;
+		public event Action OnInit;
 
-        private void Awake()
+		private void Awake()
         {
             OnAction += OnControllerAction;
             _body.OnCollisionEnter += OnBodyCollisionEnter;

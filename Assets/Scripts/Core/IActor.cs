@@ -12,5 +12,6 @@ namespace Core
 		Vector2 Position { get; }
 		IController Controller { get; }
 		bool TryChangeController(in IController controller);
+		event Action OnInit;
 	}
 }
