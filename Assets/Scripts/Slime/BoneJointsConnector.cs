@@ -19,8 +19,11 @@ namespace GameLogic
         [SerializeField] private AnimationCurve _massOverSize;
         [SerializeField] private float _massOverSizeMult = 10;
 
-        [SerializeField] private float MinSize;
-        [SerializeField] private float MaxSize;
+        [SerializeField] private float _damageForceMult = 10;
+
+        [SerializeField] private float _minSize = 1;
+        [SerializeField] private float _maxSize = 15;
+        [SerializeField] private float _deathSizeThreshold = 0.1f;
 
         [HideInInspector]
         public Vector2 Position
@@ -68,7 +71,7 @@ namespace GameLogic
         public event System.Action<Collision2D> OnCollisionExit;
 
         public event System.Action<float> OnSizeChanged;
-        public float CurrentScale => _currentSize.map01(MinSize, MaxSize);
+        public float CurrentScale => _currentSize.map01(_minSize, _maxSize);
 
         private Bone[] _bones;
         private bool _useInterpolation;
@@ -229,11 +232,43 @@ namespace GameLogic
             }
         }
 
+        public bool TakeDamage(float damage, Vector2 position, Vector2 direction)
+        {
+            AddArea(-damage);
+
+            bool dead = false;
+
+            if(CurrentScale <= _deathSizeThreshold)
+            {
+                dead = true;
+                AddArea(damage); //надо будет удолить наверное?
+            }
+
+            //в идеале не одной кости кидать а нескольким в зависимости от урона и радиуса взрыва какого нибудь но ленб
+            float closestDist = float.MaxValue;
+            int closestBone = -1;
+
+            for (int i = 0; i < _bones.Length; i++)
+            {
+                var dist = Vector2.Distance(_bones[i].body.position, position);
+
+                if (dist < closestDist)
+                {
+                    closestBone = i;
+                    closestDist = dist;
+                }
+            }
+
+            _bones[closestBone].body.AddForce(direction * damage * _damageForceMult, ForceMode2D.Impulse);
+
+            return true;
+        }
+
         public void AddArea(float area)
         {
             area += CurrentScale * CurrentScale;
             var scale = Mathf.Sqrt(area);
-            var size = scale.map(MinSize, MaxSize, 0, 1);
+            var size = scale.map(_minSize, _maxSize, 0, 1);
             SetSize(size);
         }
 

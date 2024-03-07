@@ -4,16 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Core;
 using Movement;
+using Health;
 
 namespace GameLogic
 {
-    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>, IHealth
     {
         [SerializeField] private BoneJointsConnector _body;
         [SerializeField] private CircleCollider2D _collider;
         [SerializeField] private SpriteRenderer _bodySprite;
         private int _defaultSpriteSortingLayer;
         [SerializeField] private int _flyingSpriteSortingLayer;
+        [SerializeField] private float _playerHealthMult;
 
         [SerializeField] private Camera _camera;
         [SerializeField] private AnimationCurve _cameraSize;
@@ -42,10 +44,18 @@ namespace GameLogic
         public float Radius => _startRadius * _body.CurrentScale;
 
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
+
         public IController Controller { get; private set; }
+        public IActor Actor { get => this; set => throw new NotImplementedException(); }
+        public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
+        public int MaxHealth => CurrentHealth;
+        public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
 
         public event Action<ControllerAction> OnAction;
         public event Action<float> OnAddScore;
+
+        public event Action<DamageArgs> OnDeath;
+        public event Action<DamageArgs> OnDamage;
 
         private void Awake()
         {
@@ -115,11 +125,6 @@ namespace GameLogic
             _body.Size = _startFlyingSize * mult;
         }
 
-        private void OnBodyCollisionEnter(Collision2D collision)
-        {
-            AddScore(_testAreaPerCollision);
-        }
-
         public void AddScore(float score)
         {
             score = score * _scoreMultPerCombo.Evaluate(ComboUI.ComboCount);
@@ -137,6 +142,11 @@ namespace GameLogic
             }
         }
 
+        private void OnBodyCollisionEnter(Collision2D collision)
+        {
+            AddScore(_testAreaPerCollision);
+        }
+
         public bool TryChangeController(in IController controller)
         {
             if(Controller != null)
@@ -150,6 +160,20 @@ namespace GameLogic
         public void Act(ControllerAction obj)
         {
             OnAction?.Invoke(obj);
+        }
+
+        public bool CanTakeDamage(DamageArgs args)
+        {
+            return true;
+        }
+
+        public void TakeDamage(DamageArgs args)
+        {
+            var direction = (args.HitPosition - args.SourcePosition).normalized;
+            if(_body.TakeDamage(args.Damage / _playerHealthMult, args.HitPosition, direction))
+            {
+                OnDeath?.Invoke(args);
+            }
         }
     }
 }

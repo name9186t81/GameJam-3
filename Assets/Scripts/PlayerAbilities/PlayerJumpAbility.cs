@@ -101,7 +101,7 @@ namespace PlayerAbilities
 
             }
 
-            Debug.LogError("еда сделай IHealth!!!");
+            Debug.LogError("тут наверное урон надо наносить!!");
         }
 
         private void ChangeState(State newState)

@@ -11,6 +11,7 @@ namespace PlayerAbilities
         [SerializeField] private Color _normalColor;
         [SerializeField] private Color _restrictedColor;
         [SerializeField] private float _colorSmoothTime = 0.1f;
+        [SerializeField] private LayerMask _overlapLayers = -1;
 
         public bool CanJump { get; private set; }
 
@@ -33,7 +34,7 @@ namespace PlayerAbilities
 
         private bool DoOverlap()
         {
-            return Physics2D.OverlapCircle(transform.position, _currentRadius);
+            return Physics2D.OverlapCircle(transform.position, _currentRadius, _overlapLayers);
         }
 
         private void Update()
