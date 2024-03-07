@@ -125,7 +125,6 @@ namespace Weapons
 
 		private void ReadAction(ControllerAction obj)
 		{
-			Debug.Log("Hello");
 			if (obj == ControllerAction.Fire && CanAttack) StartCoroutine(FireRoutine());
 		}
 
