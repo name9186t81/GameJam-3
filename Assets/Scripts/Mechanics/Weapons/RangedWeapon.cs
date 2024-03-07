@@ -74,6 +74,7 @@ namespace Weapons
 
 		private void Start()
 		{
+			_transform = transform;
 			_projectilePool = new Pool<IProjectile>(() => _projectileBuilder.BuildProjectile(_actor));
 
 			OnPreFireStart += () => PreFireStart?.Invoke();
@@ -124,6 +125,7 @@ namespace Weapons
 
 		private void ReadAction(ControllerAction obj)
 		{
+			Debug.Log("Hello");
 			if (obj == ControllerAction.Fire && CanAttack) StartCoroutine(FireRoutine());
 		}
 

@@ -10,6 +10,13 @@ namespace AI
 			_utilities = utilities;
 		}
 
+		public void Init(AIController controller)
+		{
+			foreach(var utility in _utilities)
+			{
+				utility.Init(controller);
+			}
+		}
 		public void Update()
 		{
 			IUtility utility = _utilities[0];

@@ -44,6 +44,25 @@ namespace AI
 			}
 		}
 
+
+		public bool CanSeePoint(Vector2 start, Vector2 end)
+		{
+			return !Physics2D.Linecast(start, end, _blockMask);
+		}
+		public bool CanSeePoint(Vector2 point)
+		{
+			//return (!_haveCollider && !Physics2D.Linecast(_controller.Position, point, _wallsMask)) ||
+			//		(_haveCollider && Physics2D.LinecastAll(_controller.Position, point, _wallsMask).Length == 1);
+			return !Physics2D.Linecast(_controller.Position, point, _blockMask);
+		}
+
+		public bool CanSeeTarget(IActor target)
+		{
+			//return (!_haveCollider && Physics2D.LinecastAll(_controller.Position, target.Position, _wallsMask)[0].transform.TryGetComponent<IActor>(out var act) && act == target) ||
+			//		(_haveCollider && Physics2D.LinecastAll(_controller.Position, target.Position, _wallsMask)[1].transform.TryGetComponent<IActor>(out var act2) && act2 == target);
+			return CanSeePoint(target.Position);
+		}
+
 		public void ForceScan()
 		{
 			_delay = 0;

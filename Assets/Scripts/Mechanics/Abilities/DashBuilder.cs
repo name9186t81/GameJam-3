@@ -4,7 +4,7 @@ using Core;
 
 namespace Abilities
 {
-	[CreateAssetMenu(fileName = "Dash ability", menuName = "YaEm/Dash")]
+	[CreateAssetMenu(fileName = "Dash ability", menuName = "GameJam/Dash")]
 	public sealed class DashBuilder : AbilityBuilder
 	{
 		[SerializeField] private float _dashLength;

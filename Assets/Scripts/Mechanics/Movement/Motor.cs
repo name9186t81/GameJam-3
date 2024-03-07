@@ -32,10 +32,10 @@ namespace Movement
 				totalForce += _forces[i].GetForce(_body.Position);
 			}
 
-			Vector2 movementForce = _actor.DesiredMoveDirection * _baseMovementSpeed * dt;
+			Vector2 movementForce = _actor.DesiredMoveDirection * _baseMovementSpeed;
 			_body.Velocity = movementForce + totalForce;
 
-			float angle = Mathf.Atan2(_actor.DesiredRotation.y, _actor.DesiredRotation.x) * Mathf.Rad2Deg;
+			float angle = Mathf.Atan2(_actor.DesiredRotation.y, _actor.DesiredRotation.x) * Mathf.Rad2Deg - 90;
 			_body.Rotation = Mathf.MoveTowardsAngle(_body.Rotation, angle, _baseRotationSpeed * dt);
 		}
 

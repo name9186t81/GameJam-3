@@ -13,7 +13,8 @@ namespace Core
 	[DisallowMultipleComponent(), RequireComponent(typeof(Rigidbody2D))]
 	public sealed class Unit : MonoBehaviour, 
 		IActor, IProvider<Motor>, IProvider<IHealth>, 
-		IProvider<IWeapon>, IMovable, ITeamProvider
+		IProvider<IWeapon>, IMovable, ITeamProvider,
+		IDamageReactable
 	{
 		[Header("Motor settings")]
 		[SerializeField] private float _speed;
@@ -44,7 +45,7 @@ namespace Core
 
 		IWeapon IProvider<IWeapon>.Value => _weapon;
 
-		public float Rotation { get => _transform.eulerAngles.z; set => _transform.rotation = Quaternion.Euler(0,0,value); }
+		public float Rotation { get => _transform.eulerAngles.z; set => _transform.rotation = Quaternion.Euler(0, 0, value); }
 		public Vector2 Velocity { get => _rigidbody.velocity; set => _rigidbody.velocity = value; }
 
 		public int TeamNumber => _teamNumber;
@@ -52,6 +53,7 @@ namespace Core
 		public event Action<ControllerAction> OnAction;
 		public event Action OnInit;
 		public event Action<int, int> OnTeamNumberChange;
+		public event Action<DamageArgs> OnDamage;
 
 		private void Start()
 		{
@@ -64,6 +66,7 @@ namespace Core
 			{
 				Debug.LogError("Unit does not have weapon");
 			}
+			_weapon.Init(this);
 			OnInit?.Invoke();
 		}
 		private void Update()
@@ -92,6 +95,17 @@ namespace Core
 			OnTeamNumberChange?.Invoke(_teamNumber, newTeamNumber);
 			_teamNumber = newTeamNumber;
 			return true;
+		}
+
+		public bool CanTakeDamage(DamageArgs args)
+		{
+			return _health.CanTakeDamage(args);
+		}
+
+		public void TakeDamage(DamageArgs args)
+		{
+			_health.TakeDamage(args);
+			OnDamage?.Invoke(args);
 		}
 	}
 }
