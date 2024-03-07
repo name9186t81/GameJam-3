@@ -23,12 +23,7 @@ public class PlayerGrabHandAbility : AbilitiesContainer.Ability
     private Vector3[] _lrPoses = new Vector3[2];
     private Collider2D _grabbedCollider;
     private Vector2 _grabbedLocalPoint;
-   private List<Object> _addedComponents = new List<Object>();
-
-    private void Awake()
-    {
-        
-    }
+    private List<Object> _addedComponents = new List<Object>();
 
     private protected override void update()
     {
@@ -89,7 +84,7 @@ public class PlayerGrabHandAbility : AbilitiesContainer.Ability
                 break;
 
             case State.Grabbed:
-                if(Time.time - _lastStateChangeTime > _grabTime)
+                if(Time.time - _lastStateChangeTime > _grabTime || _grabbedCollider == null)
                 {
                     foreach (var item in _addedComponents)
                     {

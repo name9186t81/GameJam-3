@@ -8,7 +8,7 @@ using Health;
 
 namespace GameLogic
 {
-    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>, IHealth, IProvider<IHealth>
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>, IHealth, IProvider<IHealth>, IDamageReactable
     {
         [SerializeField] private BoneJointsConnector _body;
         [SerializeField] private CircleCollider2D _collider;
@@ -93,6 +93,8 @@ namespace GameLogic
                    ||
                    []
             */
+
+            OnInit?.Invoke();
         }
 
         private void Start()

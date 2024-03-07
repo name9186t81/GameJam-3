@@ -25,6 +25,8 @@ namespace GameLogic
         [SerializeField] private float _maxSize = 15;
         [SerializeField] private float _deathSizeThreshold = 0.1f;
 
+        [SerializeField] private CircleCollider2D _circleColliderToMove;
+
         [HideInInspector]
         public Vector2 Position
         {
@@ -63,6 +65,7 @@ namespace GameLogic
         private Vector2 _position;
         private Vector2 _transformPosition;
         private bool _ignoreCollisions = false;
+        private Vector2 _colliderBaseOffset;
 
         [HideInInspector] public float Size { get { return _currentSize; } set { SetSize(value); } }
 
@@ -150,6 +153,9 @@ namespace GameLogic
 
         private void Awake()
         {
+            if(_circleColliderToMove != null)
+                _colliderBaseOffset = _circleColliderToMove.offset;
+
             var bodies = GetComponentsInChildren<Rigidbody2D>();
 
             _bones = new Bone[bodies.Length];
@@ -218,6 +224,9 @@ namespace GameLogic
                 return;
 
             _transformToMove.position = _transformPosition;
+
+            if (_circleColliderToMove != null)
+                _circleColliderToMove.offset = (Vector2)transform.InverseTransformPoint(_transformPosition) + _colliderBaseOffset;
         }
 
         public void SetIgnoreWorldCollision(bool ignore)

@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>
+public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>, IDamageReactable
 {
     [SerializeField] private BoneJointsConnector _body;
     [SerializeField] private float _baseMovevemntSpeed;
@@ -53,6 +53,8 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IH
     private void Awake()
     {
         Value = new Motor(_baseMovevemntSpeed, _baseRotationSpeed, this, this);
+
+        OnInit?.Invoke();
     }
 
     private void FixedUpdate()
