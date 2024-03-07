@@ -67,6 +67,7 @@ namespace Core
 				Debug.LogError("Unit does not have weapon");
 			}
 			_weapon.Init(this);
+			_health.OnDeath += (_) => Destroy(gameObject);
 			OnInit?.Invoke();
 		}
 		private void Update()

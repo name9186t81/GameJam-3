@@ -39,9 +39,9 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     {
         _startTime = Time.time;
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
-        _player.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); };
+        _player.Health.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); };
         TimeScaleController.Add(this);
-        _player.OnDeath += OnPlayerDeath;
+        _player.Health.OnDeath += OnPlayerDeath;
     }
 
     private void Update()
@@ -60,11 +60,13 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 
     public void OnPlayerWin()
     {
+        _pause = true;
         OpenPauseMenu(false, true);
     }
 
     public void OnPlayerDeath(DamageArgs args)
     {
+        _pause = true;
         OpenPauseMenu(false, false);
     }
 

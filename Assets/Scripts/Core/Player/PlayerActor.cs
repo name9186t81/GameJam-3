@@ -8,13 +8,14 @@ using Health;
 
 namespace GameLogic
 {
-    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>, IHealth, IProvider<IHealth>, IDamageReactable
+    [RequireComponent(typeof(SlimeHealth))]
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, ITeamProvider
     {
+        public SlimeHealth Health { get; private set; }
         [SerializeField] private BoneJointsConnector _body;
         [SerializeField] private CircleCollider2D _collider;
         [SerializeField] private SpriteRenderer _bodySprite;
         [SerializeField] private int _flyingSpriteSortingLayer;
-        [SerializeField] private float _playerHealthMult;
 
         [SerializeField] private Camera _camera;
         [SerializeField] private AnimationCurve _cameraSize;
@@ -24,7 +25,6 @@ namespace GameLogic
         [SerializeField] private float _moveForce = 5000;
         [SerializeField] private float _moveForcePerCombo = 100;
         [SerializeField] private float _moveForceComboLimit = 3000;
-        [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private float _slowdownFactor;
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
@@ -36,8 +36,6 @@ namespace GameLogic
         private float _startFlyingSize;
         private int _defaultSpriteSortingLayer;
 
-        public Motor Value { get; private set; }
-
         public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
@@ -48,52 +46,19 @@ namespace GameLogic
 
         public IController Controller { get; private set; }
         public IActor Actor { get => this; set => throw new NotImplementedException(); }
-        public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
-        public int MaxHealth => CurrentHealth;
-        public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
 
-        IHealth IProvider<IHealth>.Value => this;
+        public int TeamNumber => Health.TeamNumber;
 
         public event Action<ControllerAction> OnAction;
-        public event Action<float> OnAddScore;
+        public event Action OnInit;
+        public event Action<int, int> OnTeamNumberChange;
 
-        public event Action<DamageArgs> OnDeath;
-        public event Action<DamageArgs> OnDamage;
-		public event Action OnInit;
-
-		private void Awake()
+        private void Awake()
         {
+            Health = GetComponent<SlimeHealth>();
             OnAction += OnControllerAction;
-            _body.OnCollisionEnter += OnBodyCollisionEnter;
             _startRadius = _collider.radius;
             _defaultSpriteSortingLayer = _bodySprite.sortingOrder;
-
-            Value = new Motor(0, 0, this, this); //0 потому что перс двигается не через мотор и мотор нужен для взрывов всяких
-            /*
-               _        _
-              ( `-.__.-' )
-               `-.    .-'
-                  \  /
-                   ||
-                   ||
-                  //\\
-                 //  \\
-                ||    ||
-                ||____||
-                ||====||
-                 \\  //
-                  \\//
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   []
-            */
-
             OnInit?.Invoke();
         }
 
@@ -131,13 +96,6 @@ namespace GameLogic
             _body.Size = _startFlyingSize * mult;
         }
 
-        public void AddScore(float score)
-        {
-            score = score * _scoreMultPerCombo.Evaluate(ComboUI.ComboCount);
-            _body.AddArea(score);
-            OnAddScore?.Invoke(score);
-        }
-
         private void OnControllerAction(ControllerAction action)
         {
             switch (action)
@@ -146,12 +104,6 @@ namespace GameLogic
                     _body.AddForceToAll(Controller.DesiredMoveDirection * _dashForce.Evaluate(_body.Size) * _dashForceMult, ForceMode2D.Impulse);
                     break;
             }
-        }
-
-        private void OnBodyCollisionEnter(Collision2D collision)
-        {
-            var health = collision.otherRigidbody.GetComponent<IProvider<IHealth>>();
-            AddScore(_testAreaPerCollision);
         }
 
         public bool TryChangeController(in IController controller)
@@ -169,18 +121,10 @@ namespace GameLogic
             OnAction?.Invoke(obj);
         }
 
-        public bool CanTakeDamage(DamageArgs args)
+        public bool TryChangeTeamNumber(int newTeamNumber)
         {
-            return true;
-        }
-
-        public void TakeDamage(DamageArgs args)
-        {
-            var direction = (args.HitPosition - args.SourcePosition).normalized;
-            if(_body.TakeDamage(args.Damage / _playerHealthMult, args.HitPosition, direction))
-            {
-                OnDeath?.Invoke(args);
-            }
+            OnTeamNumberChange?.Invoke(TeamNumber, newTeamNumber);
+            return Health.TryChangeTeamNumber(newTeamNumber);
         }
     }
 }

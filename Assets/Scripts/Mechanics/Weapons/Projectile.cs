@@ -87,7 +87,7 @@ namespace Weapons
 		private void MarkForDestroy()
 		{
 			//удачи как понять что объект уже мертв
-			if (!_markedForDestroy && !gameObject.activeSelf && gameObject != null) Destroy(gameObject);
+			if (!_markedForDestroy && gameObject != null && !gameObject.activeSelf) Destroy(gameObject);
 			_markedForDestroy = true;
 		}
 

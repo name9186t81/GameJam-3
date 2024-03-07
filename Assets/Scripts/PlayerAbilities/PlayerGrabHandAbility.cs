@@ -57,7 +57,7 @@ public class PlayerGrabHandAbility : AbilitiesContainer.Ability
 
                 for (int i = 0; i < overlap.Length; i++)
                 {
-                    if(overlap[i].transform.root != _player.transform)
+                    if(overlap[i].transform.root != _player.transform.root)
                     {
                         _grabbedCollider = overlap[i].collider;
                         ChangeState(State.Grabbed);

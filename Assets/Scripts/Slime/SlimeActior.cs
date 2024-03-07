@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>, IDamageReactable
+public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>, IDamageReactable, ITeamProvider
 {
     [SerializeField] private BoneJointsConnector _body;
     [SerializeField] private float _baseMovevemntSpeed;
@@ -26,6 +26,7 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IH
     public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
     public int MaxHealth => CurrentHealth;
     public HealthFlags Flags { get; set; }
+    public int TeamNumber { get; private set; }
 
     public event Action<ControllerAction> OnAction;
 
@@ -35,7 +36,9 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IH
     public event Action<DamageArgs> OnDamage;
 	public event Action OnInit;
 
-	public bool TryChangeController(in IController controller)
+    public event Action<int, int> OnTeamNumberChange;
+
+    public bool TryChangeController(in IController controller)
     {
         if (Controller != null)
             Controller.OnAction -= Act;
@@ -74,7 +77,18 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IH
 
     public void TakeDamage(DamageArgs args)
     {
-        var direction = (args.HitPosition - args.SourcePosition).normalized;
-        _body.TakeDamage(args.Damage / _playerHealthMult, args.HitPosition, direction);
+        var direction = (args.HitPosition - args.Sender.Position).normalized;
+
+        if (!_body.TakeDamage(args.Damage / _playerHealthMult, args.HitPosition, direction))
+        {
+            OnDeath?.Invoke(args);
+        }
+    }
+
+    public bool TryChangeTeamNumber(int newTeamNumber)
+    {
+        OnTeamNumberChange?.Invoke(TeamNumber, newTeamNumber);
+        TeamNumber = newTeamNumber;
+        return true;
     }
 }

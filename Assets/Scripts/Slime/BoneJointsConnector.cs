@@ -23,7 +23,8 @@ namespace GameLogic
 
         [SerializeField] private float _minSize = 1;
         [SerializeField] private float _maxSize = 15;
-        [SerializeField] private float _deathSizeThreshold = 0.1f;
+        [SerializeField] private float _deathScaleThreshold = 0.1f;
+        private float _deathSizeThreshold;
 
         [SerializeField] private CircleCollider2D _circleColliderToMove;
 
@@ -156,6 +157,8 @@ namespace GameLogic
             if(_circleColliderToMove != null)
                 _colliderBaseOffset = _circleColliderToMove.offset;
 
+            _deathSizeThreshold = _deathScaleThreshold.map(_minSize, _maxSize, 0, 1);
+
             var bodies = GetComponentsInChildren<Rigidbody2D>();
 
             _bones = new Bone[bodies.Length];
@@ -245,12 +248,11 @@ namespace GameLogic
         {
             AddArea(-damage);
 
-            bool dead = false;
+            bool tookDamage = true;
 
-            if(CurrentScale <= _deathSizeThreshold)
+            if(_currentSize <= _deathSizeThreshold)
             {
-                dead = true;
-                AddArea(damage); //надо будет удолить наверное?
+                tookDamage = false;
             }
 
             //в идеале не одной кости кидать а нескольким в зависимости от урона и радиуса взрыва какого нибудь но ленб
@@ -270,7 +272,7 @@ namespace GameLogic
 
             _bones[closestBone].body.AddForce(direction * damage * _damageForceMult, ForceMode2D.Impulse);
 
-            return true;
+            return tookDamage;
         }
 
         public void AddArea(float area)
@@ -285,8 +287,10 @@ namespace GameLogic
         {
             //UpdateData();
 
-            _currentSize = newSize;
+            if (float.IsNaN(newSize))
+                newSize = _deathSizeThreshold;
 
+            _currentSize = Mathf.Max(_deathSizeThreshold, newSize);
             _currentMass = _massOverSize.Evaluate(newSize) * _massOverSizeMult;
 
             for (int i = 0; i < _bones.Length; i++)
