@@ -98,6 +98,7 @@ namespace PlayerAbilities
             [SerializeField] private KeyCode _useKey = KeyCode.None;
             private protected PlayerActor _player;
             private protected bool _selected = false;
+            private protected Vector2 _cursorWorldPos => Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             [SerializeField] private float _reloadTime = 0.1f;
             private float _timerReload;

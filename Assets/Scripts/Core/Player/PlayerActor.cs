@@ -8,12 +8,11 @@ using Health;
 
 namespace GameLogic
 {
-    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>, IHealth
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, IProvider<Motor>, IHealth, IProvider<IHealth>
     {
         [SerializeField] private BoneJointsConnector _body;
         [SerializeField] private CircleCollider2D _collider;
         [SerializeField] private SpriteRenderer _bodySprite;
-        private int _defaultSpriteSortingLayer;
         [SerializeField] private int _flyingSpriteSortingLayer;
         [SerializeField] private float _playerHealthMult;
 
@@ -35,6 +34,7 @@ namespace GameLogic
         private float _cameraSizeVelocity = 0f;
         private float _startRadius = 1;
         private float _startFlyingSize;
+        private int _defaultSpriteSortingLayer;
 
         public Motor Value { get; private set; }
 
@@ -42,7 +42,8 @@ namespace GameLogic
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
         public float Radius => _startRadius * _body.CurrentScale;
-
+        public float Scale => _body.CurrentScale;
+        public BoneJointsConnector BonesConnector => _body;
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
 
         public IController Controller { get; private set; }
@@ -50,6 +51,8 @@ namespace GameLogic
         public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
         public int MaxHealth => CurrentHealth;
         public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
+
+        IHealth IProvider<IHealth>.Value => this;
 
         public event Action<ControllerAction> OnAction;
         public event Action<float> OnAddScore;
@@ -144,6 +147,7 @@ namespace GameLogic
 
         private void OnBodyCollisionEnter(Collision2D collision)
         {
+            var health = collision.otherRigidbody.GetComponent<IProvider<IHealth>>();
             AddScore(_testAreaPerCollision);
         }
 

@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IHealth
+public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>
 {
     [SerializeField] private BoneJointsConnector _body;
     [SerializeField] private float _baseMovevemntSpeed;
@@ -28,6 +28,8 @@ public class SlimeActior : MonoBehaviour, IActor, IProvider<Motor>, IMovable, IH
     public HealthFlags Flags { get; set; }
 
     public event Action<ControllerAction> OnAction;
+
+    IHealth IProvider<IHealth>.Value => this;
 
     public event Action<DamageArgs> OnDeath;
     public event Action<DamageArgs> OnDamage;

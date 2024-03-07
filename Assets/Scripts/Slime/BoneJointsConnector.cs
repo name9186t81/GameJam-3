@@ -90,8 +90,8 @@ namespace GameLogic
         }
         #endregion
 
-        [System.Serializable] //хотел делать структурой но она не поддерживает значения по умолчанию и пустые конструкторы (говно)
-        private class SpringJointSettings
+        [System.Serializable]
+        public class SpringJointSettings
         {
             [SerializeField] private float _damperMult = 0;
             [SerializeField] private float _frequencyMult = 3;
@@ -337,6 +337,33 @@ namespace GameLogic
         private void _onCollisionStay(Collision2D collision) => OnCollisionStay?.Invoke(collision);
 
         private void _onCollisionExit(Collision2D collision) => OnCollisionExit?.Invoke(collision);
+
+        public SpringJoint2D GrabObject(Rigidbody2D obj, Vector2 direction, SpringJointSettings s, Vector2 anchor)
+        {
+            int nearestBoneInd = -1;
+            float maxDot = -1;
+
+            for (int i = 0; i < _bones.Length; i++)
+            {
+                var vec = (_bones[i].body.position - Position).normalized;
+                var dot = Vector2.Dot(direction, vec);
+                if (dot > maxDot)
+                {
+                    maxDot = dot;
+                    nearestBoneInd = i;
+                }
+            }
+
+            var secondBody = _bones[nearestBoneInd].body;
+
+            var joint = Link(obj, secondBody, s);
+
+            joint.distance = 0;
+            joint.connectedAnchor = Vector2.zero;
+            joint.anchor = anchor;
+
+            return joint;
+        }
 
         private SpringJoint2D Link(Rigidbody2D a, Rigidbody2D b, SpringJointSettings s)
         {

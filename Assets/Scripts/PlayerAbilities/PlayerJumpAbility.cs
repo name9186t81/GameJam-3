@@ -64,7 +64,7 @@ namespace PlayerAbilities
                         ChangeState(State.Jumping);
                         _player.SetFlyingState(true);
                         _startPosition = _player.Position;
-                        _targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        _targetPosition = _cursorWorldPos;
                     }
                     break;
                 case State.Jumping:
