@@ -14,9 +14,9 @@ namespace AI
 
 		public ControllerType Type => ControllerType.AI;
 
-		public Vector2 DesiredMoveDirection => throw new NotImplementedException();
+		public Vector2 DesiredMoveDirection => _moveDirection;
 
-		public Vector2 DesiredRotation => throw new NotImplementedException();
+		public Vector2 DesiredRotation => _rotation;
 
 		public event Action<ControllerAction> OnAction;
 
