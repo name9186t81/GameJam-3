@@ -28,6 +28,12 @@ namespace AI
 				return;
 			}
 
+			if(!actor.TryChangeController(this))
+			{
+				Debug.LogError("Cannot change controller on actor");
+				return;
+			}
+
 			_controlled = actor;
 		}
 
