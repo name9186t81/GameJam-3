@@ -28,7 +28,7 @@ namespace GameLogic
 
         [SerializeField] private CircleCollider2D _circleColliderToMove;
 
-        [HideInInspector]
+        public Vector2 TransformPosition => _transformPosition;
         public Vector2 Position
         {
             get { return _position; }
@@ -50,7 +50,7 @@ namespace GameLogic
                 _position = value;
             }
         }
-        [HideInInspector] public Vector2 Velocity { 
+        public Vector2 Velocity { 
             get { return _velocity; } 
             set 
             {
