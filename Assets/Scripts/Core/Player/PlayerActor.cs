@@ -36,6 +36,7 @@ namespace GameLogic
         private int _defaultSpriteSortingLayer;
 
         public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
+        Vector2 IActor.Position { get => _body.TransformPosition; } //da
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
         public float Radius => Health.Radius;
