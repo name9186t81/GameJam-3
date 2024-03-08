@@ -20,6 +20,12 @@ namespace AI.States
 
 			_controller.LookAt(pos);
 
+			if (_controller.Weapon.Rotatable)
+			{
+				var dir = _controller.Position.GetDirectionNormalized(pos);
+				_controller.Weapon.LookRotation = Vector2.MoveTowards(_controller.Weapon.LookRotation, dir, 0.5f);
+			}
+
 			if (_controller.IsEffectiveToFire(pos))
 			{
 				_controller.InitCommand(ControllerAction.Fire);

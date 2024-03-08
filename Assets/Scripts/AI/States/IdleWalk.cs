@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+using static UnityEditor.PlayerSettings;
+
 namespace AI.States
 {
 	public sealed class IdleWalk : IUtility
@@ -26,6 +28,11 @@ namespace AI.States
 		{
 			_controller.MoveToPoint(_point);
 			_controller.LookAt(_point);
+			if (_controller.Weapon.Rotatable)
+			{
+				var dir = _controller.Position.GetDirectionNormalized(_point);
+				_controller.Weapon.LookRotation = Vector2.MoveTowards(_controller.Weapon.LookRotation, dir, 0.5f);
+			}
 
 			if (_controller.Position.DistanceLess(_point, _controller.Actor.Scale)) //я буду молится что диаметр всех персов равен 1
 																																							//я больше не буду молится потому что добавили размер персов

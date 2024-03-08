@@ -20,6 +20,7 @@ namespace Core
 		[SerializeField] private float _speed;
 		[SerializeField] private float _scale = 0.5f;
 		[SerializeField] private float _rotationSpeed;
+		[SerializeField] private bool _faceDirectionToMove;
 		private Motor _motor;
 
 		[Space]
@@ -65,7 +66,7 @@ namespace Core
 			_transform = transform;
 			_rigidbody = GetComponent<Rigidbody2D>();
 			_rigidbody.constraints |= RigidbodyConstraints2D.FreezeRotation;
-			_motor = new Motor(_speed, _rotationSpeed, this, this);
+			_motor = new Motor(_speed, _rotationSpeed, this, this, _faceDirectionToMove);
 			_health = new Health.Health(_healthAmount, _healthAmount, this);
 			_weapon = GetComponentInChildren<IWeapon>();
 			if(_weapon == null)

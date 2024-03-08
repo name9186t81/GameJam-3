@@ -13,13 +13,15 @@ namespace Movement
 		private readonly IActor _actor;
 		private readonly float _baseMovementSpeed;
 		private readonly float _baseRotationSpeed;
+		private readonly bool _faceDirectionToMove;
 
-		public Motor(float baseMovementSpeed, float baseRotationSpeed, IMovable body, IActor actor)
+		public Motor(float baseMovementSpeed, float baseRotationSpeed, IMovable body, IActor actor, bool faceDirectionToMove = false)
 		{
 			_baseMovementSpeed = baseMovementSpeed;
 			_baseRotationSpeed = baseRotationSpeed;
 			_body = body;
 			_actor = actor;
+			_faceDirectionToMove = faceDirectionToMove;
 		}
 
 		public void Update(float dt)
@@ -32,11 +34,20 @@ namespace Movement
 				totalForce += _forces[i].GetForce(_body.Position);
 			}
 
-			Vector2 movementForce = _actor.DesiredMoveDirection * _baseMovementSpeed;
-			_body.Velocity = movementForce + totalForce;
 
 			float angle = Mathf.Atan2(_actor.DesiredRotation.y, _actor.DesiredRotation.x) * Mathf.Rad2Deg - 90;
 			_body.Rotation = Mathf.MoveTowardsAngle(_body.Rotation, angle, _baseRotationSpeed * dt);
+
+			Vector2 movementForce = _actor.DesiredMoveDirection * _baseMovementSpeed;
+			if (_faceDirectionToMove)
+			{
+				if(Vector2.Dot(_actor.DesiredRotation, ((_body.Rotation + 90) * Mathf.Deg2Rad).VectorFromAngle()) < 0.9f) //не спрашивать
+				{
+					_body.Velocity = Vector2.zero;
+					return;
+				}
+			}
+			_body.Velocity = movementForce + totalForce;
 		}
 
 		private void UpdateForces()

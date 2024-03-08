@@ -75,7 +75,18 @@ namespace AI
 				TargetTransform = (CurrentTarget as MonoBehaviour).transform;
 				TargetHealth = (CurrentTarget is IProvider<IHealth> prov) ? prov
 					.Value : null;
+				if(TargetHealth != null)
+				{
+					TargetHealth.OnDeath += TargetDied;
+				}
 			}
+		}
+
+		private void TargetDied(DamageArgs obj)
+		{
+			TargetHealth.OnDeath -= TargetDied;
+			CurrentTarget = null;
+			TargetTransform = null;
 		}
 
 		public bool IsEffectiveToFire(Vector2 point)
