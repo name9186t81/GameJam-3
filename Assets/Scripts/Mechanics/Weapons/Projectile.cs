@@ -87,7 +87,7 @@ namespace Weapons
 		private void MarkForDestroy()
 		{
 			//удачи как понять что объект уже мертв
-			if (!_markedForDestroy && gameObject != null && !gameObject.activeSelf) Destroy(gameObject);
+			if (this != null && !_markedForDestroy && gameObject != null && !gameObject.activeSelf) Destroy(gameObject);
 			_markedForDestroy = true;
 		}
 
@@ -140,6 +140,7 @@ namespace Weapons
 					if (check)
 					{
 						_args.HitPosition = raycast.point;
+						_args.SourcePosition = _startPosition;
 						act.TakeDamage(_args);
 						invoked = true;
 						OnHit?.Invoke(raycast, act);
