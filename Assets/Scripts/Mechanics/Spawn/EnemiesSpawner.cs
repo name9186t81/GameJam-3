@@ -79,10 +79,16 @@ namespace Spawning
 		{
 			if (_totalSpawned > _maxSpawns) return;
 			var unit = FindBest();
-			var radomPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
+			var avaible = new List<SpawnPoint>();
+			for(int i = 0; i < _spawnPoints.Length; i++)
+			{
+				if (_spawnPoints[i].IsAvaible) avaible.Add(_spawnPoints[i]);
+			}
 
+			if (avaible.Count == 0) return;
+			var randomPoint = avaible[UnityEngine.Random.Range(0, avaible.Count)];
 			_totalSpawned++;
-			var obj = Instantiate(unit, radomPoint.Position, Quaternion.identity, null);
+			var obj = Instantiate(unit, randomPoint.Position, Quaternion.identity, null);
 		}
 
 		private Unit FindBest()
@@ -100,12 +106,10 @@ namespace Spawning
 				choosen.Add((_spawns[i], totalFactor));
 			}
 
-			Debug.Log(choosen.Count);
 			float acFactor = 0f;
 			float random = UnityEngine.Random.Range(0, totalFactor);
 			for(int i = 0; i < choosen.Count; i++)
 			{
-				Debug.Log(random + " " + totalFactor + " " + choosen[i].Item2);
 				if(random < choosen[i].Item2)
 				{
 					choosen[i].Item1.Spawned++;
