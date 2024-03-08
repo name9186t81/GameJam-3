@@ -99,7 +99,7 @@ namespace GameLogic
 
         private void OnBodyCollisionEnter(Collision2D collision)
         {
-            var raycast = collision.collider.transform;
+            var raycast = collision.collider.transform.root;
 
             if(raycast != transform && raycast.TryGetComponent(out PlayerActor player))
             {
@@ -107,6 +107,9 @@ namespace GameLogic
             }
             else if (raycast.TryGetComponent<IDamageReactable>(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
             {
+                if (raycast.TryGetComponent<ITeamProvider>(out var team) && team.TeamNumber == TeamNumber)
+                    return;
+
                 var health = healthProvider.Value;
 
                 var canBeEated = health.MaxHealth < _body.CurrentScale * _healthCanBeEatedPerScale;

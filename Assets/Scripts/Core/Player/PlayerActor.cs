@@ -5,6 +5,7 @@ using UnityEngine;
 using Core;
 using Movement;
 using Health;
+using PlayerAbilities;
 
 namespace GameLogic
 {
@@ -79,7 +80,10 @@ namespace GameLogic
 
         public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body)
         {
-
+            if(PlayerPetSlimesAbility.TryReturnSlime(body, _body))
+            {
+                Destroy(slime.gameObject); //прощай слаймик!!
+            }
         }
 
         public void SetFlyingState(bool flying)

@@ -4378,7 +4378,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 605537676}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
@@ -4408,7 +4408,7 @@ Transform:
   - {fileID: 1680199945}
   - {fileID: 1733121000}
   - {fileID: 1277537132}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1738327387}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &605537682
 MonoBehaviour:
@@ -7906,7 +7906,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _massOverSizeMult: 200
-  _damageForceMult: 8
+  _damageForceMult: 10
   _minSize: 1
   _maxSize: 15
   _deathScaleThreshold: 0.3
@@ -9896,6 +9896,7 @@ Transform:
   m_Children:
   - {fileID: 173733854}
   - {fileID: 2121029839}
+  - {fileID: 605537681}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1738327388
@@ -10167,6 +10168,7 @@ MonoBehaviour:
   _radiusSpawnOffset: 0.7
   _pullSizeFromPlayer: 0.4
   _getSizeFromPlayer: 0.1
+  _slimeCanBeReturnedTime: 15
 --- !u!1 &1756078473
 GameObject:
   m_ObjectHideFlags: 0
@@ -12378,7 +12380,6 @@ SceneRoots:
   - {fileID: 1738327387}
   - {fileID: 1869525818}
   - {fileID: 1291513519}
-  - {fileID: 605537681}
   - {fileID: 449179209}
   - {fileID: 590836141}
   - {fileID: 1409608039}
