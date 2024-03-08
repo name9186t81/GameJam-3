@@ -230,8 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 854ba6dc970221643bd3e3c33d9546e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _utilities: {fileID: 11400000, guid: 1559e98040d7efd4992a65a20ce20350, type: 2}
-  _fireThreshold: 25
+  _utilities: {fileID: 11400000, guid: 5521d27750d06d9429cf624b070f4588, type: 2}
+  _fireThreshold: 5
 --- !u!114 &1416536604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,8 +301,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
+  _scale: 0.5
   _rotationSpeed: 360
-  _healthAmount: 1111
+  _healthAmount: 9999
   _teamNumber: 2
   _canChangeTeams: 1
 --- !u!50 &1416536607
@@ -412,6 +413,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RocketsMan
       objectReference: {fileID: 0}
+    - target: {fileID: 2614260609105254471, guid: 77062e9cadecc1c499835f43c10cac58, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7214488967708764033, guid: 77062e9cadecc1c499835f43c10cac58, type: 3}
       propertyPath: m_LocalPosition.x
       value: 74.96
@@ -505,9 +510,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6857039075909571577, guid: 409b3056240e7e64b812d1f40d4738a1, type: 3}
+      propertyPath: _projectileBuilder
+      value: 
+      objectReference: {fileID: 11400000, guid: a984a9e085b3fdd4d9eff6f77f7f62c2, type: 2}
     - target: {fileID: 7116050030720303996, guid: 409b3056240e7e64b812d1f40d4738a1, type: 3}
       propertyPath: m_Name
       value: Sniper
+      objectReference: {fileID: 0}
+    - target: {fileID: 7116050030720303996, guid: 409b3056240e7e64b812d1f40d4738a1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -526,17 +539,25 @@ PrefabInstance:
       propertyPath: _baseDamage
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 3978952678616854260, guid: 54efb3c14c737914fba9270ad59ba23c, type: 3}
+      propertyPath: _fireThreshold
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4772149080295023068, guid: 54efb3c14c737914fba9270ad59ba23c, type: 3}
+      propertyPath: _healthAmount
+      value: 9999
+      objectReference: {fileID: 0}
     - target: {fileID: 5978048962085296526, guid: 54efb3c14c737914fba9270ad59ba23c, type: 3}
       propertyPath: m_Name
       value: Pistol
       objectReference: {fileID: 0}
     - target: {fileID: 7670596920481132798, guid: 54efb3c14c737914fba9270ad59ba23c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 69.57
+      value: 71.67
       objectReference: {fileID: 0}
     - target: {fileID: 7670596920481132798, guid: 54efb3c14c737914fba9270ad59ba23c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 18.395319
+      value: 15.69
       objectReference: {fileID: 0}
     - target: {fileID: 7670596920481132798, guid: 54efb3c14c737914fba9270ad59ba23c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -626,6 +647,10 @@ PrefabInstance:
     - target: {fileID: 8706874626084682604, guid: 1ad1134f99634f5488177156f61c54c8, type: 3}
       propertyPath: m_Name
       value: AK
+      objectReference: {fileID: 0}
+    - target: {fileID: 8706874626084682604, guid: 1ad1134f99634f5488177156f61c54c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

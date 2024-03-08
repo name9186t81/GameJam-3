@@ -19,6 +19,8 @@ namespace AI
 		private IWeapon _weapon;
 		private UtilityMachine _utilityMachine;
 
+		public IActor Owner;//не ну конечно же это нарушение солид и инкапсуляции а с другой стороны мне лень память писать для ии
+
 		public ControllerType Type => ControllerType.AI;
 
 		public Vector2 DesiredMoveDirection => _moveDirection;
@@ -46,8 +48,8 @@ namespace AI
 				return;
 			}
 
-			_utilityMachine = _utilities.Build(this);
 			_controlled = actor;
+			_utilityMachine = _utilities.Build(this);
 			_controlled.OnInit += Initted;
 		}
 
