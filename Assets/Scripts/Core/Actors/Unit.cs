@@ -59,6 +59,7 @@ namespace Core
 		{
 			_transform = transform;
 			_rigidbody = GetComponent<Rigidbody2D>();
+			_rigidbody.constraints |= RigidbodyConstraints2D.FreezeRotation;
 			_motor = new Motor(_speed, _rotationSpeed, this, this);
 			_health = new Health.Health(_healthAmount, _healthAmount);
 			_weapon = GetComponentInChildren<IWeapon>();
