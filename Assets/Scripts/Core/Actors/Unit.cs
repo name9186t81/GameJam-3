@@ -68,6 +68,7 @@ namespace Core
 			}
 			_weapon.Init(this);
 			_health.OnDeath += (_) => Destroy(gameObject);
+			_health.Flags |= HealthFlags.FriendlyFireDisabled;
 			OnInit?.Invoke();
 		}
 		private void Update()
