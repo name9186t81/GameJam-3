@@ -153,7 +153,7 @@ MonoBehaviour:
   _hitMask:
     serializedVersion: 2
     m_Bits: 384
-  _flags: 0
+  _flags: 4
   _allowForcedDirectionChanges: 1
   _lifeTime: 5
 --- !u!114 &7300043326185450470

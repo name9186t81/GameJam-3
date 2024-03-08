@@ -61,7 +61,7 @@ namespace Core
 			_rigidbody = GetComponent<Rigidbody2D>();
 			_rigidbody.constraints |= RigidbodyConstraints2D.FreezeRotation;
 			_motor = new Motor(_speed, _rotationSpeed, this, this);
-			_health = new Health.Health(_healthAmount, _healthAmount);
+			_health = new Health.Health(_healthAmount, _healthAmount, this);
 			_weapon = GetComponentInChildren<IWeapon>();
 			if(_weapon == null)
 			{

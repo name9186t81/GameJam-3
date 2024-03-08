@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5902763284679825135}
   - component: {fileID: 3922054784743765458}
   - component: {fileID: 9022747274414880240}
+  - component: {fileID: 8860377550492199665}
   m_Layer: 0
   m_Name: SniperBullet
   m_TagString: Untagged
@@ -163,6 +164,20 @@ MonoBehaviour:
   _hitMask:
     serializedVersion: 2
     m_Bits: 384
-  _flags: 0
+  _flags: 4
   _allowForcedDirectionChanges: 1
   _lifeTime: 5
+--- !u!114 &8860377550492199665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765126160587386723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd2aac72ce889b4dbcc93057bed4145, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _projectile: {fileID: 9022747274414880240}
+  _renderer: {fileID: 0}

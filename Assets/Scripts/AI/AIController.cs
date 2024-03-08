@@ -32,7 +32,7 @@ namespace AI
 		public IActor CurrentTarget { get; private set; }
 		public bool IsTargetNull => TargetTransform == null || CurrentTarget == null;
 
-		private void Start()
+		private void Awake()
 		{
 			if(!TryGetComponent<IActor>(out var actor))
 			{
@@ -48,6 +48,11 @@ namespace AI
 
 			_utilityMachine = _utilities.Build(this);
 			_controlled = actor;
+			_controlled.OnInit += Initted;
+		}
+
+		private void Initted()
+		{
 			_weapon = (_controlled is IProvider<IWeapon> prov) ? prov.Value : null;
 			_vision = GetComponent<AIVision>();
 			_vision.OnScan += Scanned;
@@ -73,7 +78,8 @@ namespace AI
 
 		public bool IsEffectiveToFire(Vector2 point)
 		{
-			return true;
+			Debug.Log(_weapon);
+			Debug.Log((Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 + " " + _fireThreshold / 360);
 			return _weapon != null && 
 				(point - Position).sqrMagnitude < (_weapon.EffectiveRange * _weapon.EffectiveRange) && 
 				(Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 < _fireThreshold / 360; 
