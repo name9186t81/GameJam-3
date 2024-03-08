@@ -107,6 +107,8 @@ namespace Weapons
 				obj.Init(_projectilePool, args, (_actor is ITeamProvider prov) ? prov.TeamNumber : 0, GlobalShootPoint, _spread.GetDirection(ShootDirection), _actor, 1f);
 				OnFire?.Invoke();
 				OnAttack?.Invoke();
+				if ((_flags & WeaponFlags.Freezed) != 0)
+					yield break;
 				if (_delayPerProjectile != 0)
 					yield return new WaitForSeconds(_delayPerProjectile);
 			}
