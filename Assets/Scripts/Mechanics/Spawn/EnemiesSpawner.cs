@@ -88,7 +88,7 @@ namespace Spawning
 			if (avaible.Count == 0) return;
 			var randomPoint = avaible[UnityEngine.Random.Range(0, avaible.Count)];
 			_totalSpawned++;
-			var obj = Instantiate(unit, randomPoint.Position, Quaternion.identity, null);
+			var obj = Instantiate(unit, randomPoint.Position + UnityEngine.Random.insideUnitCircle * 10, Quaternion.identity, null);
 		}
 
 		private Unit FindBest()

@@ -170,7 +170,7 @@ MonoBehaviour:
   _scale: 1.1
   _rotationSpeed: 65
   _faceDirectionToMove: 1
-  _healthAmount: 150
+  _healthAmount: 40
   _teamNumber: 1
   _canChangeTeams: 1
   _name: BuggyAK
@@ -192,7 +192,7 @@ MonoBehaviour:
   _blockMask:
     serializedVersion: 2
     m_Bits: 256
-  _range: 30
+  _range: 50
   _scanFrequancy: 0
   _debug: 1
 --- !u!114 &9197224144737413805
