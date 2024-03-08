@@ -4478,6 +4478,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _healthCanBeEatedPerScale: 30
   _hitDamage: 20
+  _hitDamageCooldownSeconds: 0.1
   _areaPerHealthDiv: 100
   _scoreMultPerCombo:
     serializedVersion: 2
@@ -8138,7 +8139,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _startBodySize: -0.036
   _testAreaPerCollision: 0.1
-  _slimeMergeForcePerScore: 7
+  _slimeMergeForcePerScore: 5
 --- !u!114 &1291513522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8234,8 +8235,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _healthCanBeEatedPerScale: 5
-  _hitDamage: 20
+  _healthCanBeEatedPerScale: 100
+  _hitDamage: 30
+  _hitDamageCooldownSeconds: 0.5
   _areaPerHealthDiv: 100
   _scoreMultPerCombo:
     serializedVersion: 2
@@ -10183,11 +10185,11 @@ MonoBehaviour:
   _useKey: 101
   _reloadTime: 30
   _petSlimePrefab: {fileID: 605537684}
-  _slimesCount: 10
+  _slimesCount: 3
   _radiusSpawnOffset: 0
   _pullScaleFromPlayer: 0.4
   _getScaleFromPlayer: 0.1
-  _slimeCanBeReturnedTime: 3
+  _slimeCanBeReturnedTime: 10
 --- !u!1 &1756078473
 GameObject:
   m_ObjectHideFlags: 0

@@ -305,11 +305,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 2
   _scale: 1.71875
-  _rotationSpeed: 15
+  _rotationSpeed: 35
   _faceDirectionToMove: 1
   _healthAmount: 200
   _teamNumber: 1
   _canChangeTeams: 0
+  _name: 
 --- !u!114 &7320557685101704361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,7 +345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _utilities: {fileID: 11400000, guid: 1559e98040d7efd4992a65a20ce20350, type: 2}
-  _fireThreshold: 25
+  _fireThreshold: 1
 --- !u!1001 &3971895363848585795
 PrefabInstance:
   m_ObjectHideFlags: 0

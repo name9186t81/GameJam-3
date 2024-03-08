@@ -16,6 +16,7 @@ namespace GameLogic
         [SerializeField] private AnimationCurve _damageMultOverSize;
         [SerializeField] private float _healthCanBeEatedPerScale = 30;
         [SerializeField] private int _hitDamage;
+        [SerializeField] private float _hitDamageCooldownSeconds = 0.1f;
         [SerializeField] private float _areaPerHealthDiv = 100f;
         [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private int _startTeamNumber;
@@ -50,6 +51,7 @@ namespace GameLogic
         public event Action<float> OnAddScore;
 
         private float _startRadius = 1;
+        private float _lastDamageHitTime;
 
         void Awake()
         {
@@ -121,11 +123,16 @@ namespace GameLogic
 
                 if (canBeEated)
                 {
-                    damage = health.MaxHealth + 1; //da
+                    damage = health.MaxHealth + 1; //наверное не нужно +1 но на случай если еда сделает проверку не правильную!!
                 }
                 else
                 {
-                    damage = _hitDamage;
+                    damage = (Time.time - _lastDamageHitTime > _hitDamageCooldownSeconds) ? _hitDamage : 0;
+
+                    if(damage != 0) //мне лень
+                    {
+                        _lastDamageHitTime = Time.time;
+                    }
                 }
 
                 var _damageArgs = new DamageArgs(Actor, damage, DamageFlags.Melee);
