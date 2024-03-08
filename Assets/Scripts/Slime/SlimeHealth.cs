@@ -139,7 +139,7 @@ namespace GameLogic
 
                 Action<DamageArgs> onDeath = delegate (DamageArgs args)
                 {
-                    AddScore(health.MaxHealth / _areaPerHealthDiv);
+                    OnEnemyKill(health.MaxHealth);
                 };
 
                 health.OnDeath += onDeath;
@@ -158,6 +158,11 @@ namespace GameLogic
 
                 health.OnDeath -= onDeath;
             }
+        }
+
+        public void OnEnemyKill(float maxHealth)
+        {
+            AddScore(maxHealth / _areaPerHealthDiv);
         }
 
         public void AddScore(float score)

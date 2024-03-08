@@ -60,7 +60,7 @@ namespace PlayerAbilities
         {
             _lastTriggerSpawnPoint = pos;
             var trig = Instantiate(_triggerPrefab, pos, Quaternion.identity, null);
-            trig.Init(radius, _triggerDestroyTime, _player.TeamNumber);
+            trig.Init(radius, _triggerDestroyTime, _player.TeamNumber, _player.Health);
         }
     }
 }
