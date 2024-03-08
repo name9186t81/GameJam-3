@@ -1,5 +1,7 @@
 using Core;
+using GameLogic;
 using Health;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,12 +19,14 @@ namespace PlayerAbilities
         private bool _canMakeDamage = false;
         private int _lastFrameIndex = -1;
         private float _lastDamageMadeTime;
+        private SlimeHealth _slimeHealth;
 
-        public void Init(float radius, float time, int team)
+        public void Init(float radius, float time, int team, SlimeHealth health)
         {
             gameObject.SetActive(true);
             _collider.radius = radius;
             _teamNumber = team;
+            _slimeHealth = health;
             _damageArgs = new DamageArgs(null, _damage, DamageFlags.Fire);
             Destroy(gameObject, time);
         }
@@ -44,14 +48,17 @@ namespace PlayerAbilities
 
             var raycast = collision.transform.root;
 
-            if(raycast.TryGetComponent(out IDamageReactable act) && raycast.TryGetComponent(out ITeamProvider team))
+            if(raycast.TryGetComponent(out IDamageReactable act) && raycast.TryGetComponent(out ITeamProvider team) && raycast.TryGetComponent(out IProvider<IHealth> health))
             {
                 if(team.TeamNumber != _teamNumber)
                 {
+                    Action<DamageArgs> onDeath = delegate (DamageArgs damageArgs) { _slimeHealth.OnEnemyKill(health.Value.MaxHealth); };
+                    health.Value.OnDeath += onDeath;
                     if (act.CanTakeDamage(_damageArgs))
                     {
                         act.TakeDamage(_damageArgs);
                     }
+                    health.Value.OnDeath -= onDeath;
                 }
             }
         }

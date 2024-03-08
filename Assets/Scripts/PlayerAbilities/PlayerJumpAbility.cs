@@ -101,7 +101,8 @@ namespace PlayerAbilities
 
             }
 
-            Debug.LogError("тут наверное урон надо наносить!!");
+            //Debug.LogError("тут наверное урон надо наносить!!");
+            //ноуп мне лень
         }
 
         private void ChangeState(State newState)

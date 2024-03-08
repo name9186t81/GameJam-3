@@ -468,12 +468,14 @@ MonoBehaviour:
 
     Programmer, UI Designer
 
-    CEO, Programmer
+    Team Lead, Programmer, VFX Artist
 
-    Game designer,
+    Game
+    designer, Artist, Sound designer
+
     Artist
 
-    Artist'
+    Compositor'
 --- !u!222 &598764440
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1308,7 +1310,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0410\u0432\u0442\u043E\u0440\u044B:\n\nXMAKE:\nNo:\nSunFranCiscO:\nBrorya144:"
+  m_Text: "\u0410\u0432\u0442\u043E\u0440\u044B:\n\nXMAKE:\nNo:\nSunFranCiscO:\nBrorya144:\nquematvey:"
 --- !u!222 &1754281125
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1808,7 +1810,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1800732161061429337, guid: a6bff09ab064153469f0662bf5087c21, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 50
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1800732161061429337, guid: a6bff09ab064153469f0662bf5087c21, type: 3}
       propertyPath: m_LocalPosition.x
