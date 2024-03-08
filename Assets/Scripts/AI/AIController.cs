@@ -78,11 +78,9 @@ namespace AI
 
 		public bool IsEffectiveToFire(Vector2 point)
 		{
-			Debug.Log(_weapon);
-			Debug.Log((Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 + " " + _fireThreshold / 360);
 			return _weapon != null && 
 				(point - Position).sqrMagnitude < (_weapon.EffectiveRange * _weapon.EffectiveRange) && 
-				(Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 < _fireThreshold / 360; 
+				(Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 > (1 - _fireThreshold / 360); 
 			//кто посмеет спросить что тут происходит тот будет уничтожен святым огнем
 		}
 
