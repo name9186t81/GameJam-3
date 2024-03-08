@@ -27,7 +27,8 @@ namespace AI.States
 			_controller.MoveToPoint(_point);
 			_controller.LookAt(_point);
 
-			if (_controller.Position.DistanceLess(_point, 0.5f)) //я буду молится что диаметр всех персов равен 1
+			if (_controller.Position.DistanceLess(_point, _controller.Actor.Scale)) //я буду молится что диаметр всех персов равен 1
+																																							//я больше не буду молится потому что добавили размер персов
 			{
 				_isWalking = false;
 				_elapsedCooldown = _walkCooldown;
