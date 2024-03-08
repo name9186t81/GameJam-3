@@ -18,6 +18,7 @@ namespace Core
 	{
 		[Header("Motor settings")]
 		[SerializeField] private float _speed;
+		[SerializeField] private float _scale = 0.5f;
 		[SerializeField] private float _rotationSpeed;
 		private Motor _motor;
 
@@ -49,6 +50,8 @@ namespace Core
 		public Vector2 Velocity { get => _rigidbody.velocity; set => _rigidbody.velocity = value; }
 
 		public int TeamNumber => _teamNumber;
+
+		public float Scale => _scale;
 
 		public event Action<ControllerAction> OnAction;
 		public event Action OnInit;
