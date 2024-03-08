@@ -101,7 +101,11 @@ namespace GameLogic
         {
             var raycast = collision.collider.transform;
 
-            if (raycast.TryGetComponent<IDamageReactable>(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
+            if(raycast != transform && raycast.TryGetComponent(out PlayerActor player))
+            {
+                player.OnSlimeCollision(this, _body);
+            }
+            else if (raycast.TryGetComponent<IDamageReactable>(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
             {
                 var health = healthProvider.Value;
 

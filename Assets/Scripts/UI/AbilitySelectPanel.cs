@@ -16,8 +16,13 @@ public class AbilitySelectPanel : MonoBehaviour
     private bool pressed = false;
     private Action<AbilityUIData> _onSelected;
 
-    public void Init(AbilityUIData left, AbilityUIData right, Action<AbilityUIData> onSelected)
+    public bool CanInit => !gameObject.activeSelf;
+
+    public bool TryInit(AbilityUIData left, AbilityUIData right, Action<AbilityUIData> onSelected)
     {
+        if (gameObject.activeSelf)
+            return false;
+
         _leftPart.Init(left, OnPress);
         _rightPart.Init(right, OnPress);
         _alphaVel = 0;
@@ -26,6 +31,8 @@ public class AbilitySelectPanel : MonoBehaviour
         gameObject.SetActive(true);
         pressed = false;
         _onSelected = onSelected;
+
+        return true;
     }
 
     private void Update()
