@@ -11,13 +11,11 @@ public class SlimeActior : MonoBehaviour, IActor, IMovable, ITeamProvider //ITea
 {
     [SerializeField] private BoneJointsConnector _body;
     public SlimeHealth Health;
-    [SerializeField] private float _baseMovevemntSpeed;
-    [SerializeField] private float _baseRotationSpeed;
     [SerializeField] private float _playerHealthMult;
 
     public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
 
-    public Vector2 Position => _body.Position;
+    public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
     public Vector2 Velocity { get { return _body.Velocity; } set { _body.Velocity = value; } }
     public float Rotation { get { return 0; } set { } }
 
@@ -50,7 +48,7 @@ public class SlimeActior : MonoBehaviour, IActor, IMovable, ITeamProvider //ITea
         OnAction?.Invoke(obj);
     }
 
-    private void Awake()
+    private void Start()
     {
         OnInit?.Invoke();
     }

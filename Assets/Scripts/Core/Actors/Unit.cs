@@ -3,7 +3,7 @@ using Health;
 using Movement;
 
 using System;
-
+using System.Collections;
 using UnityEngine;
 
 using Weapons;
@@ -36,7 +36,7 @@ namespace Core
 		private IController _controller;
 		private IWeapon _weapon;
 		private Rigidbody2D _rigidbody;
-		public Vector2 Position => _transform.position;
+		public Vector2 Position { get => _transform.position; set { _transform.position = value; } }
 
 		public IController Controller => _controller;
 
@@ -58,6 +58,8 @@ namespace Core
 		public event Action<int, int> OnTeamNumberChange;
 		public event Action<DamageArgs> OnDamage;
 
+		private bool _freezed = false;
+
 		private void Start()
 		{
 			_transform = transform;
@@ -71,14 +73,57 @@ namespace Core
 				Debug.LogError("Unit does not have weapon");
 			}
 			_weapon.Init(this);
-			_health.OnDeath += (_) => Destroy(gameObject);
+			_health.OnDeath += OnDeath;
 			_health.Flags |= HealthFlags.FriendlyFireDisabled;
 			OnInit?.Invoke();
 		}
+
+		private void OnDeath(DamageArgs args)
+        {
+			_freezed = true;
+			var colls = gameObject.GetComponentsInChildren<Collider2D>();
+			foreach(var coll in colls)
+            {
+				coll.enabled = false;
+            }
+			StartCoroutine(DeathCor(args, GetComponent<SpriteRenderer>()));
+		}
+
+		private const float _deathEffectTime = 1f;
+		private const float _deathLerpTime = 0.2f;
+		private IEnumerator DeathCor(DamageArgs args, SpriteRenderer renderer)
+        {
+			var startTime = Time.time;
+
+			if (renderer)
+				renderer.sortingOrder = 20; //у игрока 15 тип да чтобы поверх игрока да согласен говно
+
+			var startPos = Position;
+
+			while (Time.time - startTime < _deathEffectTime && args.Sender != null)
+            {
+				var prog = (Time.time - startTime) / _deathEffectTime;
+				var progLerp = Mathf.Clamp01((Time.time - startTime) / _deathLerpTime);
+
+				if (renderer)
+					renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1 - prog);
+
+				Position = Vector3.Lerp(startPos, args.Sender.Position, progLerp);
+
+				yield return null; //сделал лерп по другому
+				//yield return new WaitForFixedUpdate(); // фиксед потому что лерп да говно
+            }
+
+			yield return null;
+			Destroy(gameObject);
+		}
+
 		private void Update()
 		{
-			_motor.Update(Time.deltaTime);
+			if(!_freezed)
+				_motor.Update(Time.deltaTime);
 		}
+
 		public bool TryChangeController(in IController controller)
 		{
 			if(_controller != null)
@@ -92,7 +137,8 @@ namespace Core
 
 		private void Act(ControllerAction obj)
 		{
-			OnAction?.Invoke(obj);
+			if (!_freezed)
+				OnAction?.Invoke(obj);
 		}
 
 		public bool TryChangeTeamNumber(int newTeamNumber)

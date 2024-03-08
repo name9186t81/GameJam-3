@@ -19,8 +19,11 @@ namespace GameLogic
         [SerializeField] private float _areaPerHealthDiv = 100f;
         [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private int _startTeamNumber;
-        [SerializeField] private bool _useMotor = false;
         [SerializeField] private CircleCollider2D _collider;
+
+        [SerializeField] private bool _useMotor = false;
+        [SerializeField] private float _baseMovementSpeed;
+        [SerializeField] private float _baseRotationSpeed;
 
         IHealth IProvider<IHealth>.Value => this;
         public Motor Value { get; private set; }
@@ -55,8 +58,10 @@ namespace GameLogic
 
             _startRadius = _collider.radius;
 
-            Value = new Motor(0, 0, this, Actor); //0 потому что перс двигается не через мотор и мотор нужен для взрывов всяких
+            Value = new Motor(_baseMovementSpeed, _baseRotationSpeed, this, Actor);
             /*
+             * R.I.P. Костыль
+             * 06.03.2024 - 08.03.2024
                _        _
               ( `-.__.-' )
                `-.    .-'
