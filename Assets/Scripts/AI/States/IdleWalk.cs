@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-using static UnityEditor.PlayerSettings;
-
 namespace AI.States
 {
 	public sealed class IdleWalk : IUtility
@@ -79,6 +77,6 @@ namespace AI.States
 			_isWalking = false;
 		}
 
-		public float PointPickRadius => Random.Range(_pointPickRadiusMin, _pointPickRadius);
+		public float PointPickRadius => Random.Range(_pointPickRadiusMin, _pointPickRadius) * _controller.Actor.Scale;
 	}
 }

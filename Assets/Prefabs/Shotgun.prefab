@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
-  _scale: 0.5
+  _scale: 0.36
   _rotationSpeed: 360
   _faceDirectionToMove: 0
   _healthAmount: 15
