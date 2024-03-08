@@ -28,7 +28,7 @@ namespace AI.States
 		{
 			_controller.MoveToPoint(_point);
 			_controller.LookAt(_point);
-			if (_controller.Weapon.Rotatable)
+			if (_controller.Weapon != null && _controller.Weapon.Rotatable)
 			{
 				var dir = _controller.Position.GetDirectionNormalized(_point);
 				_controller.Weapon.LookRotation = Vector2.MoveTowards(_controller.Weapon.LookRotation, dir, 0.5f);
