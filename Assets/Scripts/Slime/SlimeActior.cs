@@ -25,7 +25,9 @@ public class SlimeActior : MonoBehaviour, IActor, IMovable, ITeamProvider //ITea
 
     public float Scale => Health.Radius;
 
-    public event Action<ControllerAction> OnAction;
+	public string Name => "Slime";
+
+	public event Action<ControllerAction> OnAction;
      
     public event Action<DamageArgs> OnDeath;
     public event Action<DamageArgs> OnDamage;

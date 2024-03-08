@@ -12,6 +12,7 @@ namespace Core
 		float Scale { get; } //radius of the unit
 		Vector2 Position { get; }
 		IController Controller { get; }
+		string Name { get; }
 		bool TryChangeController(in IController controller);
 		event Action OnInit;
 	}

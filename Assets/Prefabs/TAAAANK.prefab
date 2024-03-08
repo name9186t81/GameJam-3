@@ -310,7 +310,7 @@ MonoBehaviour:
   _healthAmount: 200
   _teamNumber: 1
   _canChangeTeams: 0
-  _name: 
+  _name: Tank
 --- !u!114 &7320557685101704361
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -49,7 +49,9 @@ namespace GameLogic
 
         public int TeamNumber => Health.TeamNumber;
 
-        public event Action<ControllerAction> OnAction;
+		public string Name => "Player";
+
+		public event Action<ControllerAction> OnAction;
         public event Action OnInit;
         public event Action<int, int> OnTeamNumberChange;
 

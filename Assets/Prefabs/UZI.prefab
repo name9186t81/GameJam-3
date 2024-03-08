@@ -265,6 +265,7 @@ MonoBehaviour:
   _healthAmount: 15
   _teamNumber: 1
   _canChangeTeams: 1
+  _name: UZI
 --- !u!58 &650238422566054363
 CircleCollider2D:
   m_ObjectHideFlags: 0
