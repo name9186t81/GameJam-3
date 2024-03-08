@@ -51,6 +51,7 @@ namespace PlayerAbilities
                 else
                 {
                     _working = false;
+                    ResetTimer();
                 }
             }
         }
@@ -58,6 +59,8 @@ namespace PlayerAbilities
         private void SpawnTrigger(Vector2 pos, float radius)
         {
             _lastTriggerSpawnPoint = pos;
+            var trig = Instantiate(_triggerPrefab, pos, Quaternion.identity, null);
+            trig.Init(radius, _triggerDestroyTime, _player.TeamNumber);
         }
     }
 }

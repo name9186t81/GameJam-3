@@ -110,7 +110,7 @@ namespace GameLogic
             {
                 player.OnSlimeCollision(this, _body, collision.contacts[0].point);
             }
-            else if (raycast.TryGetComponent<IDamageReactable>(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
+            else if (raycast.TryGetComponent(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
             {
                 if (raycast.TryGetComponent<ITeamProvider>(out var team) && team.TeamNumber == TeamNumber)
                     return;
