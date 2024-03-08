@@ -106,7 +106,7 @@ MonoBehaviour:
   _damageFlags: 19
   _projectileBuilder: {fileID: 11400000, guid: a886dd7959a73034f87bd05e54846c7e, type: 2}
   _shootPoint: {x: 0, y: 2.96}
-  _baseDamage: 150
+  _baseDamage: 200
   _projectileCount: 1
   _preFireDelay: 0
   _delayPerProjectile: 0
