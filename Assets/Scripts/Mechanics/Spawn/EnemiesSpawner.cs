@@ -61,6 +61,7 @@ namespace Spawning
 
 		private Unit FindBest()
 		{
+			return null;
 			float score = _playerActor.CurrentScore;
 
 			for(int i = 0; i < _spawns.Length; i++)
