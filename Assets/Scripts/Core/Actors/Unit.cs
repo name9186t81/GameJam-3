@@ -62,6 +62,11 @@ namespace Core
 
 		private bool _freezed = false;
 
+		private void Awake()
+		{
+			_transform = transform;
+		}
+
 		private void Start()
 		{
 			_transform = transform;

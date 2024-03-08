@@ -50,7 +50,6 @@ namespace Spawning
 		{
 			for(int i = 0; i < _spawns.Length; i++)
 			{
-				Debug.Log(_spawns[i].EnemyPrefab.Name + " " + arg2.Name);
 				if (_spawns[i].EnemyPrefab.Name == arg2.Name)
 				{
 					_spawns[i].Spawned--;
@@ -94,17 +93,19 @@ namespace Spawning
 
 			for(int i = 0; i < _spawns.Length; i++)
 			{
-				if (_spawns[i].MiniumScore > score || _spawns[i].Spawned >= _spawns[i].MaxSpawns) continue;
+				if (_spawns[i].MiniumScore > score * 100 || _spawns[i].Spawned >= _spawns[i].MaxSpawns) continue;
 
 				float timeFactor = _spawns[i].ChanceOverTime.Evaluate(MathF.Min(_totalTime / _spawns[i].MaxTime, 1f));
-				_totalTime += timeFactor * _spawns[i].SpawnMultiplayer;
+				totalFactor += timeFactor * _spawns[i].SpawnMultiplayer;
 				choosen.Add((_spawns[i], totalFactor));
 			}
 
+			Debug.Log(choosen.Count);
 			float acFactor = 0f;
 			float random = UnityEngine.Random.Range(0, totalFactor);
 			for(int i = 0; i < choosen.Count; i++)
 			{
+				Debug.Log(random + " " + totalFactor + " " + choosen[i].Item2);
 				if(random < choosen[i].Item2)
 				{
 					choosen[i].Item1.Spawned++;
