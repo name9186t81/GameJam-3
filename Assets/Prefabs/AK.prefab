@@ -404,7 +404,7 @@ MonoBehaviour:
   _blockMask:
     serializedVersion: 2
     m_Bits: 256
-  _range: 16
+  _range: 30
   _scanFrequancy: 0.5
   _debug: 0
 --- !u!114 &2706796083508958341

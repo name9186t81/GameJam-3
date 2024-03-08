@@ -29,7 +29,7 @@ namespace Spawning
 		[SerializeField] private SpawnPoint[] _spawnPoints;
 		[SerializeField] private SpawnInfo[] _spawns;
 		private PlayerActor _playerActor;
-		private float _elapsed;
+		private float _elapsed = float.MaxValue;
 		private float _totalTime;
 		private int _totalSpawned;
 

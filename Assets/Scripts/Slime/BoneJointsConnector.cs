@@ -39,6 +39,12 @@ namespace GameLogic
                 if (_ignoreCollisions) //так надо
                 {
                     transform.position += (Vector3)delta;
+                    Velocity = Vector2.zero;
+
+                    for (int i = 0; i < _bones.Length; i++)
+                    {
+                        _bones[i].body.position += delta;
+                    }
                 }
                 else
                 {
