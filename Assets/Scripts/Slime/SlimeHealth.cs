@@ -20,6 +20,7 @@ namespace GameLogic
         [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private int _startTeamNumber;
         [SerializeField] private CircleCollider2D _collider;
+        [SerializeField] private float _slowdownFactor = 75;
 
         [SerializeField] private bool _useMotor = false;
         [SerializeField] private float _baseMovementSpeed;
@@ -29,7 +30,7 @@ namespace GameLogic
         public Motor Value { get; private set; }
 
         public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
-        public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
+        public Vector2 Velocity { get { return _body.Velocity; } set { _body.AddForce(value); } } //ага да вот текущая скорость да да конечно скорость будет как ты хочешь мотор
         public float Rotation { get => 0; set { } }
 
         public event Action<int, int> OnTeamNumberChange;
@@ -93,7 +94,9 @@ namespace GameLogic
 
         private void FixedUpdate()
         {
-            if(_useMotor)
+            _body.AddForceToAll(-_body.Velocity * _slowdownFactor * Time.fixedDeltaTime);
+
+            if (_useMotor)
                 Value.Update(Time.deltaTime);
         }
 
@@ -103,7 +106,7 @@ namespace GameLogic
 
             if(raycast != transform && raycast.TryGetComponent(out PlayerActor player))
             {
-                player.OnSlimeCollision(this, _body);
+                player.OnSlimeCollision(this, _body, collision.contacts[0].point);
             }
             else if (raycast.TryGetComponent<IDamageReactable>(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
             {

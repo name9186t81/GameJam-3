@@ -25,11 +25,11 @@ namespace GameLogic
         [SerializeField] private float _moveForce = 5000;
         [SerializeField] private float _moveForcePerCombo = 100;
         [SerializeField] private float _moveForceComboLimit = 3000;
-        [SerializeField] private float _slowdownFactor;
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
         [SerializeField] private float _startBodySize;
         [SerializeField] private float _testAreaPerCollision = 0.1f;
+        [SerializeField] private float _slimeMergeForcePerScore = 1f;
 
         private float _cameraSizeVelocity = 0f;
         private float _startFlyingSize;
@@ -70,7 +70,6 @@ namespace GameLogic
         {
             var direction = (this as IActor).DesiredMoveDirection;
 
-            _body.AddForceToAll(-_body.Velocity * _slowdownFactor * Time.fixedDeltaTime);
             _body.AddForce(direction * (_moveForce + MathF.Min(_moveForceComboLimit, _moveForcePerCombo * ComboUI.ComboCount)) * Time.fixedDeltaTime);
         }
 
@@ -79,10 +78,11 @@ namespace GameLogic
             _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _body.CurrentScale * _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
         }
 
-        public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body)
+        public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)
         {
             if(PlayerPetSlimesAbility.TryReturnSlime(body, _body))
             {
+                _body.AddForceToNearestBone(collisionPoint, (body.Position - Position).normalized * _slimeMergeForcePerScore * CurrentScore);
                 Destroy(slime.gameObject); //прощай слаймик!!
             }
         }

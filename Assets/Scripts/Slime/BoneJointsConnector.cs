@@ -256,6 +256,13 @@ namespace GameLogic
             }
 
             //в идеале не одной кости кидать а нескольким в зависимости от урона и радиуса взрыва какого нибудь но ленб
+            AddForceToNearestBone(position, direction * damage * _damageForceMult);
+
+            return tookDamage;
+        }
+
+        public void AddForceToNearestBone(Vector2 position, Vector3 force)
+        {
             float closestDist = float.MaxValue;
             int closestBone = -1;
 
@@ -270,9 +277,8 @@ namespace GameLogic
                 }
             }
 
-            _bones[closestBone].body.AddForce(direction * damage * _damageForceMult, ForceMode2D.Impulse);
+            _bones[closestBone].body.AddForce(force, ForceMode2D.Impulse);
 
-            return tookDamage;
         }
 
         public void AddArea(float area)

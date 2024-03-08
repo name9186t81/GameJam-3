@@ -4505,8 +4505,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   _startTeamNumber: 0
   _collider: {fileID: 605537677}
+  _slowdownFactor: 75
   _useMotor: 1
-  _baseMovementSpeed: 10
+  _baseMovementSpeed: 20
   _baseRotationSpeed: 100
 --- !u!114 &605537684
 MonoBehaviour:
@@ -8110,7 +8111,6 @@ MonoBehaviour:
   _moveForce: 5000
   _moveForcePerCombo: 200
   _moveForceComboLimit: 5000
-  _slowdownFactor: 75
   _dashForceMult: 80
   _dashForce:
     serializedVersion: 2
@@ -8138,6 +8138,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _startBodySize: -0.036
   _testAreaPerCollision: 0.1
+  _slimeMergeForcePerScore: 7
 --- !u!114 &1291513522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8262,6 +8263,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _startTeamNumber: 0
   _collider: {fileID: 1291513523}
+  _slowdownFactor: 75
   _useMotor: 0
   _baseMovementSpeed: 0
   _baseRotationSpeed: 0
@@ -9942,6 +9944,7 @@ MonoBehaviour:
   _reloadSpeedPerComboLimit: 1.8
   _selectedAbilities:
   - {fileID: 1738327390}
+  - {fileID: 1738327393}
 --- !u!114 &1738327389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10184,7 +10187,7 @@ MonoBehaviour:
   _radiusSpawnOffset: 0.7
   _pullSizeFromPlayer: 0.4
   _getSizeFromPlayer: 0.1
-  _slimeCanBeReturnedTime: 15
+  _slimeCanBeReturnedTime: 3
 --- !u!1 &1756078473
 GameObject:
   m_ObjectHideFlags: 0
