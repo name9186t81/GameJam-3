@@ -24,6 +24,7 @@ namespace AI.States
 
 		public void Execute()
 		{
+			if(!_isWalking) PreExecute();
 			_controller.MoveToPoint(_point);
 			_controller.LookAt(_point);
 			if (_controller.Weapon != null && _controller.Weapon.Rotatable)
@@ -45,7 +46,7 @@ namespace AI.States
 			_elapsedCooldown -= Time.deltaTime;
 			_elapsedCooldown = Mathf.Clamp(_elapsedCooldown, 0, _walkCooldown);
 
-			return !_controller.IsTargetNull ? -100f : _isWalking ? 2f : _elapsedCooldown == 0 ? 1f : -1f;
+			return !_controller.IsTargetNull ? -100f : _isWalking ? 2f : _elapsedCooldown < 0.1f ? 1f : -1f;
 		}
 
 		public void Init(AIController controller)

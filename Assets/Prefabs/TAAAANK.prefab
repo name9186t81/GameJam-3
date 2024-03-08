@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 9175838470142242452}
   - component: {fileID: 7320557685101704361}
   - component: {fileID: 8983730728339594224}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TAAAANK
   m_TagString: Untagged
   m_Icon: {fileID: 0}

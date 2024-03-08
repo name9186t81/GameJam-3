@@ -13,7 +13,7 @@ namespace AI
 		{
 			return new UtilityMachine(new IUtility[]
 			{
-				new IdleWalk(1f, controller.Actor.Scale * 3f, controller.Actor.Scale * 2f),
+				new IdleWalk(0, controller.Actor.Scale * 3f, controller.Actor.Scale * 2f),
 				new TouchAttack(),
 				new ReturnToOwner(Random.Range(_timeToReturn - _timeToReturn * _variety, _timeToReturn + _timeToReturn * _variety))
 			});

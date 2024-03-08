@@ -14,7 +14,7 @@ namespace AI.States
 
 		public float GetEffectivness()
 		{
-			return _controller.IsTargetNull ? -1f : 1f;
+			return _controller.IsTargetNull ? -100f : 1f;
 		}
 
 		public void Init(AIController controller)

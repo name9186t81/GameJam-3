@@ -21,6 +21,7 @@ namespace AI.States
 		public float GetEffectivness()
 		{
 			_elapsed += Time.deltaTime;
+			if (_elapsed < _timeToReturn) return -100f;
 			return  _controller.Owner != null ? _elapsed / _timeToReturn : -1f;
 		}
 
