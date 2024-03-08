@@ -45,10 +45,10 @@ namespace PlayerAbilities
                     break;
             }
 
-            if (enoughScoreSelectionIndex > alreadySelectedAbilitiesIndex && _selectionsPendingCount == 0)
+            if (enoughScoreSelectionIndex > alreadySelectedAbilitiesIndex && _selectionsPendingCount == 0 && _selectPanel.CanInit)
             {
-                _abilities[enoughScoreSelectionIndex].Show(_selectPanel, _onAbilitySelected, _player);
                 alreadySelectedAbilitiesIndex++;
+                _abilities[alreadySelectedAbilitiesIndex].Show(_selectPanel, _onAbilitySelected, _player);
                 _selectionsPendingCount++;
             }
 
@@ -75,7 +75,7 @@ namespace PlayerAbilities
 
             public void Show(AbilitySelectPanel panel, Action<Ability> OnAbilitySelected, PlayerActor player)
             {
-                panel.Init(LeftAbility.UIData, RightAbility.UIData, delegate (AbilitySelectPanel.AbilityUIData data)
+                panel.TryInit(LeftAbility.UIData, RightAbility.UIData, delegate (AbilitySelectPanel.AbilityUIData data)
                 {
                 //да, говно, но лучше не придумал
                 if (data.Equals(LeftAbility.UIData))
