@@ -32,6 +32,7 @@ namespace Core
 		[Header("Team settings")]
 		[SerializeField] private int _teamNumber;
 		[SerializeField] private bool _canChangeTeams;
+		[SerializeField] private string _name;
 
 		private Transform _transform;
 		private IController _controller;
@@ -163,5 +164,7 @@ namespace Core
 			_health.TakeDamage(args);
 			OnDamage?.Invoke(args);
 		}
+
+		public string Name => _name;
 	}
 }

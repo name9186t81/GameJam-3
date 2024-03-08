@@ -23,7 +23,8 @@ namespace AI.States
 			if (_controller.Weapon.Rotatable)
 			{
 				var dir = _controller.Position.GetDirectionNormalized(pos);
-				_controller.Weapon.LookRotation = Vector2.MoveTowards(_controller.Weapon.LookRotation, dir, 0.5f);
+				_controller.Weapon.LookRotation = Vector2.MoveTowards(_controller.Weapon.LookRotation, dir, 0.5f * Time.deltaTime);
+				//^ говно переделать
 			}
 
 			if (_controller.IsEffectiveToFire(pos))
