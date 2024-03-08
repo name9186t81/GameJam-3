@@ -19,6 +19,8 @@ namespace GameLogic
         [SerializeField] private float _areaPerHealthDiv = 100f;
         [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private int _startTeamNumber;
+        [SerializeField] private bool _useMotor = false;
+        [SerializeField] private CircleCollider2D _collider;
 
         IHealth IProvider<IHealth>.Value => this;
         public Motor Value { get; private set; }
@@ -37,14 +39,21 @@ namespace GameLogic
         public IActor Actor { get; set; }
         public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
         public int MaxHealth => CurrentHealth;
+
+        public float Radius => _startRadius * _body.CurrentScale;
+
         public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
         public event Action<float> OnAddScore;
+
+        private float _startRadius = 1;
 
         void Awake()
         {
             _body.OnCollisionEnter += OnBodyCollisionEnter;
 
             Actor = GetComponent<IActor>();
+
+            _startRadius = _collider.radius;
 
             Value = new Motor(0, 0, this, Actor); //0 потому что перс двигается не через мотор и мотор нужен для взрывов всяких
             /*
@@ -79,8 +88,8 @@ namespace GameLogic
 
         private void FixedUpdate()
         {
-            //Value.Update(Time.deltaTime); //а оно нужно вообще?
-            //ноуп оно ошибку кидает потому что поворот не имплементед так что мне лень разбираться
+            if(_useMotor)
+                Value.Update(Time.deltaTime);
         }
 
         private void OnBodyCollisionEnter(Collision2D collision)
@@ -143,7 +152,7 @@ namespace GameLogic
 
         public void TakeDamage(DamageArgs args)
         {
-            var direction = (args.HitPosition - args.Sender.Position).normalized;
+            var direction = (args.HitPosition - args.SourcePosition).normalized;
 
             if (!_body.TakeDamage((args.Damage / _playerHealthMult) * _damageMultOverSize.Evaluate(_body.Size), args.HitPosition, direction))
             {

@@ -9,7 +9,7 @@ public class PlayerInputController : MonoBehaviour, IController
 {
     [SerializeField] private PlayerActor _player;
     public Vector2 DesiredMoveDirection { get; private set; }
-    public Vector2 DesiredRotation => throw new NotImplementedException();
+    public Vector2 DesiredRotation => Vector2.up;
 
 	public ControllerType Type => ControllerType.Player;
 

@@ -13,7 +13,6 @@ namespace GameLogic
     {
         public SlimeHealth Health { get; private set; }
         [SerializeField] private BoneJointsConnector _body;
-        [SerializeField] private CircleCollider2D _collider;
         [SerializeField] private SpriteRenderer _bodySprite;
         [SerializeField] private int _flyingSpriteSortingLayer;
 
@@ -32,14 +31,13 @@ namespace GameLogic
         [SerializeField] private float _testAreaPerCollision = 0.1f;
 
         private float _cameraSizeVelocity = 0f;
-        private float _startRadius = 1;
         private float _startFlyingSize;
         private int _defaultSpriteSortingLayer;
 
         public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
-        public float Radius => _startRadius * _body.CurrentScale;
+        public float Radius => Health.Radius;
         public float Scale => _body.CurrentScale;
         public BoneJointsConnector BonesConnector => _body;
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
@@ -57,7 +55,6 @@ namespace GameLogic
         {
             Health = GetComponent<SlimeHealth>();
             OnAction += OnControllerAction;
-            _startRadius = _collider.radius;
             _defaultSpriteSortingLayer = _bodySprite.sortingOrder;
             OnInit?.Invoke();
         }

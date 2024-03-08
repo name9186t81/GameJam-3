@@ -25,6 +25,8 @@ public class SlimeActior : MonoBehaviour, IActor, IMovable, ITeamProvider //ITea
     public IActor Actor { get => this; set => throw new NotImplementedException(); }
     public int TeamNumber => Health.TeamNumber;
 
+    public float Scale => Health.Radius;
+
     public event Action<ControllerAction> OnAction;
      
     public event Action<DamageArgs> OnDeath;
