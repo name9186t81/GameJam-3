@@ -35,7 +35,7 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 
     public float TimeScale => _pause ? 0 : 1;
 
-    private void Awake()
+    private void Start()
     {
         _startTime = Time.time;
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);

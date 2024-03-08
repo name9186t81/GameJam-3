@@ -41,6 +41,7 @@ namespace GameLogic
         public float Rotation { get => 0; set { } }
         public float Radius => Health.Radius;
         public float Scale => _body.Scale;
+        float IActor.Scale => Radius;
         public BoneJointsConnector BonesConnector => _body;
         public float CurrentScore => _body.Scale * _body.Scale;
 

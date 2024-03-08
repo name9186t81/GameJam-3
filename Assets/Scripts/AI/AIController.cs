@@ -89,10 +89,14 @@ namespace AI
 			TargetTransform = null;
 		}
 
-		public bool IsEffectiveToFire(Vector2 point)
+		public bool IsEffectiveToFire(IActor target)
 		{
+			var point = target.Position;
+
+
 			return _weapon != null && 
-				(point - Position).sqrMagnitude < (_weapon.EffectiveRange * _weapon.EffectiveRange) && 
+				(point - Position).sqrMagnitude < (_weapon.EffectiveRange * _weapon.EffectiveRange) 
+				&& 
 				(Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 > (1 - _fireThreshold / 360); 
 			//кто посмеет спросить что тут происходит тот будет уничтожен святым огнем
 		}

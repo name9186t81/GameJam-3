@@ -27,7 +27,7 @@ namespace AI.States
 				//^ говно переделать
 			}
 
-			if (_controller.IsEffectiveToFire(pos))
+			if (_controller.IsEffectiveToFire(target))
 			{
 				_controller.InitCommand(ControllerAction.Fire);
 				if (_controller.Position.DistanceLess(pos, _controller.Weapon.UseRange / 2))
