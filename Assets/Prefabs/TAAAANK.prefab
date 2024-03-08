@@ -308,7 +308,7 @@ MonoBehaviour:
   _rotationSpeed: 15
   _faceDirectionToMove: 1
   _healthAmount: 200
-  _teamNumber: 0
+  _teamNumber: 1
   _canChangeTeams: 0
 --- !u!114 &7320557685101704361
 MonoBehaviour:

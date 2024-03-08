@@ -10,7 +10,7 @@ namespace Weapons
 		bool CanAttack { get; }
 		float EffectiveRange { get; }
 		float UseRange { get; }
-		WeaponFlags Flags { get; }
+		WeaponFlags Flags { get; set; }
 		bool IsInited { get; }
 		void Init(IActor actor);
 		bool Rotatable { get; }
@@ -28,6 +28,7 @@ namespace Weapons
 		Melee = 2,
 		Ranged = 4,
 		Mixed = 8,
-		PreAim = 16
+		PreAim = 16,
+		Freezed = 32
 	}
 }

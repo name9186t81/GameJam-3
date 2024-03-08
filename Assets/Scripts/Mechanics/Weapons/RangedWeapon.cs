@@ -50,7 +50,7 @@ namespace Weapons
 
 		public float UseRange => _useRange;
 
-		public WeaponFlags Flags => _flags;
+		public WeaponFlags Flags { get => _flags; set => _flags = value; }
 
 		public bool IsInited => _isInited;
 
@@ -97,6 +97,9 @@ namespace Weapons
 			yield return new WaitForSeconds(_preFireDelay); //закешировать сранные вейт фор секонды если лагать будет
 			OnPreFireEnd?.Invoke();
 
+			if ((_flags & WeaponFlags.Freezed) != 0)
+				yield break;
+
 			for (int i = 0; i < _projectileCount; i++)
 			{
 				var obj = _projectilePool.Get();
@@ -125,6 +128,9 @@ namespace Weapons
 
 		private void ReadAction(ControllerAction obj)
 		{
+			if ((_flags & WeaponFlags.Freezed) != 0)
+				return;
+
 			if (obj == ControllerAction.Fire && CanAttack) StartCoroutine(FireRoutine());
 		}
 

@@ -39,12 +39,12 @@ namespace GameLogic
         public event Action OnInit;
         public int TeamNumber { get; private set; }
 
-        public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
+        public float CurrentScore => _body.Scale * _body.Scale;
         public IActor Actor { get; set; }
         public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
         public int MaxHealth => CurrentHealth;
 
-        public float Radius => _startRadius * _body.CurrentScale;
+        public float Radius => _startRadius * _body.Scale;
 
         public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
         public event Action<float> OnAddScore;
@@ -115,7 +115,7 @@ namespace GameLogic
 
                 var health = healthProvider.Value;
 
-                var canBeEated = health.MaxHealth < _body.CurrentScale * _healthCanBeEatedPerScale;
+                var canBeEated = health.MaxHealth < _body.Scale * _healthCanBeEatedPerScale;
 
                 int damage = 0;
 

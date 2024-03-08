@@ -12,32 +12,33 @@ namespace PlayerAbilities
         [SerializeField] private AIController _petSlimePrefab;
         [SerializeField] private int _slimesCount;
         [SerializeField] private float _radiusSpawnOffset = 0.5f;
-        [SerializeField] [Range(0,1)] private float _pullSizeFromPlayer = 0.4f;
-        [SerializeField] [Range(0,1)] private float _getSizeFromPlayer = 0.2f;
+        [SerializeField] [Range(0,1)] private float _pullScaleFromPlayer = 0.4f;
+        [SerializeField] [Range(0,1)] private float _getScaleFromPlayer = 0.2f;
         [SerializeField] private float _slimeCanBeReturnedTime = 15;
 
         private static Dictionary<BoneJointsConnector, SlimeReturnData> _spawnedSlimes = new Dictionary<BoneJointsConnector, SlimeReturnData>();
         private class SlimeReturnData
         {
-            private float _sizeToReturn;
-            private float _startSlimeSize;
+            private float _ScaleToReturn;
+            private float _startSlimeScale;
             private float _slimeCanBeReturnedTime;
 
             public bool Return(BoneJointsConnector bodyToReturn, BoneJointsConnector bodyToReturnFrom)
             {
                 if(Time.time > _slimeCanBeReturnedTime)
                 {
-                    bodyToReturn.Size += _sizeToReturn + Mathf.Max(0, bodyToReturnFrom.Size - _startSlimeSize);
+                    var slimeLooted = Mathf.Max(0, bodyToReturnFrom.Scale - _startSlimeScale);
+                    bodyToReturn.Scale += _ScaleToReturn + slimeLooted;
                     return true;
                 }
 
                 return false;
             }
 
-            public SlimeReturnData(float sizeToReturn, float startSlimeSize, float slimeCanBeReturnedTime)
+            public SlimeReturnData(float ScaleToReturn, float startSlimeScale, float slimeCanBeReturnedTime)
             {
-                _sizeToReturn = sizeToReturn;
-                _startSlimeSize = startSlimeSize;
+                _ScaleToReturn = ScaleToReturn;
+                _startSlimeScale = startSlimeScale;
                 _slimeCanBeReturnedTime = slimeCanBeReturnedTime;
             }
         }
@@ -59,27 +60,30 @@ namespace PlayerAbilities
             {
                 var radius = _player.Radius;
 
-                var _sizePulledFromPlayer = _player.BonesConnector.Size * _pullSizeFromPlayer;
+                var _ScalePulledFromPlayer = _player.BonesConnector.Scale * _pullScaleFromPlayer;
 
-                var sizePerSlime = (_player.BonesConnector.Size * _getSizeFromPlayer + _sizePulledFromPlayer) / _slimesCount;
+                var ScalePerSlime = (_player.BonesConnector.Scale * _getScaleFromPlayer + _ScalePulledFromPlayer) / _slimesCount;
 
-                _player.BonesConnector.Size -= _sizePulledFromPlayer;
+                _player.BonesConnector.Scale -= _ScalePulledFromPlayer;
 
                 for (int i = 0; i < _slimesCount; i++)
                 {
                     var angle = i * (Mathf.PI * 2 / _slimesCount);
                     var vector = Vector2Extensions.VectorFromAngle(angle);
 
-                    var pos = _player.Position + vector * (radius * (1 + _radiusSpawnOffset));
-
-                    var slime = Instantiate(_petSlimePrefab, pos, Quaternion.identity, null);
+                    var slime = Instantiate(_petSlimePrefab, _player.Position, Quaternion.identity, null);
                     slime.gameObject.SetActive(true);
                     var body = slime.GetComponent<BoneJointsConnector>();
-                    body.Size = sizePerSlime;
+                    body.Scale = ScalePerSlime;
                     //slime.GetComponent<IMovable>().Position = pos;
                     slime.Owner = _player;
+                    var health = slime.GetComponent<SlimeHealth>();
 
-                    _spawnedSlimes.Add(body, new SlimeReturnData(_sizePulledFromPlayer / _slimesCount, sizePerSlime, Time.time + _slimeCanBeReturnedTime));
+                    var pos = _player.Position + vector * ((_player.Radius + health.Radius) * (1 + _radiusSpawnOffset));
+
+                    body.transform.position = pos;
+
+                    _spawnedSlimes.Add(body, new SlimeReturnData(_ScalePulledFromPlayer / _slimesCount, body.Scale, Time.time + _slimeCanBeReturnedTime));
                 }
             }
         }

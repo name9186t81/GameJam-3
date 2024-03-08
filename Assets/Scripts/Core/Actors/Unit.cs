@@ -82,6 +82,9 @@ namespace Core
 		private void OnDeath(DamageArgs args)
         {
 			_freezed = true;
+			if (_weapon != null)
+				_weapon.Flags |= WeaponFlags.Freezed;
+
 			var colls = gameObject.GetComponentsInChildren<Collider2D>();
 			foreach(var coll in colls)
             {

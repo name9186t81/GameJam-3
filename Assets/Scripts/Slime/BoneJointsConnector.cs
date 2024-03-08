@@ -50,9 +50,9 @@ namespace GameLogic
                 _position = value;
             }
         }
-        public Vector2 Velocity { 
-            get { return _velocity; } 
-            set 
+        public Vector2 Velocity {
+            get { return _velocity; }
+            set
             {
                 var delta = value - _velocity;
                 for (int i = 0; i < _bones.Length; i++)
@@ -60,7 +60,7 @@ namespace GameLogic
                     _bones[i].body.velocity += delta;
                 }
                 _velocity = value;
-            } 
+            }
         } //не обновляется сразу при добавлении силы (хотя в теории должно так что если понадобится нужно будет реализовать)
         private Vector2 _velocity;
         private Vector2 _position;
@@ -75,7 +75,7 @@ namespace GameLogic
         public event System.Action<Collision2D> OnCollisionExit;
 
         public event System.Action<float> OnSizeChanged;
-        public float CurrentScale => _currentSize.map01(_minSize, _maxSize);
+        public float Scale { get { return Size.map01(_minSize, _maxSize); } set { Size = value.map(_minSize, _maxSize, 0, 1); } }
 
         private Bone[] _bones;
         private bool _useInterpolation;
@@ -283,7 +283,7 @@ namespace GameLogic
 
         public void AddArea(float area)
         {
-            area += CurrentScale * CurrentScale;
+            area += Scale * Scale;
             var scale = Mathf.Sqrt(area);
             var size = scale.map(_minSize, _maxSize, 0, 1);
             SetSize(size);
@@ -306,7 +306,7 @@ namespace GameLogic
 
             var pos = _transformToMove.position;
 
-            var delta = CurrentScale / transform.localScale.x;
+            var delta = Scale / transform.localScale.x;
             transform.localScale *= delta;
 
             transform.position -= _transformToMove.position - pos;

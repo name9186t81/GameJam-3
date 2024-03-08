@@ -13,7 +13,7 @@ public class SlimeActior : MonoBehaviour, IActor, IMovable, ITeamProvider //ITea
     public SlimeHealth Health;
     [SerializeField] private float _playerHealthMult;
 
-    public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
+    public float CurrentScore => _body.Scale * _body.Scale;
 
     public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
     public Vector2 Velocity { get { return _body.Velocity; } set { _body.Velocity = value; } }

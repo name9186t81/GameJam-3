@@ -40,9 +40,9 @@ namespace GameLogic
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
         public float Radius => Health.Radius;
-        public float Scale => _body.CurrentScale;
+        public float Scale => _body.Scale;
         public BoneJointsConnector BonesConnector => _body;
-        public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
+        public float CurrentScore => _body.Scale * _body.Scale;
 
         public IController Controller { get; private set; }
         public IActor Actor { get => this; set => throw new NotImplementedException(); }
@@ -75,7 +75,7 @@ namespace GameLogic
 
         private void Update()
         {
-            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _body.CurrentScale * _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
+            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _body.Scale * _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
         }
 
         public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)

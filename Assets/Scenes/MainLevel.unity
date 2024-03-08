@@ -4315,7 +4315,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _massOverSizeMult: 200
-  _damageForceMult: 7
+  _damageForceMult: 10
   _minSize: 1
   _maxSize: 15
   _deathScaleThreshold: 0.3
@@ -8234,7 +8234,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _healthCanBeEatedPerScale: 30
+  _healthCanBeEatedPerScale: 5
   _hitDamage: 20
   _areaPerHealthDiv: 100
   _scoreMultPerCombo:
@@ -10183,10 +10183,10 @@ MonoBehaviour:
   _useKey: 101
   _reloadTime: 30
   _petSlimePrefab: {fileID: 605537684}
-  _slimesCount: 3
-  _radiusSpawnOffset: 0.7
-  _pullSizeFromPlayer: 0.4
-  _getSizeFromPlayer: 0.1
+  _slimesCount: 10
+  _radiusSpawnOffset: 0
+  _pullScaleFromPlayer: 0.4
+  _getScaleFromPlayer: 0.1
   _slimeCanBeReturnedTime: 3
 --- !u!1 &1756078473
 GameObject:
@@ -10734,6 +10734,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1880646984}
   m_CullTransparentMesh: 1
+--- !u!1001 &1899043753
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 31.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.000000104308114
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3137835328196680346, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 4766479968094311037, guid: f4d42d34679df6b47b9818542d149622, type: 3}
+      propertyPath: m_Name
+      value: TAAAANK
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f4d42d34679df6b47b9818542d149622, type: 3}
 --- !u!1 &1930585234
 GameObject:
   m_ObjectHideFlags: 0
@@ -12415,4 +12472,5 @@ SceneRoots:
   - {fileID: 1220770543}
   - {fileID: 1331619311}
   - {fileID: 217232544}
+  - {fileID: 1899043753}
   - {fileID: 826044731}
