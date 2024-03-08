@@ -11,7 +11,6 @@ namespace GameLogic
     public class SlimeHealth : MonoBehaviour, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>, IDamageReactable, ITeamProvider
     {
         [SerializeField] private BoneJointsConnector _body;
-        [SerializeField] private IActor _actor;
         [Header("Health and damage")]
         [SerializeField] private float _playerHealthMult;
         [SerializeField] private AnimationCurve _damageMultOverSize;
@@ -35,7 +34,7 @@ namespace GameLogic
         public int TeamNumber { get; private set; }
 
         public float CurrentScore => _body.CurrentScale * _body.CurrentScale;
-        public IActor Actor { get => _actor; set => _actor = value; }
+        public IActor Actor { get; set; }
         public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
         public int MaxHealth => CurrentHealth;
         public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
@@ -45,7 +44,9 @@ namespace GameLogic
         {
             _body.OnCollisionEnter += OnBodyCollisionEnter;
 
-            Value = new Motor(0, 0, this, _actor); //0 потому что перс двигается не через мотор и мотор нужен для взрывов всяких
+            Actor = GetComponent<IActor>();
+
+            Value = new Motor(0, 0, this, Actor); //0 потому что перс двигается не через мотор и мотор нужен для взрывов всяких
             /*
                _        _
               ( `-.__.-' )
@@ -76,6 +77,12 @@ namespace GameLogic
             OnInit?.Invoke();
         }
 
+        private void FixedUpdate()
+        {
+            //Value.Update(Time.deltaTime); //а оно нужно вообще?
+            //ноуп оно ошибку кидает потому что поворот не имплементед так что мне лень разбираться
+        }
+
         private void OnBodyCollisionEnter(Collision2D collision)
         {
             var raycast = collision.collider.transform;
@@ -97,7 +104,7 @@ namespace GameLogic
                     damage = _hitDamage;
                 }
 
-                var _damageArgs = new DamageArgs(_actor, damage, DamageFlags.Melee);
+                var _damageArgs = new DamageArgs(Actor, damage, DamageFlags.Melee);
 
                 Action<DamageArgs> onDeath = delegate (DamageArgs args)
                 {

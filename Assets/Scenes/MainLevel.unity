@@ -4828,6 +4828,7 @@ GameObject:
   - component: {fileID: 605537678}
   - component: {fileID: 605537677}
   - component: {fileID: 605537682}
+  - component: {fileID: 605537683}
   m_Layer: 7
   m_Name: AiSlime
   m_TagString: Untagged
@@ -5194,9 +5195,85 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _body: {fileID: 605537679}
+  Health: {fileID: 605537683}
   _baseMovevemntSpeed: 10
   _baseRotationSpeed: 100
   _playerHealthMult: 10
+--- !u!114 &605537683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605537676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f696b4f4a6d62f341a425670e20ec1d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _body: {fileID: 605537679}
+  _playerHealthMult: 100
+  _damageMultOverSize:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.25
+      inSlope: 18.24375
+      outSlope: 18.24375
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.1764519
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: -0.025068134
+      outSlope: -0.025068134
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.21668994
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _healthCanBeEatedPerScale: 30
+  _hitDamage: 20
+  _areaPerHealthDiv: 100
+  _scoreMultPerCombo:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0.05
+      outSlope: 0.05
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 20
+      value: 2
+      inSlope: 0.05
+      outSlope: 0.05
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _startTeamNumber: 0
 --- !u!1 &616869035
 GameObject:
   m_ObjectHideFlags: 0
@@ -9254,9 +9331,9 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: -0.39999998
-      outSlope: -0.39999998
+      value: 0.8
+      inSlope: -0.19999999
+      outSlope: -0.19999999
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -9264,8 +9341,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 0.6
-      inSlope: -0.39999998
-      outSlope: -0.39999998
+      inSlope: -0.19999999
+      outSlope: -0.19999999
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334

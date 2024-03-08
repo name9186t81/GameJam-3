@@ -9,7 +9,7 @@ using Health;
 namespace GameLogic
 {
     [RequireComponent(typeof(SlimeHealth))]
-    public class PlayerActor : MonoBehaviour, IActor, IMovable, ITeamProvider
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, ITeamProvider //ITeamProvider пытается перебрасывать все с IHealth и нужен он тут потому что без скрипта одновременно с актором и провайдером ии еды не будет работать
     {
         public SlimeHealth Health { get; private set; }
         [SerializeField] private BoneJointsConnector _body;
