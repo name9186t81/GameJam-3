@@ -3752,7 +3752,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1800732161061429337, guid: a6bff09ab064153469f0662bf5087c21, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 70
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1800732161061429337, guid: a6bff09ab064153469f0662bf5087c21, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4597,9 +4597,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _healthCanBeEatedPerScale: 30
-  _hitDamage: 20
-  _hitDamageCooldownSeconds: 0.1
+  _healthCanBeEatedPerScale: 100
+  _hitDamage: 30
+  _hitDamageCooldownSeconds: 0.5
   _areaPerHealthDiv: 100
   _scoreMultPerCombo:
     serializedVersion: 2

@@ -135,7 +135,7 @@ namespace GameLogic
                     }
                 }
 
-                var _damageArgs = new DamageArgs(Actor, damage, DamageFlags.Melee);
+                var _damageArgs = new DamageArgs(Actor, damage, DamageFlags.Melee, null, Radius);
 
                 Action<DamageArgs> onDeath = delegate (DamageArgs args)
                 {

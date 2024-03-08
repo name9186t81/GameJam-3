@@ -111,6 +111,9 @@ namespace Core
 
 			var startPos = Position;
 
+			//var offset = UnityEngine.Random.insideUnitCircle * args.Radius * 0.5f;
+			var offset = Vector2.ClampMagnitude((Position - args.Sender.Position) / args.Radius, 1) * args.Radius * 0.5f;
+
 			while (Time.time - startTime < _deathEffectTime && args.Sender != null)
             {
 				var prog = (Time.time - startTime) / _deathEffectTime;
@@ -119,7 +122,7 @@ namespace Core
 				if (renderer)
 					renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 1 - prog);
 
-				Position = Vector3.Lerp(startPos, args.Sender.Position, progLerp);
+				Position = Vector3.Lerp(startPos, args.Sender.Position + offset, progLerp);
 
 				yield return null; //сделал лерп по другому
 				//yield return new WaitForFixedUpdate(); // фиксед потому что лерп да говно

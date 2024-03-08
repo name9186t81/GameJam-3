@@ -14,13 +14,15 @@ namespace Health
 		public readonly IWeapon Weapon;
 		public Vector2 HitPosition;
 		public Vector2 SourcePosition;
+		public float Radius = 0;
 
-		public DamageArgs(IActor sender, int damage, DamageFlags damageFlags, IWeapon weapon = null)
+		public DamageArgs(IActor sender, int damage, DamageFlags damageFlags, IWeapon weapon = null, float radius = 0)
 		{
 			Sender = sender;
 			Damage = damage;
 			DamageFlags = damageFlags;
 			Weapon = weapon;
+			Radius = radius;
 		}
 	}
 
