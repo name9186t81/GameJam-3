@@ -110,8 +110,8 @@ MonoBehaviour:
   _preFireDelay: 0
   _delayPerProjectile: 0.1
   _postFireDelay: 1
-  _effectiveRange: 12
-  _useRange: 7
+  _effectiveRange: 24
+  _useRange: 14
   _rotatble: 1
   _debug: 0
   PreFireStart:
