@@ -12,6 +12,7 @@ namespace GameLogic
     {
         [SerializeField] private BoneJointsConnector _body;
         [Header("Health and damage")]
+        [SerializeField] private AnimationCurve _incomingDamageMultOverSize;
         [SerializeField] private float _playerHealthMult;
         [SerializeField] private AnimationCurve _damageMultOverSize;
         [SerializeField] private float _healthCanBeEatedPerScale = 30;
@@ -42,7 +43,7 @@ namespace GameLogic
 
         public float CurrentScore => _body.Scale * _body.Scale;
         public IActor Actor { get; set; }
-        public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult);
+        public int CurrentHealth => Mathf.RoundToInt(CurrentScore * _playerHealthMult / _incomingDamageMultOverSize.Evaluate(_body.Size));
         public int MaxHealth => CurrentHealth;
 
         public float Radius => _startRadius * _body.Scale;

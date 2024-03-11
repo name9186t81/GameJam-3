@@ -11,7 +11,7 @@ namespace AI
 	public sealed class AIController : MonoBehaviour, IController
 	{
 		[SerializeField] private UtilityMachineBuilder _utilities;
-		[SerializeField] private float _fireThreshold;
+		[SerializeField] [Range(0,1)] private float _fireThresholdMult = 0.5f;
 		private IActor _controlled;
 		private AIVision _vision;
 		private Vector2 _moveDirection;
@@ -93,12 +93,12 @@ namespace AI
 		{
 			var point = target.Position;
 
+			var angle = Mathf.Asin((target.Radius * _fireThresholdMult) / Vector2.Distance(point, Position)) * Mathf.Rad2Deg;
 
 			return _weapon != null && 
-				(point - Position).sqrMagnitude < (_weapon.EffectiveRange * _weapon.EffectiveRange) 
+				(point - Position).sqrMagnitude - (target.Radius * target.Radius) < (_weapon.EffectiveRange * _weapon.EffectiveRange) 
 				&& 
-				(Vector2.Dot(_weapon.LookRotation, Position.GetDirectionNormalized(point)) + 1) / 2 > (1 - _fireThreshold / 360); 
-			//кто посмеет спросить что тут происходит тот будет уничтожен святым огнем
+				(Vector2.Angle(_weapon.LookRotation, Position.GetDirectionNormalized(point)) < angle); 
 		}
 
 		public void InitCommand(ControllerAction command)

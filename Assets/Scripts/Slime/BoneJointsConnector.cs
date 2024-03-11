@@ -299,6 +299,8 @@ namespace GameLogic
         {
             //UpdateData();
 
+            testSize = newSize;
+
             if (float.IsNaN(newSize))
                 newSize = _deathSizeThreshold;
 

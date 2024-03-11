@@ -35,14 +35,14 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 
     public float TimeScale => _pause ? 0 : 1;
 
-    float maxScore = 0;
+    private float _maxScore = 0;
 
 
     private void Start()
     {
         _startTime = Time.time;
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
-        _player.Health.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); maxScore = Mathf.Max(maxScore, _player.CurrentScore); };
+        _player.Health.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); _maxScore = Mathf.Max(_maxScore, _player.CurrentScore); };
         TimeScaleController.Add(this);
         _player.Health.OnDeath += OnPlayerDeath;
     }
@@ -110,7 +110,7 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
         _pausePanel.SetActive(true);
         _volumeSlider.value = AudioListener.volume;
         _time.text = "Âðåìÿ: " + (new TimeSpan(10000L * 1000L * (long)(Time.time - _startTime)).ToString()); //da
-        _scoreText.text = "Ñ÷¸ò: " + MathF.Round(maxScore * _visualScoreMult).ToString();
+        _scoreText.text = "Ñ÷¸ò: " + MathF.Round(_maxScore * _visualScoreMult).ToString();
 
         SetPauseOrEndGameState(pause, win);
     }

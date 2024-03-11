@@ -10,6 +10,7 @@ namespace Core
 		public Vector2 DesiredRotation => Controller == null ? Vector2.zero : Controller.DesiredRotation;
 		event Action<ControllerAction> OnAction;
 		float Scale { get; } //radius of the unit
+		float Radius { get; }
 		Vector2 Position { get; }
 		IController Controller { get; }
 		string Name { get; }

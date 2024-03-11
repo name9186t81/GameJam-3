@@ -46,7 +46,7 @@ namespace Weapons
 		private ISpreadProvider _spread;
 		public bool CanAttack => !_isFiring && _canFire;
 
-		public float EffectiveRange => _effectiveRange;
+		public float EffectiveRange => _effectiveRange * 3; // эти баланс правки просто имба (я не виноват что еда сделал оружие где то там внутри иерархии и мне лень по каждому бегать и увеличивать)
 
 		public float UseRange => _useRange;
 

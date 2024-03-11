@@ -78,7 +78,7 @@ namespace GameLogic
 
         private void Update()
         {
-            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _body.Scale * _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
+            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
         }
 
         public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)

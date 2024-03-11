@@ -54,6 +54,7 @@ namespace Core
 		public int TeamNumber => _teamNumber;
 
 		public float Scale => _scale;
+		public float Radius => Scale;
 
 		public event Action<ControllerAction> OnAction;
 		public event Action OnInit;

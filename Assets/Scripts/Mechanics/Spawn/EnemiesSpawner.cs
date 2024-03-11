@@ -85,7 +85,9 @@ namespace Spawning
 				if (_spawnPoints[i].IsAvaible) avaible.Add(_spawnPoints[i]);
 			}
 
-			if (avaible.Count == 0) return;
+			if (avaible.Count == 0)
+				avaible.AddRange(_spawnPoints); //где то надо спавнить ж
+
 			var randomPoint = avaible[UnityEngine.Random.Range(0, avaible.Count)];
 			_totalSpawned++;
 			var obj = Instantiate(unit, randomPoint.Position + UnityEngine.Random.insideUnitCircle * 10, Quaternion.identity, null);

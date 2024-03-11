@@ -68,7 +68,7 @@ namespace PlayerAbilities
         [System.Serializable]
         public class AbilitySelection
         {
-            public int NeededScore;
+            public float NeededScore;
             public Ability LeftAbility;
             public Ability RightAbility;
             public KeyCode AbilityKey = KeyCode.None;
