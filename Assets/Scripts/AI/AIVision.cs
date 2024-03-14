@@ -18,16 +18,16 @@ namespace AI
 		[SerializeField] private bool _debug;
 		private float _delay;
 		private AIController _controller;
-		private IList<IActor> _cachedScan;
-		private IList<IActor> _enemies;
-		private IList<IActor> _alies;
+		private IList<IActor> _cachedScan = new List<IActor>();
+		private IList<IActor> _enemies = new List<IActor>();
+		private IList<IActor> _alies = new List<IActor>();
 
 		public event Action OnScan;
 		public IReadOnlyList<IActor> ActorsInRange => (IReadOnlyList<IActor>)_cachedScan;
 		public IReadOnlyList<IActor> EnemiesInRange => (IReadOnlyList<IActor>)_enemies;
 		public IReadOnlyList<IActor> AliesInRange => (IReadOnlyList<IActor>)_alies;
 
-		private static Collider2D[] _cachedHits = new Collider2D[64];
+		private static Collider2D[] _cachedHits = new Collider2D[128];
 
 		public void Init(AIController controller)
 		{
@@ -69,54 +69,75 @@ namespace AI
 
 			int hits = Physics2D.OverlapCircleNonAlloc(_controller.Position, _range, _cachedHits, _unitsMask);
 
-			IList<IActor> listed = ClearForActors(_cachedHits);
-			listed = ClearForWalls(listed);
+			IList<IActor> listed = ClearForActors(_cachedHits, hits, _cachedScan);
 
 			_cachedScan = listed;
 			if (_controller.Actor is ITeamProvider prov)
 			{
-				_enemies = SortForTeamNumber(prov.TeamNumber, true);
-				_alies = SortForTeamNumber(prov.TeamNumber, false);
+				_enemies = ClearForWalls(SortForTeamNumber(prov.TeamNumber, true, _enemies));
+				_alies = SortForTeamNumber(prov.TeamNumber, false, _alies);
 			}
 			OnScan?.Invoke();
 		}
 
+		private static Dictionary<Collider2D, IActor> _cachedActors = new Dictionary<Collider2D, IActor>(); //вроде бы это быстрее чем геткомпоненты даже с дип профайлом
 
-		private IList<IActor> ClearForActors(IList<Collider2D> hits)
+		private IList<IActor> ClearForActors(IList<Collider2D> hits, int hitsCount, IList<IActor> cachedList)
 		{
-			IList<IActor> newList = new List<IActor>();
+			IList<IActor> newList = cachedList;
+			cachedList.Clear();
 
-			foreach (var col in hits)
-			{
-				if (col == null) break;
+            for (int i = 0; i < hitsCount; i++)
+            {
+				var col = hits[i];
+				bool needToTryGetComponent = true;
+				//if (col == null) break; //вернуть если тут будут нулл референс экзепшоны
+				if(_cachedActors.TryGetValue(col, out var cachedActor))
+                {
+					if(cachedActor != null)
+                    {
+						needToTryGetComponent = false;
+						newList.Add(cachedActor);
+                    }
+                    else
+                    {
+						_cachedActors.Remove(col);
+                    }
+                }
 
-				if (col.transform.TryGetComponent<IActor>(out var act) && act.ToString() != "null")
+				if (needToTryGetComponent && col.transform.TryGetComponent<IActor>(out var act))// && act != null)
 				{
 					newList.Add(act);
+					_cachedActors.Add(col, act);
 				}
 			}
+
 			return newList;
 		}
 
 		private IList<IActor> ClearForWalls(IList<IActor> hits)
 		{
-			IList<IActor> newList = new List<IActor>();
+            for (int i = 0; i < hits.Count; i++)
+            {
+				var actor = hits[i];
 
-			foreach (var col in hits)
-			{
-				if (!Physics2D.Linecast(_controller.Position, col.Position, _blockMask))
+				if (Physics2D.Linecast(_controller.Position, actor.Position, _blockMask))
 				{
-					newList.Add(col);
+					hits.RemoveAt(i);
+					i--;
 				}
 			}
-			return newList;
+			return hits;
 		}
 
-		public IList<IActor> SortForTeamNumber(int teamNumber, bool excluded)
+		public IList<IActor> SortForTeamNumber(int teamNumber, bool excluded, IList<IActor> cachedList)
 		{
-			IList<IActor> list = new List<IActor>();
-			foreach (var el in _cachedScan)
-			{
+			IList<IActor> list = cachedList;
+			cachedList.Clear();
+
+            for (int i = 0; i < _cachedScan.Count; i++)
+            {
+				var el = _cachedScan[i];
 				if (!(el is ITeamProvider prov)) continue;
 
 				if (prov.TeamNumber == teamNumber && !excluded || excluded && prov.TeamNumber != teamNumber)
@@ -124,6 +145,7 @@ namespace AI
 					list.Add(el);
 				}
 			}
+
 			return list;
 		}
 

@@ -17,7 +17,7 @@ namespace GameLogic
         [SerializeField] private SpriteRenderer _bodySprite;
         [SerializeField] private int _flyingSpriteSortingLayer;
 
-        [SerializeField] private Camera _camera;
+        [SerializeField] private CameraSizeAbstraction _camera;
         [SerializeField] private AnimationCurve _cameraSize;
         [SerializeField] private float _cameraSizeMult = 5;
         [SerializeField] private float _cameraSizeSmoothTime = 0.1f;

@@ -459,7 +459,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   _range: 100
-  _scanFrequancy: 0
+  _scanFrequancy: 0.5
   _debug: 1
 --- !u!114 &604990401798854075
 MonoBehaviour:
