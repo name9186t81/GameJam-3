@@ -80,7 +80,7 @@ namespace AI
 			OnScan?.Invoke();
 		}
 
-		private static Dictionary<Collider2D, IActor> _cachedActors = new Dictionary<Collider2D, IActor>(); //вроде бы это быстрее чем геткомпоненты даже с дип профайлом
+		private static Dictionary<Collider2D, IActor> _cachedActors = new Dictionary<Collider2D, IActor>(); //TODO: очищать это при перезапуске уровня 
 
 		private IList<IActor> ClearForActors(IList<Collider2D> hits, int hitsCount, IList<IActor> cachedList)
 		{
@@ -94,7 +94,7 @@ namespace AI
 				//if (col == null) break; //вернуть если тут будут нулл референс экзепшоны
 				if(_cachedActors.TryGetValue(col, out var cachedActor))
                 {
-					if(cachedActor != null)
+					if((UnityEngine.Object)cachedActor != null) //да, каст нужон
                     {
 						needToTryGetComponent = false;
 						newList.Add(cachedActor);

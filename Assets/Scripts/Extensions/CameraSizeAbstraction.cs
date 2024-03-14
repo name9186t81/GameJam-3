@@ -20,7 +20,7 @@ public class CameraSizeAbstraction : MonoBehaviour
     void LateUpdate()
     {
         var verticalSize = orthographicSize;
-        var horizontalSize = orthographicSize * (Screen.height / Screen.width);
+        var horizontalSize = orthographicSize * ((float)Screen.height / Screen.width);
 
         _camera.orthographicSize = _matchSize.map01(verticalSize, horizontalSize);
     }

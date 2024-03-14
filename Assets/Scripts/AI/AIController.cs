@@ -71,6 +71,7 @@ namespace AI
 		{
 			if(_vision.EnemiesInRange != null && _vision.EnemiesInRange.Count > 0 && IsTargetNull)
 			{
+				//TODO: выбирать рандомного врага каждый раз когда текущего врага нет в листе доступных
 				CurrentTarget = _vision.EnemiesInRange[0];
 				TargetTransform = (CurrentTarget as MonoBehaviour).transform;
 				TargetHealth = (CurrentTarget is IProvider<IHealth> prov) ? prov
