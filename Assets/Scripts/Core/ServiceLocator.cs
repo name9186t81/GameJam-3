@@ -7,11 +7,6 @@ namespace Core
 	{
 		private static Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
-		static ServiceLocator()
-		{
-			_services.Add(typeof(GlobalDeathNotificator), new GlobalDeathNotificator());
-		}
-
 		public static void Register<T>(T instance) where T : class, IService
 		{
 			_services.Add(typeof(T), instance);
