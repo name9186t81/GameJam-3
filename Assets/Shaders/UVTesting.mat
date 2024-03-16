@@ -51,9 +51,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _Density: 50.45
-    - _Speed: 0.09
+    - _Speed: 0.2
     - _Strength: 3.6
-    - _Width: 0.101
+    - _Width: 0.1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.42942306, g: 0.638, b: 0.12269229, a: 1}
+    - _Inside_color: {r: 0.33484247, g: 0.589, b: 0.43973282, a: 1}
   m_BuildTextureStacks: []
