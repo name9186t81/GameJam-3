@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using UnityEditor;
@@ -18,20 +19,20 @@ namespace Core
 		{
 			public string Name;
 			public Tilemap Map;
+			public Tilemap ShadowMap;
 		}
 
+		[SerializeField] private Sprite[] _shadowCasters;
 		[SerializeField] private int _pixelsPerTile;
-
 		[SerializeField] private TileMapInfo[] _infos;
+		private HashSet<Sprite> _shadowSprites; //поиск в массиве будет занимать века при генерации
 		private string DataPath => Application.dataPath + "/Resources";
 		public int callbackOrder => 0; //ваще всеравно какой ордер + документаци€ о нем молчит(дефолт)
 
-		//ƒ≈Ѕј√ ”Ѕ–ј“№ »« ‘»ЌјЋ№Ќќ√ќ Ѕ»Ћƒј »Ћ» —¬≈–Ќ” Ў≈ё
 		private void Start()
 		{
-			OnPreprocessBuild(null);
+			OnPreprocessBuild(null); //удалить
 		}
-		//дебаг кончаетс€ здесь
 
 		public void OnPreprocessBuild(BuildReport report)
 		{
@@ -44,12 +45,24 @@ namespace Core
 			if (_infos == null)
 				return;
 
-			for(int i = 0, length = _infos.Length; i < length; ++i)
+			_shadowSprites = new HashSet<Sprite>(_shadowCasters.Length);
+			for(int i = 0; i < _shadowCasters.Length;i++)
+			{
+				_shadowSprites.Add(_shadowCasters[i]);
+			}
+
+			for (int i = 0, length = _infos.Length; i < length; ++i)
 			{
 				TileMapInfo map = _infos[i];
 
 				UpdateMap(map);
 			}
+		}
+
+		[ContextMenu("Force Bake")]
+		private void ForceBake()
+		{
+			OnPreprocessBuild(null);
 		}
 
 		private void UpdateMap(in TileMapInfo info)
@@ -80,18 +93,24 @@ namespace Core
 				writer.Write(time);
 			}
 
-			var texture = GetTextureFromTileMap(info.Map);
+			var texture = GetTextureFromTileMap(info.Map, out var shadowsMap);
 			var bytes = texture.EncodeToPNG();
+
+			var shadowTextureBytes = shadowsMap.EncodeToPNG();
 
 			using (BinaryWriter writer = new BinaryWriter(File.OpenWrite(DataPath + "/" + info.Name + ".png")))
 			{
 				writer.Write(bytes);
 			}
+			using (BinaryWriter writer = new BinaryWriter(File.OpenWrite(DataPath + "/" + info.Name + "_shadow.png")))
+			{
+				writer.Write(shadowTextureBytes);
+			}
 		}
 
 		//с одной стороны это не должно быть по солид
 		//с другой стороны это нигде больше не нужно
-		private Texture2D GetTextureFromTileMap(Tilemap map)
+		private Texture2D GetTextureFromTileMap(Tilemap map, out Texture2D shadowMap, Tilemap shadowTileMap = null, bool generateShadows = true)
 		{
 			map.CompressBounds();
 			Vector2Int tilesCount = new Vector2Int(
@@ -103,12 +122,15 @@ namespace Core
 			Vector2Int textureSize = new Vector2Int(
 				(int)(tilesCount.y * map.cellSize.y * _pixelsPerTile),
 				(int)(tilesCount.x * map.cellSize.x * _pixelsPerTile));
+			var shadowTexture = new Texture2D(textureSize.x, textureSize.y);
 
 			TileData data = new TileData();
+			TileData shadowData = new TileData();
 
 			var width = texture.width;
 
 			var resultPixels = texture.GetPixels();
+			var shadowPixels = shadowTexture.GetPixels();
 
 			for (int y = map.cellBounds.yMin; y < map.cellBounds.yMax; y++)
 			{
@@ -120,13 +142,18 @@ namespace Core
 						Vector2Int drawStart = new Vector2Int(x - map.cellBounds.xMin, y - map.cellBounds.yMin);
 
 						var tile = map.GetTile<TileBase>(pos);
+						var shadowTile = shadowTileMap?.GetTile<TileBase>(pos);
 
+						bool hasShadow = shadowTile != null;
 						var emptyTile = tile == null;
 
 						if (!emptyTile)
 							tile.GetTileData(pos, map, ref data);
+						if (hasShadow)
+							shadowTile.GetTileData(pos, shadowTileMap, ref shadowData);
 
 						var rect = data.sprite.textureRect;
+						bool isShadow = _shadowSprites.Contains(data.sprite);
 
 						for (int x1 = 0; x1 < _pixelsPerTile; x1++)
 						{
@@ -138,6 +165,7 @@ namespace Core
 								if (!emptyTile)
 									color = data.sprite.texture.GetPixel(y1 + (int)rect.x, x1 + (int)rect.y);
 
+								shadowPixels[textureId] = isShadow ? Color.red : Color.clear;
 								resultPixels[textureId] = color;
 							}
 						}
@@ -145,9 +173,12 @@ namespace Core
 				}
 			}
 
+			shadowTexture.SetPixels(shadowPixels);
 			texture.SetPixels(resultPixels);
-			texture.filterMode = FilterMode.Point;
+			shadowTexture.filterMode = texture.filterMode = FilterMode.Point;
 			texture.Apply();
+			shadowTexture.Apply();
+			shadowMap = shadowTexture;
 			return texture;
 		}
 	}
