@@ -50,10 +50,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Density: 50.45
+    - _Density: 31.87
     - _Speed: 0.2
     - _Strength: 3.6
-    - _Width: 0.1
+    - _Width: 0.265
     m_Colors:
     - _Color: {r: 0.42942306, g: 0.638, b: 0.12269229, a: 1}
     - _Inside_color: {r: 0.33484247, g: 0.589, b: 0.43973282, a: 1}
