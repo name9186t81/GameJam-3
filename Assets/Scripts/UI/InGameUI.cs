@@ -23,6 +23,8 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private Text _time;
     [SerializeField] private Slider _volumeSlider;
+    [SerializeField] private LocalizationString _timeString;
+    [SerializeField] private LocalizationString _scoreString;
 
     [Header("End game menu")]
     [SerializeField] private GameObject _winText;
@@ -115,7 +117,7 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     {
         _winText.gameObject.SetActive(!pause && win);
         _looseText.gameObject.SetActive(!pause && !win);
-        _scoreText.transform.parent.gameObject.SetActive(!pause); //da
+        _scoreText.transform.parent.gameObject.SetActive(!pause);
         _resumeButton.SetActive(pause);
         _volumeSliderGO.SetActive(pause);
     }
@@ -124,8 +126,9 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     {
         _pausePanel.SetActive(true);
         _volumeSlider.value = AudioListener.volume;
-        _time.text = "Âðåìÿ: " + (new TimeSpan(10000L * 1000L * (long)(Time.time - _startTime)).ToString()); //da
-        _scoreText.text = "Ñ÷¸ò: " + MathF.Round(_maxScore * _visualScoreMult).ToString();
+
+        _time.text = _timeString.Get() + ": " + (new TimeSpan(10000L * 1000L * (long)(Time.time - _startTime)).ToString()); //da
+        _scoreText.text = _scoreString.Get() + ": " + MathF.Round(_maxScore * _visualScoreMult).ToString();
 
         SetPauseOrEndGameState(pause, win);
     }

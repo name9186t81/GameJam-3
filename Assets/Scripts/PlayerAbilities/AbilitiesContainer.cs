@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlayerInput;
 using Core;
+using UnityEngine.EventSystems;
 
 namespace PlayerAbilities
 {
@@ -29,14 +30,14 @@ namespace PlayerAbilities
 
         private void Start()
         {
-            for (int i = 0; i < _selectedAbilities.Count; i++)
-            {
-                _selectedAbilities[i].OnSelectedBy(null, _player);
-                OnAbilitySelected?.Invoke(_selectedAbilities[i], i);
-            }
-
             _inputProvider = ServiceLocator.Get<InputProvider>();
             _inputProvider.AbilityUsed += OnTryUseAbility;
+
+            for (int i = 0; i < _selectedAbilities.Count; i++)
+            {
+                _selectedAbilities[i].OnSelectedBy(null, _player, _inputProvider.UsingMobileInput);
+                OnAbilitySelected?.Invoke(_selectedAbilities[i], i);
+            }
         }
 
         private void OnDestroy()
@@ -44,12 +45,12 @@ namespace PlayerAbilities
             _inputProvider.AbilityUsed -= OnTryUseAbility;
         }
 
-        private void OnTryUseAbility(int id)
+        private void OnTryUseAbility(int id, PointerEventData data)
         {
             if (id >= _selectedAbilities.Count)
                 return;
 
-            _selectedAbilities[id].OnTryUse();
+            _selectedAbilities[id].OnTryUse(data);
         }
 
         private void Update()
@@ -68,7 +69,7 @@ namespace PlayerAbilities
             if (enoughScoreSelectionIndex > alreadySelectedAbilitiesIndex && _selectionsPendingCount == 0 && _selectPanel.CanInit)
             {
                 alreadySelectedAbilitiesIndex++;
-                _abilities[alreadySelectedAbilitiesIndex].Show(_selectPanel, _onAbilitySelected, _player);
+                _abilities[alreadySelectedAbilitiesIndex].Show(_selectPanel, _onAbilitySelected, _player, _inputProvider);
                 _selectionsPendingCount++;
             }
 
@@ -92,19 +93,19 @@ namespace PlayerAbilities
             public Ability LeftAbility;
             public Ability RightAbility;
 
-            public void Show(AbilitySelectPanel panel, Action<Ability> OnAbilitySelected, PlayerActor player)
+            public void Show(AbilitySelectPanel panel, Action<Ability> OnAbilitySelected, PlayerActor player, InputProvider provider)
             {
                 panel.TryInit(LeftAbility.UIData, RightAbility.UIData, delegate (AbilitySelectPanel.AbilityUIData data)
                 {
                     //да, говно, но лучше не придумал
                     if (data.Equals(LeftAbility.UIData))
                     {
-                        LeftAbility.OnSelectedBy(this, player);
+                        LeftAbility.OnSelectedBy(this, player, provider.UsingMobileInput);
                         OnAbilitySelected?.Invoke(LeftAbility);
                     }
                     else if (data.Equals(RightAbility.UIData))
                     {
-                        RightAbility.OnSelectedBy(this, player);
+                        RightAbility.OnSelectedBy(this, player, provider.UsingMobileInput);
                         OnAbilitySelected?.Invoke(RightAbility);
                     }
                 });
@@ -114,8 +115,10 @@ namespace PlayerAbilities
         public abstract class Ability : MonoBehaviour
         {
             public AbilitySelectPanel.AbilityUIData UIData;
-            private protected PlayerActor _player;
-            private protected bool _selected = false;
+            private protected PlayerActor _player { get; private set; }
+            private protected bool _selected { get; private set; } = false;
+            private protected PointerEventData _lastPointerEventData { get; private set; } = null;
+            private protected bool _usingMobileInput = false;
             private protected Vector2 _cursorWorldPos => Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             [SerializeField] private float _reloadTime = 0.1f;
@@ -124,8 +127,9 @@ namespace PlayerAbilities
             private float _lastTryUseTime = -1000;
             private const float _useThresholdSeconds = 0.1f;
 
-            public void OnTryUse()
+            public void OnTryUse(PointerEventData data)
             {
+                _lastPointerEventData = data;
                 _lastTryUseTime = Time.unscaledTime;
             }
 
@@ -154,11 +158,11 @@ namespace PlayerAbilities
                 return Mathf.Clamp01(_timerReload / _reloadTime);
             }
 
-            public void OnSelectedBy(AbilitySelection selection, PlayerActor player)
+            public void OnSelectedBy(AbilitySelection selection, PlayerActor player, bool usingMobileInput)
             {
                 _selected = true;
                 _player = player;
-
+                _usingMobileInput = usingMobileInput;
                 _timerReload = _reloadTime; //абилка будет заряжена сразу при получении, можно закомментить тогда не будет
             }
 

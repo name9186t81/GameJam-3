@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace PlayerAbilities
         [SerializeField] private float _placeSelectTime = 0.5f;
         [SerializeField] private float _timePauseSmoothTime = 0.1f;
         [SerializeField] private JumpPointSelector _jumpPointSelector;
+        [SerializeField] private float _overlapRadiusMult = 0.6f;
 
         [SerializeField] private float _jumpTime = 0.7f;
         [SerializeField] private AnimationCurve _jumpProgressCurve;
@@ -21,6 +23,8 @@ namespace PlayerAbilities
         Vector2 _targetPosition;
 
         public float TimeScale { get; private set; } = 1;
+
+        private bool _usePointerEvents => _usingMobileInput;
 
         void Start()
         {
@@ -59,12 +63,20 @@ namespace PlayerAbilities
                     }
                     break;
                 case State.Selecting:
-                    if(Input.GetMouseButtonDown(0) && _jumpPointSelector.CanJump)
+                    _jumpPointSelector.Update();
+                    if((_usePointerEvents ? (_lastPointerEventData != null && _lastPointerEventData.used) : Input.GetMouseButtonDown(0)))
                     {
-                        ChangeState(State.Jumping);
-                        _player.SetFlyingState(true);
-                        _startPosition = _player.Position;
-                        _targetPosition = _cursorWorldPos;
+                        if (_jumpPointSelector.CanJump)
+                        {
+                            ChangeState(State.Jumping);
+                            _player.SetFlyingState(true);
+                            _startPosition = _player.Position;
+                            _targetPosition = _jumpPointSelector.transform.position;
+                        }
+                        else
+                        {
+                            ChangeState(State.Waiting);
+                        }
                     }
                     break;
                 case State.Jumping:
@@ -109,8 +121,22 @@ namespace PlayerAbilities
         {
             _currentState = newState;
             _lastStateChangeTime = Time.unscaledTime;
-            _jumpPointSelector.gameObject.SetActive(newState == State.Selecting && !Application.isMobilePlatform);
-            _jumpPointSelector.SetRadius(_player.Radius);
+            _jumpPointSelector.gameObject.SetActive(newState == State.Selecting);
+            _jumpPointSelector.SetRadius(_player.Radius * _overlapRadiusMult);
+            _jumpPointSelector.PositionProvider = _usePointerEvents ? EventDataPositionProvider : MousePositionProvider;
+        }
+
+        private Vector2 EventDataPositionProvider()
+        {
+            if(_lastPointerEventData == null)
+                return MousePositionProvider();
+
+            return Camera.main.ScreenToWorldPoint(_lastPointerEventData.position);
+        }
+
+        private Vector2 MousePositionProvider()
+        {
+            return _cursorWorldPos;
         }
 
         private enum State

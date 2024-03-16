@@ -7,13 +7,12 @@ using System.Linq;
 
 public class LanguageChanger : MonoBehaviour
 {
-    public Dropdown LangugeDropdown;
-    private ReadOnlyDictionary<LanguageType, LanguageData> _languageToTexts;
+    [SerializeField] private Dropdown LangugeDropdown;
 
     private void Awake()
     {
         LangugeDropdown.options = new List<Dropdown.OptionData>();
-        _languageToTexts = new ReadOnlyDictionary<LanguageType, LanguageData>(Resources.LoadAll<LanguageData>("Localization").ToDictionary((data) => data.LanguageType, (data) => data));
+        var _languageToTexts = new ReadOnlyDictionary<LanguageType, LanguageData>(Resources.LoadAll<LanguageData>("Localization").ToDictionary((data) => data.LanguageType, (data) => data));
 
         foreach (var v in _languageToTexts)
         {
@@ -33,7 +32,7 @@ public class LanguageChanger : MonoBehaviour
         LangugeDropdown.onValueChanged.AddListener(OnValueChanged);
     }
 
-    public void OnValueChanged(int value)
+    private void OnValueChanged(int value)
     {
         Localization.ChangeLanguageType((LanguageType)value);
     }

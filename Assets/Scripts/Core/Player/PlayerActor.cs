@@ -28,7 +28,6 @@ namespace GameLogic
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
         [SerializeField] private float _startBodySize;
-        [SerializeField] private float _testAreaPerCollision = 0.1f;
         [SerializeField] private float _slimeMergeForcePerScore = 1f;
 
         private float _cameraSizeVelocity = 0f;

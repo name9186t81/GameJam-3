@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace PlayerInput
 {
@@ -15,7 +16,7 @@ namespace PlayerInput
         public override float Horizontal => _joystick.Horizontal;
         public override float Vertical => _joystick.Vertical;
 
-        public override event Action<int> AbilityUsed;
+        public override event Action<int, PointerEventData> AbilityUsed;
         public override event Action<ActionType> Action;
 
         public override void Init()
@@ -27,9 +28,20 @@ namespace PlayerInput
 
         private void OnAbilityPartSpawned(AbilityUIPart abilityUIPart, int id)
         {
+            var downEntry = new EventTrigger.Entry();
+            downEntry.eventID = EventTriggerType.PointerDown;
+            downEntry.callback.AddListener((data) => { AbilityUsed?.Invoke(id, (PointerEventData)data); });
+
+            var upEntry = new EventTrigger.Entry();
+            upEntry.eventID = EventTriggerType.PointerUp;
+            upEntry.callback.AddListener((data) => { ((PointerEventData)data).Use(); });
+
+            abilityUIPart.Events.triggers.Add(downEntry);
+            abilityUIPart.Events.triggers.Add(upEntry);
+
             abilityUIPart.OnPress += delegate 
             {
-                AbilityUsed?.Invoke(id);
+                //AbilityUsed?.Invoke(id);
             };
         }
 

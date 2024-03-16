@@ -2,17 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace PlayerAbilities
 {
     public class AbilityUIPart : MonoBehaviour
-    {
+    { 
         [SerializeField] private Image _preview;
         [SerializeField] private Image _loadingIndicator;
         [SerializeField] private Text _nameText;
         [SerializeField] private float _previewScaleOnReload = 0.7f;
         [SerializeField] private float _smoothStateTime = 0.1f;
+        public EventTrigger Events;
 
         private FloatSmoothDamp _smoothState;
         private AbilitiesContainer.Ability _ability;
@@ -34,11 +36,6 @@ namespace PlayerAbilities
 
             OnKeyUpdated("");
             Update();
-        }
-
-        public void OnClick()
-        {
-            OnPress?.Invoke();
         }
 
         public void OnKeyUpdated(string keyDesc)

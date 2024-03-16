@@ -37,7 +37,7 @@ namespace PlayerAbilities
                 case State.Waiting:
                     if (CanUse(false))
                     {
-                        if (Application.isMobilePlatform)
+                        if (_usingMobileInput)
                         {
                             var prov = ServiceLocator.Get<InputProvider>();
                             _startGrabDirection = new Vector2(prov.Horizontal, prov.Vertical).normalized;

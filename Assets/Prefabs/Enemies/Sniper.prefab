@@ -50,14 +50,14 @@ MonoBehaviour:
   _spreadAngle: 0
   _flags: 4
   _damageFlags: 1
-  _projectileBuilder: {fileID: 11400000, guid: c6d736db72af9f24099e08e1bd885ec3, type: 2}
+  _projectileBuilder: {fileID: 11400000, guid: a984a9e085b3fdd4d9eff6f77f7f62c2, type: 2}
   _shootPoint: {x: 0, y: 0.55}
   _baseDamage: 45
   _projectileCount: 1
   _preFireDelay: 0
   _delayPerProjectile: 4
   _postFireDelay: 0
-  _effectiveRange: 15
+  _effectiveRange: 25
   _useRange: 12
   _rotatble: 0
   _debug: 1

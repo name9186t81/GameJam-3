@@ -23,13 +23,26 @@ MonoBehaviour:
   - Jump
   - Deals damage to enemies within a radius
   - Tentacle
-  - Allows you to attract objects or yourself
+  - Allows you to grasp your surroundings
   - Reproduction
   - You are divided into many independent slimes
   - Slime Road
   - Leaves a trail that damages enemies
   - Score
   - Combo
+  - 
+  - You lose
+  - Volume
+  - Continue
+  - Restart level
+  - To main menu
+  - Time
+  - Score
+  - 'Select ability:'
+  - Start the game
+  - Authors
+  - Exit
+  - Language
   - Dash
   - Dash
   translate: 0

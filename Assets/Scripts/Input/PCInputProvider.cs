@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace PlayerInput
 {
@@ -15,7 +16,7 @@ namespace PlayerInput
         public override float Horizontal => Input.GetAxis("Horizontal");
         public override float Vertical => Input.GetAxis("Vertical");
 
-        public override event Action<int> AbilityUsed;
+        public override event Action<int, PointerEventData> AbilityUsed;
         public override event Action<ActionType> Action;
 
         [System.Serializable]
@@ -57,7 +58,7 @@ namespace PlayerInput
             {
                 if (Input.GetKeyDown(_abilitiesKeys[i].KeyCode))
                 {
-                    AbilityUsed?.Invoke(i);
+                    AbilityUsed?.Invoke(i, null);
                 }
             }
         }

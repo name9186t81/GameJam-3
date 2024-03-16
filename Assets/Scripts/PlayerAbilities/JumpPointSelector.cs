@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace PlayerAbilities
         [SerializeField] private Color _restrictedColor;
         [SerializeField] private float _colorSmoothTime = 0.1f;
         [SerializeField] private LayerMask _overlapLayers = -1;
+
+        public Func<Vector2> PositionProvider;
 
         public bool CanJump { get; private set; } = true;
 
@@ -37,9 +40,10 @@ namespace PlayerAbilities
             return Physics2D.OverlapCircle(transform.position, _currentRadius, _overlapLayers);
         }
 
-        private void Update()
+        public void Update()
         {
-            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if(PositionProvider != null)
+                transform.position = PositionProvider();
             transform.position = new Vector3(transform.position.x, transform.position.y, 0);
 
             CanJump = !DoOverlap();
