@@ -10,6 +10,8 @@ namespace Architecture
 
 		private void Awake()
 		{
+			Application.targetFrameRate = 360;
+
 			if (_elements == null) Debug.LogError("No elements in bootstraper");
 
 			for (int i = 0; i < _elements.Length; ++i)

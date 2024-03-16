@@ -13,7 +13,7 @@ namespace PlayerAbilities
         [SerializeField] private float _colorSmoothTime = 0.1f;
         [SerializeField] private LayerMask _overlapLayers = -1;
 
-        public bool CanJump { get; private set; }
+        public bool CanJump { get; private set; } = true;
 
         private FloatSmoothDamp _smoothDamp;
         private float _currentRadius;
