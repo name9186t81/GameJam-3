@@ -7,6 +7,11 @@ namespace Core
 	{
 		private static Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
+		public static void ClearAll() //еда сделай лучше
+        {
+			_services.Clear();
+        }
+
 		public static void Register<T>(T instance) where T : class, IService
 		{
 			_services.Add(typeof(T), instance);

@@ -26,14 +26,15 @@ namespace PlayerAbilities
         private void OnAbilitySelected(AbilitiesContainer.Ability ability, int id)
         {
             var part = SpawnNewPart(ability);
-
             OnPartSpawned?.Invoke(part, id);
         }
 
         private AbilityUIPart SpawnNewPart(AbilitiesContainer.Ability ability)
         {
             var part = Instantiate(_part, _part.transform.parent);
+
             part.Init(ability);
+
             return part;
         }
     }

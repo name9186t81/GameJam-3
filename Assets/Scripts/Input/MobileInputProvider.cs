@@ -1,3 +1,4 @@
+using PlayerAbilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,20 +8,33 @@ namespace PlayerInput
 {
     public class MobileInputProvider : InputProvider
     {
-        public override float Horizontal => throw new NotImplementedException();
+        [SerializeField] private GameObject _mobileInput;
+        [SerializeField] private Joystick _joystick;
+        [SerializeField] private AbilitiesUI _mobileAbilitiesUI;
 
-        public override float Vertical => throw new NotImplementedException();
+        public override float Horizontal => _joystick.Horizontal;
+        public override float Vertical => _joystick.Vertical;
 
         public override event Action<int> AbilityUsed;
 
         public override void Init()
         {
-            throw new NotImplementedException();
+            _mobileInput.SetActive(true);
+            _mobileAbilitiesUI.Init();
+            _mobileAbilitiesUI.OnPartSpawned += OnAbilityPartSpawned;
+        }
+
+        private void OnAbilityPartSpawned(AbilityUIPart abilityUIPart, int id)
+        {
+            abilityUIPart.OnPress += delegate 
+            {
+                AbilityUsed?.Invoke(id);
+            };
         }
 
         public override void Tick()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

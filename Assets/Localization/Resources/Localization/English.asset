@@ -28,6 +28,8 @@ MonoBehaviour:
   - You are divided into many independent slimes
   - Slime Road
   - Leaves a trail that damages enemies
+  - Score
+  - Combo
   - Dash
   - Dash
   translate: 0
