@@ -25,7 +25,7 @@ namespace PlayerAbilities
         {
             if(!_working)
             {
-                if (TryUse(false))
+                if (CanUse(false))
                 {
                     _working = true;
                     _trailRenderer.transform.position = _player.BonesConnector.TransformPosition;

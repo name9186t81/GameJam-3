@@ -19,7 +19,7 @@ public class AbilitySelectPart : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void Init(AbilitySelectPanel.AbilityUIData data, Action<AbilitySelectPanel.AbilityUIData> onPress)
     {
         _nameText.text = data.Name;
-        _descText.text = data.Desc;
+        _descText.text = data.Description;
         _preview.sprite = data.Preview;
         _onPress = delegate { onPress?.Invoke(data); };
     }

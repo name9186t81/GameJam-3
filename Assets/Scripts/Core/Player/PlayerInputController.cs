@@ -2,6 +2,7 @@ using UnityEngine;
 using Core;
 using System;
 using GameLogic;
+using PlayerInput;
 
 public class PlayerInputController : MonoBehaviour, IController
 {
@@ -13,13 +14,20 @@ public class PlayerInputController : MonoBehaviour, IController
 
 	public event Action<ControllerAction> OnAction;
 
+    private InputProvider _inputProvider;
+
     private void Awake()
     {
         _player.TryChangeController(this);
     }
 
+    void Start()
+    {
+        _inputProvider = ServiceLocator.Get<InputProvider>();
+    }
+
     private void Update()
     {
-        DesiredMoveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        DesiredMoveDirection = new Vector2(_inputProvider.Horizontal, _inputProvider.Vertical);
     }
 }

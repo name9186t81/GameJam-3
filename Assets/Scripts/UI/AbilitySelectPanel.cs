@@ -54,10 +54,8 @@ public class AbilitySelectPanel : MonoBehaviour
     [System.Serializable]
     public struct AbilityUIData
     {
-        public string Name;
-        public string ReloadingPanelName;
-        [TextArea]
-        public string Desc;
+        public LocalizationString Name;
+        public LocalizationString Description;
         public Sprite Preview;
     }
 }

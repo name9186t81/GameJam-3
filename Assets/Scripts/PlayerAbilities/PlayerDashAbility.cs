@@ -8,7 +8,7 @@ namespace PlayerAbilities
     {
         private protected override void update()
         {
-            if (TryUse())
+            if (CanUse())
             {
                 _player.Act(Core.ControllerAction.Dash);
             }

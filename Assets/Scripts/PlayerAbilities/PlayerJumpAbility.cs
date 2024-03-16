@@ -53,7 +53,7 @@ namespace PlayerAbilities
             switch(_currentState)
             {
                 case State.Waiting:
-                    if (TryUse(false))
+                    if (CanUse(false))
                     {
                         ChangeState(State.Selecting);
                     }

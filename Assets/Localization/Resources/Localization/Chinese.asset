@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d8a0bc30808f804dac6ae6bc9f44e31, type: 3}
+  m_Name: Chinese
+  m_EditorClassIdentifier: 
+  _languageType: 2
+  DrawElementsCount: 700
+  _texts:
+  - "\u8F6C\u79FB"
+  - "\u7A7A\u95F4"
+  - E
+  - "\u6DF7\u86CB"
+  - "\u9009\u5B9A\u65B9\u5411\u7684\u77AC\u65F6\u52A0\u901F\u5EA6"
+  - "\u5F39\u8DF3"
+  - "\u5BF9\u4E00\u5B9A\u534A\u5F84\u5185\u7684\u654C\u4EBA\u9020\u6210\u4F24\u5BB3"
+  - "\u89E6\u624B"
+  - "\u5141\u8BB8\u60A8\u5438\u5F15\u7269\u4F53\u6216\u60A8\u81EA\u5DF1"
+  - "\u518D\u751F\u4EA7"
+  - "\u4F60\u88AB\u5206\u6210\u8BB8\u591A\u72EC\u7ACB\u7684\u53F2\u83B1\u59C6"
+  - "\u53F2\u83B1\u59C6\u8DEF"
+  - "\u7559\u4E0B\u75D5\u8FF9\uFF0C\u5BF9\u654C\u4EBA\u9020\u6210\u4F24\u5BB3"
+  - 
+  - 
+  translate: 0
+  translateFrom: en
+  translateTo: zh-CN

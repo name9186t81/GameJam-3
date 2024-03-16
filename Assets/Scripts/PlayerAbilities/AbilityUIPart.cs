@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,18 +17,33 @@ namespace PlayerAbilities
         private FloatSmoothDamp _smoothState;
         private AbilitiesContainer.Ability _ability;
 
+        public event Action OnPress;
+
+        private string _startName;
+
         public void Init(AbilitiesContainer.Ability ability)
         {
             _ability = ability;
 
             _preview.sprite = ability.UIData.Preview;
-            _nameText.text = ability.UIData.ReloadingPanelName;
+            _startName = ability.UIData.Name;
 
             _smoothState = new FloatSmoothDamp(_smoothStateTime);
 
             gameObject.SetActive(true);
 
+            OnKeyUpdated("");
             Update();
+        }
+
+        public void OnClick()
+        {
+            OnPress?.Invoke();
+        }
+
+        public void OnKeyUpdated(string keyDesc)
+        {
+            _nameText.text = _startName + " " + keyDesc;
         }
 
         private void Update()

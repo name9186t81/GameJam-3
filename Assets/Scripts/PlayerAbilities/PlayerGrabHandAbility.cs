@@ -33,7 +33,7 @@ namespace PlayerAbilities
             switch (_currentState)
             {
                 case State.Waiting:
-                    if (TryUse(false))
+                    if (CanUse(false))
                     {
                         _startGrabDirection = (_cursorWorldPos - playerPos).normalized;
                         _currentPosition = playerPos;

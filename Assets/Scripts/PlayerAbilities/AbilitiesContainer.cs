@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PlayerInput;
+using Core;
 
 namespace PlayerAbilities
 {
@@ -21,15 +23,28 @@ namespace PlayerAbilities
         private int _selectionsPendingCount = 0; //чтобы не показывать следующий выбор способности пока предыдущий еще не выбран
         private float _reloadSpeedMult => Mathf.Min(1 + ComboUI.ComboCount * _reloadSpeedBonusPerCombo, _reloadSpeedPerComboLimit);
 
-        public event Action<Ability> OnAbilitySelected;
+        public event Action<Ability, int> OnAbilitySelected;
+
+        InputProvider _inputProvider;
 
         private void Start()
         {
             for (int i = 0; i < _selectedAbilities.Count; i++)
             {
                 _selectedAbilities[i].OnSelectedBy(null, _player);
-                OnAbilitySelected?.Invoke(_selectedAbilities[i]);
+                OnAbilitySelected?.Invoke(_selectedAbilities[i], i);
             }
+
+            _inputProvider = ServiceLocator.Get<InputProvider>();
+            _inputProvider.AbilityUsed += OnTryUseAbility;
+        }
+
+        private void OnTryUseAbility(int id)
+        {
+            if (id >= _selectedAbilities.Count)
+                return;
+
+            _selectedAbilities[id].OnTryUse();
         }
 
         private void Update()
@@ -62,7 +77,7 @@ namespace PlayerAbilities
         {
             _selectedAbilities.Add(ability);
             _selectionsPendingCount--;
-            OnAbilitySelected?.Invoke(ability);
+            OnAbilitySelected?.Invoke(ability, _selectedAbilities.Count - 1);
         }
 
         [System.Serializable]
@@ -71,14 +86,13 @@ namespace PlayerAbilities
             public float NeededScore;
             public Ability LeftAbility;
             public Ability RightAbility;
-            public KeyCode AbilityKey = KeyCode.None;
 
             public void Show(AbilitySelectPanel panel, Action<Ability> OnAbilitySelected, PlayerActor player)
             {
                 panel.TryInit(LeftAbility.UIData, RightAbility.UIData, delegate (AbilitySelectPanel.AbilityUIData data)
                 {
-                //да, говно, но лучше не придумал
-                if (data.Equals(LeftAbility.UIData))
+                    //да, говно, но лучше не придумал
+                    if (data.Equals(LeftAbility.UIData))
                     {
                         LeftAbility.OnSelectedBy(this, player);
                         OnAbilitySelected?.Invoke(LeftAbility);
@@ -95,7 +109,6 @@ namespace PlayerAbilities
         public abstract class Ability : MonoBehaviour
         {
             public AbilitySelectPanel.AbilityUIData UIData;
-            [SerializeField] private KeyCode _useKey = KeyCode.None;
             private protected PlayerActor _player;
             private protected bool _selected = false;
             private protected Vector2 _cursorWorldPos => Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -103,12 +116,20 @@ namespace PlayerAbilities
             [SerializeField] private float _reloadTime = 0.1f;
             private float _timerReload;
 
-            private protected bool TryUse(bool autoReset = true)
+            private float _lastTryUseTime = -1000;
+            private const float _useThresholdSeconds = 0.1f;
+
+            public void OnTryUse()
+            {
+                _lastTryUseTime = Time.unscaledTime;
+            }
+
+            private protected bool CanUse(bool autoReset = true)
             {
                 if (!_selected)
                     return false;
 
-                if (!Input.GetKey(_useKey))
+                if (Time.unscaledTime - _lastTryUseTime > _useThresholdSeconds)
                     return false;
 
                 bool result = _timerReload > _reloadTime;
@@ -130,8 +151,6 @@ namespace PlayerAbilities
 
             public void OnSelectedBy(AbilitySelection selection, PlayerActor player)
             {
-                if (selection != null && _useKey == KeyCode.None)
-                    _useKey = selection.AbilityKey;
                 _selected = true;
                 _player = player;
 

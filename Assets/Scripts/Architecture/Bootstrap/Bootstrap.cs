@@ -2,6 +2,7 @@
 
 namespace Architecture
 {
+	[DefaultExecutionOrder(-10000)]
 	[DisallowMultipleComponent()]
 	public sealed class Bootstrap : MonoBehaviour
 	{
