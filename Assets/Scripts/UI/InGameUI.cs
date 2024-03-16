@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using PlayerInput;
+using Core;
 
 public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 {
@@ -37,6 +39,8 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 
     private float _maxScore = 0;
 
+    private InputProvider _inputProvider;
+
 
     private void Start()
     {
@@ -45,19 +49,30 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
         _player.Health.OnAddScore += delegate (float score) { _comboUI.OnCombo(score * _visualScoreMult); _maxScore = Mathf.Max(_maxScore, _player.CurrentScore); };
         TimeScaleController.Add(this);
         _player.Health.OnDeath += OnPlayerDeath;
+        _inputProvider = ServiceLocator.Get<InputProvider>();
+        _inputProvider.Action += OnAction;
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        _inputProvider.Action -= OnAction;
+        TimeScaleController.Remove(this);
+    }
+
+    private void OnAction(InputProvider.ActionType type)
+    {
+        if(type == InputProvider.ActionType.Pause)
         {
             _pause = !_pause;
-            if(_pause)
+            if (_pause)
                 OpenPauseMenu(true);
             else
                 ClosePauseMenu();
         }
+    }
 
+    private void Update()
+    {
         _playerScore.text = Mathf.Round(_scoreSmooth.Update(_player.CurrentScore * _visualScoreMult)).ToString();
     }
 
@@ -119,10 +134,5 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     {
         _pausePanel.SetActive(false);
         _pause = false;
-    }
-
-    private void OnDestroy()
-    {
-        TimeScaleController.Remove(this);
     }
 }

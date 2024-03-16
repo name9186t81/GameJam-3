@@ -8,6 +8,7 @@ namespace PlayerInput
 {
     public class PCInputProvider : InputProvider
     {
+        [SerializeField] private ActionKey[] _actions;
         [SerializeField] private Key[] _abilitiesKeys;
         [SerializeField] private AbilitiesUI _pcAbilitiesUI;
 
@@ -15,11 +16,19 @@ namespace PlayerInput
         public override float Vertical => Input.GetAxis("Vertical");
 
         public override event Action<int> AbilityUsed;
+        public override event Action<ActionType> Action;
 
         [System.Serializable]
         private class Key
         {
             public LocalizationString InterfaceName;
+            public KeyCode KeyCode;
+        }
+
+        [System.Serializable]
+        private class ActionKey
+        {
+            public ActionType ActionType;
             public KeyCode KeyCode;
         }
 
@@ -36,6 +45,14 @@ namespace PlayerInput
 
         public override void Tick()
         {
+            for (int i = 0; i < _actions.Length; i++)
+            {
+                if (Input.GetKeyDown(_actions[i].KeyCode))
+                {
+                    Action?.Invoke(_actions[i].ActionType);
+                }
+            }
+
             for (int i = 0; i < _abilitiesKeys.Length; i++)
             {
                 if (Input.GetKeyDown(_abilitiesKeys[i].KeyCode))

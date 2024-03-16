@@ -25,7 +25,7 @@ namespace PlayerAbilities
 
         public event Action<Ability, int> OnAbilitySelected;
 
-        InputProvider _inputProvider;
+        private InputProvider _inputProvider;
 
         private void Start()
         {
@@ -37,6 +37,11 @@ namespace PlayerAbilities
 
             _inputProvider = ServiceLocator.Get<InputProvider>();
             _inputProvider.AbilityUsed += OnTryUseAbility;
+        }
+
+        private void OnDestroy()
+        {
+            _inputProvider.AbilityUsed -= OnTryUseAbility;
         }
 
         private void OnTryUseAbility(int id)

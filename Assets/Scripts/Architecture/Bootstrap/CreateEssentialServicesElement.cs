@@ -9,7 +9,7 @@ namespace Architecture
 	{
 		public override void Init()
 		{
-			ServiceLocator.ClearAll();
+			ServiceLocator.ClearAll(this);
 			ServiceLocator.Register<GlobalDeathNotificator>(new GlobalDeathNotificator());
 		}
 	}

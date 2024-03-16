@@ -1,4 +1,6 @@
+using Core;
 using GameLogic;
+using PlayerInput;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,7 +37,16 @@ namespace PlayerAbilities
                 case State.Waiting:
                     if (CanUse(false))
                     {
-                        _startGrabDirection = (_cursorWorldPos - playerPos).normalized;
+                        if (Application.isMobilePlatform)
+                        {
+                            var prov = ServiceLocator.Get<InputProvider>();
+                            _startGrabDirection = new Vector2(prov.Horizontal, prov.Vertical).normalized;
+                        }
+                        else
+                        {
+                            _startGrabDirection = (_cursorWorldPos - playerPos).normalized;
+                        }
+
                         _currentPosition = playerPos;
                         ChangeState(State.Trying);
                     }

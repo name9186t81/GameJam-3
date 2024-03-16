@@ -41,6 +41,9 @@ namespace Core
 				Debug.Log("Creating resources folder...");
 			}
 
+			if (_infos == null)
+				return;
+
 			for(int i = 0, length = _infos.Length; i < length; ++i)
 			{
 				TileMapInfo map = _infos[i];

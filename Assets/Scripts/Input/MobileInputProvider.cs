@@ -16,6 +16,7 @@ namespace PlayerInput
         public override float Vertical => _joystick.Vertical;
 
         public override event Action<int> AbilityUsed;
+        public override event Action<ActionType> Action;
 
         public override void Init()
         {
@@ -30,6 +31,11 @@ namespace PlayerInput
             {
                 AbilityUsed?.Invoke(id);
             };
+        }
+
+        public void OnPauseButton()
+        {
+            Action?.Invoke(ActionType.Pause);
         }
 
         public override void Tick()

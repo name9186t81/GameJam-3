@@ -109,7 +109,7 @@ namespace PlayerAbilities
         {
             _currentState = newState;
             _lastStateChangeTime = Time.unscaledTime;
-            _jumpPointSelector.gameObject.SetActive(newState == State.Selecting);
+            _jumpPointSelector.gameObject.SetActive(newState == State.Selecting && !Application.isMobilePlatform);
             _jumpPointSelector.SetRadius(_player.Radius);
         }
 

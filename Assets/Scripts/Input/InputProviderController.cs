@@ -41,8 +41,15 @@ namespace PlayerInput
         public abstract float Vertical { get; }
 
         public abstract event Action<int> AbilityUsed;
+        public abstract event Action<ActionType> Action;
 
         public abstract void Init();
         public abstract void Tick();
+
+        [System.Serializable]
+        public enum ActionType
+        {
+            Pause
+        }
     }
 }

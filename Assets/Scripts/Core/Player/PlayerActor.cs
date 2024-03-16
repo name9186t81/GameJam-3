@@ -56,6 +56,8 @@ namespace GameLogic
         public event Action OnInit;
         public event Action<int, int> OnTeamNumberChange;
 
+        private Vector2 _lastActualDesiredMoveDirection;
+
         private void Awake()
         {
             Health = GetComponent<SlimeHealth>();
@@ -72,6 +74,9 @@ namespace GameLogic
         private void FixedUpdate()
         {
             var direction = (this as IActor).DesiredMoveDirection;
+
+            if(direction.magnitude > 0.5f)
+                _lastActualDesiredMoveDirection = direction;
 
             _body.AddForce(direction * (_moveForce + MathF.Min(_moveForceComboLimit, _moveForcePerCombo * ComboUI.ComboCount)) * Time.fixedDeltaTime);
         }
@@ -111,7 +116,7 @@ namespace GameLogic
             switch (action)
             {
                 case ControllerAction.Dash:
-                    _body.AddForceToAll(Controller.DesiredMoveDirection * _dashForce.Evaluate(_body.Size) * _dashForceMult, ForceMode2D.Impulse);
+                    _body.AddForceToAll(_lastActualDesiredMoveDirection.normalized * _dashForce.Evaluate(_body.Size) * _dashForceMult, ForceMode2D.Impulse);
                     break;
             }
         }

@@ -1,3 +1,4 @@
+using Architecture;
 using System;
 using System.Collections.Generic;
 
@@ -7,8 +8,11 @@ namespace Core
 	{
 		private static Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
-		public static void ClearAll() //еда сделай лучше
+		public static void ClearAll(CreateEssentialServicesElement creator)
         {
+			if(creator == null)
+				throw new ArgumentNullException(nameof(creator));
+
 			_services.Clear();
         }
 
