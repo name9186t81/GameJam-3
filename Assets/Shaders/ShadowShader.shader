@@ -7,6 +7,7 @@
         _ShadowColor("Shadow color", Color) = (0,0,0,0)
         _Angle("Angle", Float) = 0
         _Length("Length", Float) = 0
+        _Iterations("Iterations", Int) = 0
         _Strength("Strength", Float) = 0
     }
     SubShader
@@ -41,6 +42,7 @@
             float _Length;
             float _Strength;
             float4 _MainTex_ST;
+            int _Iterations;
 
             v2f vert (appdata v)
             {
@@ -52,26 +54,20 @@
 
             fixed4 frag(v2f i) : SV_Target
             {
-                fixed4 originalShadow = tex2D(_ShadowTex, i.uv);
-                originalShadow *= originalShadow.a;
-                fixed2 offset = (fixed2(sin(_Angle), cos(_Angle))) * _Length;
+                fixed shadow = 0;
+                fixed4 sampled = tex2D(_ShadowTex, i.uv);
 
-                fixed2 up = fixed2(0, -offset.x);
-                fixed2 down = fixed2(0, offset.x);
-                fixed2 right = fixed2(offset.y, 0);
-                fixed2 left = fixed2(-offset.y, 0);
+                fixed2 direction = (fixed2(cos(_Angle), sin(_Angle)));
+                fixed strengthDelta = _Length / _Iterations;
 
-                fixed4 triangleTest = tex2D(_ShadowTex, i.uv + up + offset);
-                fixed4 triangleTest2 = tex2D(_ShadowTex, i.uv + right);
-                triangleTest *= triangleTest.a;
-                triangleTest2 *= triangleTest2.a;
-                if (triangleTest.a && triangleTest2.a) return fixed4(1, 1, 1, 1);
-
-                fixed4 offsettedShadow = tex2D(_ShadowTex, i.uv + offset);
-                offsettedShadow *= offsettedShadow.a;
-
+                for (int j = 0; j < _Iterations; ++j) {
+                    fixed4 offsettedShadow = tex2D(_ShadowTex, i.uv + direction * strengthDelta * (j + 1));
+                    shadow = max(shadow, offsettedShadow.r * offsettedShadow.a);
+                }
+                
+                shadow = max(0, shadow - sampled.r * sampled.a);
                 fixed4 mapColor = tex2D(_MainTex, i.uv);
-                return max(originalShadow, max(offsettedShadow, triangleTest));
+                return lerp(mapColor, _ShadowColor, shadow * _Strength);
             }
             ENDCG
         }

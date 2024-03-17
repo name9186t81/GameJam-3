@@ -52,17 +52,14 @@ namespace Movement
 
 		private void UpdateForces()
 		{
-			List<IForce> forces = new List<IForce>();
-
 			for(int i = 0, length = _forces.Count; i < length; ++i)
 			{
-				if (_forces[i].State == ForceState.Running)
+				if (_forces[i].State == ForceState.Finished)
 				{
-					forces.Add(_forces[i]);
+					_forces.RemoveAt(i);
+					--i;
 				}
 			}
-
-			_forces = forces;
 		}
 
 		public void AddForce(IForce force)

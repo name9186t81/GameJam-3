@@ -4,8 +4,6 @@ using Health;
 
 using System.Collections.Generic;
 
-using UnityEngine;
-
 namespace AI
 {
 	public sealed class StrongestSelector : IEnemySelector
