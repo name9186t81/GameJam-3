@@ -74,7 +74,6 @@ namespace AI
 		{
 			if(_vision.EnemiesInRange != null && _vision.EnemiesInRange.Count > 0 && IsTargetNull)
 			{
-				Debug.Log(_selector.GetEnemy(_vision.EnemiesInRange) + " " + _selector + " " + _vision.EnemiesInRange.Count);
 				CurrentTarget = _selector.GetEnemy(_vision.EnemiesInRange);
 				if (CurrentTarget == null) return; //иногда селекторы могут просто не выдать никого(нет хп например ни у кого)
 
