@@ -62,7 +62,7 @@ namespace GameLogic
 
             _startRadius = _collider.radius;
 
-            Value = new Motor(_baseMovementSpeed, _baseRotationSpeed, this, Actor);
+            Value = new Motor(_baseMovementSpeed * Time.fixedDeltaTime, _baseRotationSpeed, this, Actor);
             /*
              * R.I.P. Костыль
              * 06.03.2024 - 08.03.2024

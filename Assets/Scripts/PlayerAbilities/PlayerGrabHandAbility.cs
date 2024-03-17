@@ -22,11 +22,12 @@ namespace PlayerAbilities
         private State _currentState = State.Waiting;
         private Vector2 _startGrabDirection;
         private Vector2 _currentPosition;
-        private float _lastStateChangeTime = 0;
+        private float _lastStateChangeTime = -1000;
         private Vector3[] _lrPoses = new Vector3[2];
         private Collider2D _grabbedCollider;
         private Vector2 _grabbedLocalPoint;
         private List<Object> _addedComponents = new List<Object>();
+        private Vector3 _smoothDampVel;
 
         private protected override void update()
         {
@@ -49,10 +50,13 @@ namespace PlayerAbilities
 
                         _currentPosition = playerPos;
                         ChangeState(State.Trying);
+                        _lineRenderer.gameObject.SetActive(true);
                     }
                     else
                     {
-                        _currentPosition = Vector3.Lerp(_currentPosition, playerPos, Mathf.Clamp01((Time.time - _lastStateChangeTime) / _returnBackTime));
+                        var time = Mathf.Clamp01((Time.time - _lastStateChangeTime) / _returnBackTime);
+                        _lineRenderer.gameObject.SetActive(time != 1);
+                        _currentPosition = Vector3.SmoothDamp(_currentPosition, playerPos, ref _smoothDampVel, (1 - time) * _returnBackTime);
                     }
                     break;
 
