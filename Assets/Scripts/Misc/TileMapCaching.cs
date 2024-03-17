@@ -33,7 +33,6 @@ namespace Core
 		{
 			OnPreprocessBuild(null); //удалить
 		}
-
 		public void OnPreprocessBuild(BuildReport report)
 		{
 			if (!Directory.Exists(DataPath))
@@ -46,7 +45,7 @@ namespace Core
 				return;
 
 			_shadowSprites = new HashSet<Sprite>(_shadowCasters.Length);
-			for(int i = 0; i < _shadowCasters.Length;i++)
+			for (int i = 0, length = _shadowCasters.Length; i < length; ++i)
 			{
 				_shadowSprites.Add(_shadowCasters[i]);
 			}
@@ -59,6 +58,7 @@ namespace Core
 			}
 		}
 
+		//размечтался иди свой редактор писать
 		[ContextMenu("Force Bake")]
 		private void ForceBake()
 		{
@@ -93,7 +93,7 @@ namespace Core
 				writer.Write(time);
 			}
 
-			var texture = GetTextureFromTileMap(info.Map, out var shadowsMap);
+			var texture = GetTextureFromTileMap(info.Map, out var shadowsMap, info.ShadowMap);
 			var bytes = texture.EncodeToPNG();
 
 			var shadowTextureBytes = shadowsMap.EncodeToPNG();
@@ -142,18 +142,22 @@ namespace Core
 						Vector2Int drawStart = new Vector2Int(x - map.cellBounds.xMin, y - map.cellBounds.yMin);
 
 						var tile = map.GetTile<TileBase>(pos);
-						var shadowTile = shadowTileMap?.GetTile<TileBase>(pos);
+						var shadowTile = shadowTileMap == null ? null : shadowTileMap.GetTile<TileBase>(pos);
 
 						bool hasShadow = shadowTile != null;
 						var emptyTile = tile == null;
 
 						if (!emptyTile)
+						{
 							tile.GetTileData(pos, map, ref data);
+						}
 						if (hasShadow)
+						{
 							shadowTile.GetTileData(pos, shadowTileMap, ref shadowData);
+						}
 
 						var rect = data.sprite.textureRect;
-						bool isShadow = _shadowSprites.Contains(data.sprite);
+						bool isShadow = hasShadow && _shadowSprites.Contains(shadowData.sprite);
 
 						for (int x1 = 0; x1 < _pixelsPerTile; x1++)
 						{

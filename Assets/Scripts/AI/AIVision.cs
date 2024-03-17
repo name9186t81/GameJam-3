@@ -53,7 +53,7 @@ namespace AI
 		{
 			//return (!_haveCollider && !Physics2D.Linecast(_controller.Position, point, _wallsMask)) ||
 			//		(_haveCollider && Physics2D.LinecastAll(_controller.Position, point, _wallsMask).Length == 1);
-			return !Physics2D.Linecast(_controller.Position, point, _blockMask);
+			return point.DistanceLess(_controller.Position, _range) && !Physics2D.Linecast(_controller.Position, point, _blockMask);
 		}
 
 		public bool CanSeeTarget(IActor target)

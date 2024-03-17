@@ -12,12 +12,14 @@ namespace AI
 	{
 		[SerializeField] private UtilityMachineBuilder _utilities;
 		[SerializeField] [Range(0,1)] private float _fireThresholdMult = 0.5f;
+		[SerializeField] private EnemySelectorFactory.Type _selectorType;
 		private IActor _controlled;
 		private AIVision _vision;
 		private Vector2 _moveDirection;
 		private Vector2 _rotation;
 		private IWeapon _weapon;
 		private UtilityMachine _utilityMachine;
+		private IEnemySelector _selector;
 
 		public IActor Owner;//не ну конечно же это нарушение солид и инкапсуляции а с другой стороны мне лень память писать для ии
 
@@ -60,6 +62,7 @@ namespace AI
 			_vision.OnScan += Scanned;
 			_vision.Init(this);
 			_utilityMachine.Init(this);
+			_selector = EnemySelectorFactory.GetSelector(Owner, _selectorType);
 		}
 
 		private void Update()
@@ -71,8 +74,10 @@ namespace AI
 		{
 			if(_vision.EnemiesInRange != null && _vision.EnemiesInRange.Count > 0 && IsTargetNull)
 			{
-				//TODO: выбирать рандомного врага каждый раз когда текущего врага нет в листе доступных
-				CurrentTarget = _vision.EnemiesInRange[0];
+				Debug.Log(_selector.GetEnemy(_vision.EnemiesInRange) + " " + _selector + " " + _vision.EnemiesInRange.Count);
+				CurrentTarget = _selector.GetEnemy(_vision.EnemiesInRange);
+				if (CurrentTarget == null) return; //иногда селекторы могут просто не выдать никого(нет хп например ни у кого)
+
 				TargetTransform = (CurrentTarget as MonoBehaviour).transform;
 				TargetHealth = (CurrentTarget is IProvider<IHealth> prov) ? prov
 					.Value : null;
@@ -80,6 +85,13 @@ namespace AI
 				{
 					TargetHealth.OnDeath += TargetDied;
 				}
+			}
+
+			if(!IsTargetNull && !_vision.CanSeeTarget(CurrentTarget))
+			{
+				TargetHealth.OnDeath -= TargetDied;
+				CurrentTarget = null;
+				TargetTransform = null;
 			}
 		}
 

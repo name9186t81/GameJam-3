@@ -10,8 +10,9 @@ using PlayerAbilities;
 namespace GameLogic
 {
     [RequireComponent(typeof(SlimeHealth))]
-    public class PlayerActor : MonoBehaviour, IActor, IMovable, ITeamProvider //ITeamProvider пытается перебрасывать все с IHealth и нужен он тут потому что без скрипта одновременно с актором и провайдером ии еды не будет работать
-    {
+    public class PlayerActor : MonoBehaviour, IActor, IMovable, ITeamProvider, //ITeamProvider пытается перебрасывать все с IHealth и нужен он тут потому что без скрипта одновременно с актором и провайдером ии еды не будет работать
+    IProvider<IHealth> //todo: релизовать другие интерфейсы по типу этого
+        {
         public SlimeHealth Health { get; private set; }
         [SerializeField] private BoneJointsConnector _body;
         [SerializeField] private SpriteRenderer _bodySprite;
@@ -50,6 +51,8 @@ namespace GameLogic
         public int TeamNumber => Health.TeamNumber;
 
 		public string Name => "Player";
+
+		public IHealth Value => Health;
 
 		public event Action<ControllerAction> OnAction;
         public event Action OnInit;
