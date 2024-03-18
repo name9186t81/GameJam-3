@@ -77,7 +77,7 @@ Shader "Unlit/TileMapShadingGlobal"
 
                     shadow = max(0, shadow - sampled.r * sampled.a);
                     fixed4 mapColor = tex2D(_MapTexture, i.uv);
-                    fixed4 color = lerp(lerp(mapColor, _ShadowColor, shadow * _Strength), _MapColor, (1 - shadow) * _Affinity);
+                    fixed4 color = lerp(_MapColor, _ShadowColor, shadow);
                     color.a = lerp(_Affinity, _Strength, shadow);
                     return color;
                 }
