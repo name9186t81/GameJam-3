@@ -15,17 +15,29 @@ namespace PlayerInput
 
         private InputProvider CurrentProvider;
 
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern bool IsMobile();
+#endif
+
         private void Awake()
         {
             CurrentProvider = _defaultProvider;
 
-            //if(Application.isMobilePlatform)
-#if UNITY_ANDROID
-            CurrentProvider = _mobileProvider;
+            var isMobile = false;
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+            isMobile = IsMobile();
 #endif
 
-            CurrentProvider.Init();
+            if(Application.isMobilePlatform)
+                isMobile = true;
 
+            if(isMobile)
+                CurrentProvider = _mobileProvider;
+
+            CurrentProvider.Init();
             ServiceLocator.Register(CurrentProvider);
         }
 
