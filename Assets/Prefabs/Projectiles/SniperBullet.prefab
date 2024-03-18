@@ -180,4 +180,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectile: {fileID: 9022747274414880240}
-  _renderer: {fileID: 0}
+  _renderer: {fileID: 3922054784743765458}

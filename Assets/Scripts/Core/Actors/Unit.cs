@@ -113,7 +113,10 @@ namespace Core
 			var startPos = Position;
 
 			//var offset = UnityEngine.Random.insideUnitCircle * args.Radius * 0.5f;
-			var offset = Vector2.ClampMagnitude((Position - args.Sender.Position) / args.Radius, 1) * args.Radius * 0.5f;
+			Vector2 offset = Vector2.zero;
+
+			if(args.Sender != null)
+				offset = Vector2.ClampMagnitude((Position - args.Sender.Position) / args.Radius, 1) * args.Radius * 0.5f;
 
 			while (Time.time - startTime < _deathEffectTime && args.Sender != null)
             {
