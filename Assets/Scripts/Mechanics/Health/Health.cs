@@ -62,7 +62,6 @@ namespace Health
 
 			if (_currentHealth <= 0)
 			{
-				Debug.Log(_owner);
 				OnDeath?.Invoke(args);
 				if (ServiceLocator.TryGet<GlobalDeathNotificator>(out var notif))
 				{

@@ -33,9 +33,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Angle: -3.79
+    - _Angle: 125.41
+    - _Iterations: 8
     - _Length: 0.06
-    - _Strength: 0
+    - _Strength: 0.69
     m_Colors:
-    - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ShadowColor: {r: 0.077650696, g: 0, b: 0.15723258, a: 1}
   m_BuildTextureStacks: []

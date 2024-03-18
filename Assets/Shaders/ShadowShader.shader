@@ -5,8 +5,10 @@
         _MainTex ("Texture", 2D) = "white" {}
         _ShadowTex("Shadow texture", 2D) = "white" {}
         _ShadowColor("Shadow color", Color) = (0,0,0,0)
+        _MapColor("Map color", Color) = (0,0,0,0)
         _Angle("Angle", Float) = 0
         _Length("Length", Float) = 0
+        _Affinity("Map affinity strength", Float) = 0
         _Iterations("Iterations", Int) = 0
         _Strength("Strength", Float) = 0
     }
@@ -38,8 +40,10 @@
             sampler2D _MainTex;
             sampler2D _ShadowTex;
             float4 _ShadowColor;
+            float4 _MapColor;
             float _Angle;
             float _Length;
+            float _Affinity;
             float _Strength;
             float4 _MainTex_ST;
             int _Iterations;
@@ -67,7 +71,7 @@
                 
                 shadow = max(0, shadow - sampled.r * sampled.a);
                 fixed4 mapColor = tex2D(_MainTex, i.uv);
-                return lerp(mapColor, _ShadowColor, shadow * _Strength);
+                return lerp(lerp(mapColor, _ShadowColor, shadow * _Strength), _MapColor, (1 - shadow) * _Affinity);
             }
             ENDCG
         }
