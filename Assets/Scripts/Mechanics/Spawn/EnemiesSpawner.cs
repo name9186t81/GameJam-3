@@ -28,14 +28,14 @@ namespace Spawning
 		[SerializeField] private float _spawnDelay;
 		[SerializeField] private SpawnPoint[] _spawnPoints;
 		[SerializeField] private SpawnInfo[] _spawns;
-		private PlayerActor _playerActor;
+		private SlimeActior _playerActor;
 		private float _elapsed = float.MaxValue;
 		private float _totalTime;
 		private int _totalSpawned;
 
 		private void Start()
 		{
-			if ((_playerActor = FindObjectOfType<PlayerActor>()) == null)
+			if ((_playerActor = FindObjectOfType<SlimeActior>()) == null)
 			{
 				Debug.LogError("Cannot find player actor");
 				Destroy(gameObject);

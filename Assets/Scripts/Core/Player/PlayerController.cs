@@ -4,9 +4,11 @@ using System;
 using GameLogic;
 using PlayerInput;
 
-public class PlayerInputController : MonoBehaviour, IController
+public class PlayerController : MonoBehaviour, IController
 {
-    [SerializeField] private PlayerActor _player;
+    
+
+    private IActor _actor;
     public Vector2 DesiredMoveDirection { get; private set; }
     public Vector2 DesiredRotation => Vector2.up;
 
@@ -18,7 +20,8 @@ public class PlayerInputController : MonoBehaviour, IController
 
     private void Awake()
     {
-        _player.TryChangeController(this);
+        _actor = GetComponent<IActor>();
+        _actor.TryChangeController(this);
     }
 
     void Start()

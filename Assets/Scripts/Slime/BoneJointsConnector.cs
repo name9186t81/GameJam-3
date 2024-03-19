@@ -24,6 +24,7 @@ namespace GameLogic
         [SerializeField] private float _minSize = 1;
         [SerializeField] private float _maxSize = 15;
         [SerializeField] private float _deathScaleThreshold = 0.1f;
+        [SerializeField] private float _startBodySize = 0;
         private float _deathSizeThreshold;
 
         [SerializeField] private CircleCollider2D _circleColliderToMove;
@@ -198,6 +199,8 @@ namespace GameLogic
                     Physics2D.IgnoreCollision(_bones[i].collider, _bones[j].collider, true);
                 }
             }
+
+            Size = _startBodySize;
         }
 
         private void Update()

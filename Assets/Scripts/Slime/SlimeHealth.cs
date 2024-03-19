@@ -8,7 +8,7 @@ using Health;
 
 namespace GameLogic
 {
-    public class SlimeHealth : MonoBehaviour, IProvider<Motor>, IMovable, IHealth, IProvider<IHealth>, IDamageReactable, ITeamProvider
+    public class SlimeHealth : MonoBehaviour, IHealth, IProvider<IHealth>, IDamageReactable, ITeamProvider
     {
         [SerializeField] private BoneJointsConnector _body;
         [Header("Health and damage")]
@@ -22,18 +22,8 @@ namespace GameLogic
         [SerializeField] private AnimationCurve _scoreMultPerCombo;
         [SerializeField] private int _startTeamNumber;
         [SerializeField] private CircleCollider2D _collider;
-        [SerializeField] private float _slowdownFactor = 75;
-
-        [SerializeField] private bool _useMotor = false;
-        [SerializeField] private float _baseMovementSpeed;
-        [SerializeField] private float _baseRotationSpeed;
 
         IHealth IProvider<IHealth>.Value => this;
-        public Motor Value { get; private set; }
-
-        public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
-        public Vector2 Velocity { get { return _body.Velocity; } set { _body.AddForce(value); } } //ага да вот текущая скорость да да конечно скорость будет как ты хочешь мотор
-        public float Rotation { get => 0; set { } }
 
         public event Action<int, int> OnTeamNumberChange;
         public event Action<DamageArgs> OnDeath;
@@ -50,6 +40,9 @@ namespace GameLogic
 
         public HealthFlags Flags { get; set; } = HealthFlags.FriendlyFireDisabled;
         public event Action<float> OnAddScore;
+        public event SlimeCollision OnSlimeCollision;
+
+        public delegate void SlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint);
 
         private float _startRadius = 1;
         private float _lastDamageHitTime;
@@ -62,54 +55,23 @@ namespace GameLogic
 
             _startRadius = _collider.radius;
 
-            Value = new Motor(_baseMovementSpeed * Time.fixedDeltaTime, _baseRotationSpeed, this, Actor);
-            /*
-             * R.I.P. Костыль
-             * 06.03.2024 - 08.03.2024
-               _        _
-              ( `-.__.-' )
-               `-.    .-'
-                  \  /
-                   ||
-                   ||
-                  //\\
-                 //  \\
-                ||    ||
-                ||____||
-                ||====||
-                 \\  //
-                  \\//
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   ||
-                   []
-            */
-
             TryChangeTeamNumber(_startTeamNumber);
 
             OnInit?.Invoke();
         }
 
-        private void FixedUpdate()
+        private void onSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)
         {
-            _body.AddForceToAll(-_body.Velocity * _slowdownFactor * Time.fixedDeltaTime);
-
-            if (_useMotor)
-                Value.Update(Time.deltaTime);
+            OnSlimeCollision?.Invoke(slime, body, collisionPoint);
         }
 
         private void OnBodyCollisionEnter(Collision2D collision)
         {
             var raycast = collision.collider.transform.root;
 
-            if(raycast != transform && raycast.TryGetComponent(out PlayerActor player))
+            if(raycast != transform && raycast.TryGetComponent(out SlimeHealth slime))
             {
-                player.OnSlimeCollision(this, _body, collision.contacts[0].point);
+                slime.onSlimeCollision(this, _body, collision.contacts[0].point);
             }
             else if (raycast.TryGetComponent(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
             {

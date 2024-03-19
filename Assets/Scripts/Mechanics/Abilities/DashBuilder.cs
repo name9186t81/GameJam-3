@@ -20,6 +20,7 @@ namespace Abilities
 
 		private void OnValidate()
 		{
+			//люди до того как придумали атрибут Min такие типа:
 			_dashLength = Mathf.Max(0f, _dashLength);
 			_dashDuration = Mathf.Max(0f, _dashDuration);
 		}

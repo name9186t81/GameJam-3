@@ -6,20 +6,20 @@ using UnityEngine.UI;
 
 public class ComboUI : MonoBehaviour
 {
+    [SerializeField] private InGameUI _inGameUI;
     [SerializeField] private Animation _comboAnim;
     [SerializeField] private float _comboAnimPeakTime = 0.05f;
     [SerializeField] private Text _comboCountText;
     [SerializeField] private Text _comboScoreText;
-    [SerializeField] private float _comboTime;
     [SerializeField] private AnimationCurve _alphaOverTime;
     [SerializeField] private float _scoreSmoothTime = 0.15f;
     [SerializeField] private float _comboSmoothTime = 0.15f;
 
-    public static int ComboCount { get; private set; }
-    public float NewScoreCount { get; private set; }
-    public event Action<int> OnComboCountChanged;
+    private ComboCounter _currentCounter => _inGameUI.CurrentPlayer.ComboCounter;
 
-    private float _lastScoreTime = -100;
+    public static int ComboCount { get; private set; } //TODO: delete
+    public float NewScoreCount { get; private set; }
+
     private FloatSmoothDamp _scoreSmooth;
     private FloatSmoothDamp _comboSmooth;
 
@@ -27,16 +27,11 @@ public class ComboUI : MonoBehaviour
     {
         _scoreSmooth = new FloatSmoothDamp(_scoreSmoothTime);
         _comboSmooth = new FloatSmoothDamp(_comboSmoothTime);
-        ComboCount = 0;
     }
 
     public void OnCombo(float score)
     {
-        _lastScoreTime = Time.time;
-        ComboCount++;
         NewScoreCount += score;
-
-        OnComboCountChanged?.Invoke(ComboCount);
 
         if (!_comboAnim.isPlaying)
             _comboAnim.Play();
@@ -46,16 +41,15 @@ public class ComboUI : MonoBehaviour
 
     private void Update()
     {
-        var elapsedTime = (Time.time - _lastScoreTime) / _comboTime;
-        var alpha = _alphaOverTime.Evaluate(elapsedTime);
+        ComboCount = _currentCounter.ComboCount;
+
+        var progress = _currentCounter.ÑountResetProgress;
+        var alpha = _alphaOverTime.Evaluate(progress);
         _comboScoreText.color = new Color(_comboScoreText.color.r, _comboScoreText.color.g, _comboScoreText.color.b, alpha);
 
-        if(elapsedTime > 1 && ComboCount != 0)
+        if(progress >= 1)
         {
-            ComboCount = 0;
             NewScoreCount = 0;
-
-            OnComboCountChanged?.Invoke(ComboCount);
         }
 
         _comboCountText.text = Mathf.Floor(Mathf.Max(ComboCount, _comboSmooth.Update(ComboCount))).ToString() + "X";

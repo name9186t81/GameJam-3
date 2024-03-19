@@ -6,6 +6,7 @@ using UnityEngine;
 using PlayerInput;
 using Core;
 using UnityEngine.EventSystems;
+using Abilities;
 
 namespace PlayerAbilities
 {
@@ -35,7 +36,8 @@ namespace PlayerAbilities
 
             for (int i = 0; i < _selectedAbilities.Count; i++)
             {
-                _selectedAbilities[i].OnSelectedBy(null, _player, _inputProvider.UsingMobileInput);
+                _selectedAbilities[i]._usingMobileInput = _inputProvider.UsingMobileInput;
+                _selectedAbilities[i].Init(_player);
                 OnAbilitySelected?.Invoke(_selectedAbilities[i], i);
             }
         }
@@ -75,7 +77,8 @@ namespace PlayerAbilities
 
             for (int i = 0; i < _selectedAbilities.Count; i++)
             {
-                _selectedAbilities[i].Tick(_reloadSpeedMult);
+                _selectedAbilities[i].ReloadSpeedMultipler = _reloadSpeedMult;
+                _selectedAbilities[i].Update(Time.deltaTime);
             }
         }
 
@@ -100,25 +103,26 @@ namespace PlayerAbilities
                     //да, говно, но лучше не придумал
                     if (data.Equals(LeftAbility.UIData))
                     {
-                        LeftAbility.OnSelectedBy(this, player, provider.UsingMobileInput);
+                        LeftAbility._usingMobileInput = provider.UsingMobileInput;
+                        LeftAbility.Init(player);
                         OnAbilitySelected?.Invoke(LeftAbility);
                     }
                     else if (data.Equals(RightAbility.UIData))
                     {
-                        RightAbility.OnSelectedBy(this, player, provider.UsingMobileInput);
+                        RightAbility._usingMobileInput = provider.UsingMobileInput;
+                        RightAbility.Init(player);
                         OnAbilitySelected?.Invoke(RightAbility);
                     }
                 });
             }
         }
 
-        public abstract class Ability : MonoBehaviour
+        public abstract class Ability : MonoBehaviour, IAbility
         {
+            [SerializeField] private AbilityType AbilityType;
             public AbilitySelectPanel.AbilityUIData UIData;
-            private protected PlayerActor _player { get; private set; }
-            private protected bool _selected { get; private set; } = false;
+            private protected IActor _actor { get; private set; }
             private protected PointerEventData _lastPointerEventData { get; private set; } = null;
-            private protected bool _usingMobileInput = false;
             private protected Vector2 _cursorWorldPos => Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             [SerializeField] private float _reloadTime = 0.1f;
@@ -126,6 +130,17 @@ namespace PlayerAbilities
 
             private float _lastTryUseTime = -1000;
             private const float _useThresholdSeconds = 0.1f;
+
+            public event Action OnActivate;
+            public event Action OnDeactivate;
+
+            [HideInInspector] public float ReloadSpeedMultipler = 1;
+            [HideInInspector] public bool _usingMobileInput = false; //TODO: удалить
+
+            public IAIAbilityInstruction AIAbilityInstruction => null;
+            public float Readiness => Mathf.Clamp01(_timerReload / _reloadTime);
+
+            AbilityType IAbility.Type => AbilityType;
 
             public void OnTryUse(PointerEventData data)
             {
@@ -135,9 +150,6 @@ namespace PlayerAbilities
 
             private protected bool CanUse(bool autoReset = true)
             {
-                if (!_selected)
-                    return false;
-
                 if (Time.unscaledTime - _lastTryUseTime > _useThresholdSeconds)
                     return false;
 
@@ -153,26 +165,26 @@ namespace PlayerAbilities
                 _timerReload = 0;
             }
 
-            public float GetReloadProgress()
+            public void Init(IActor actor)
             {
-                return Mathf.Clamp01(_timerReload / _reloadTime);
-            }
-
-            public void OnSelectedBy(AbilitySelection selection, PlayerActor player, bool usingMobileInput)
-            {
-                _selected = true;
-                _player = player;
-                _usingMobileInput = usingMobileInput;
+                _actor = actor;
                 _timerReload = _reloadTime; //абилка будет заряжена сразу при получении, можно закомментить тогда не будет
             }
 
-            public void Tick(float reloadMult)
+            public void Update(float dt)
             {
-                _timerReload += Time.deltaTime * reloadMult;
+                _timerReload += dt * ReloadSpeedMultipler;
                 update();
             }
 
             private protected abstract void update();
+
+            public bool CanUse()
+            {
+                return CanUse(false);
+            }
+
+            public abstract void Use();
         }
     }
 }

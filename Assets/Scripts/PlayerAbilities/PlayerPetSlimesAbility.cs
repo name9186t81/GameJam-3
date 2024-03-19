@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
+    /*
     public class PlayerPetSlimesAbility : AbilitiesContainer.Ability
     {
         [SerializeField] private AIController _petSlimePrefab;
@@ -58,28 +59,28 @@ namespace PlayerAbilities
         {
             if(CanUse())
             {
-                var radius = _player.Radius;
+                var radius = _actor.Radius;
 
-                var _ScalePulledFromPlayer = _player.BonesConnector.Scale * _pullScaleFromPlayer;
+                var _ScalePulledFromPlayer = _actor.BonesConnector.Scale * _pullScaleFromPlayer;
 
-                var ScalePerSlime = (_player.BonesConnector.Scale * _getScaleFromPlayer + _ScalePulledFromPlayer) / _slimesCount;
+                var ScalePerSlime = (_actor.BonesConnector.Scale * _getScaleFromPlayer + _ScalePulledFromPlayer) / _slimesCount;
 
-                _player.BonesConnector.Scale -= _ScalePulledFromPlayer;
+                _actor.BonesConnector.Scale -= _ScalePulledFromPlayer;
 
                 for (int i = 0; i < _slimesCount; i++)
                 {
                     var angle = i * (Mathf.PI * 2 / _slimesCount);
                     var vector = Vector2Extensions.VectorFromAngle(angle);
 
-                    var slime = Instantiate(_petSlimePrefab, _player.Position, Quaternion.identity, null);
+                    var slime = Instantiate(_petSlimePrefab, _actor.Position, Quaternion.identity, null);
                     slime.gameObject.SetActive(true);
                     var body = slime.GetComponent<BoneJointsConnector>();
                     body.Scale = ScalePerSlime;
                     //slime.GetComponent<IMovable>().Position = pos;
-                    slime.Owner = _player;
+                    slime.Owner = _actor;
                     var health = slime.GetComponent<SlimeHealth>();
 
-                    var pos = _player.Position + vector * ((_player.Radius + health.Radius) * (1 + _radiusSpawnOffset));
+                    var pos = _actor.Position + vector * ((_actor.Radius + health.Radius) * (1 + _radiusSpawnOffset));
 
                     body.transform.position = pos;
 
@@ -90,4 +91,5 @@ namespace PlayerAbilities
 
         //public static bool TryColl
     }
+    */
 }

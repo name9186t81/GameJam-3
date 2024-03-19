@@ -11,7 +11,7 @@ using Core;
 
 public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 {
-    [SerializeField] private PlayerActor _player;
+    [SerializeField] private SlimeActior _player;
 
     [Header("Main UI")]
     [SerializeField] private Text _playerScore;
@@ -38,6 +38,8 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     private FloatSmoothDamp _scoreSmooth;
 
     public float TimeScale => _pause ? 0 : 1;
+
+    public SlimeActior CurrentPlayer => _player;
 
     private float _maxScore = 0;
 

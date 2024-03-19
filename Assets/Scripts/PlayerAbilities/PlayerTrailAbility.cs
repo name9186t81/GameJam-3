@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
+    /*
     public class PlayerTrailAbility : AbilitiesContainer.Ability
     {
         [SerializeField] private float _workingTime;
@@ -28,7 +29,7 @@ namespace PlayerAbilities
                 if (CanUse(false))
                 {
                     _working = true;
-                    _trailRenderer.transform.position = _player.BonesConnector.TransformPosition;
+                    _trailRenderer.transform.position = _actor.BonesConnector.TransformPosition;
                     _trailRenderer.Clear();
                     _lastTriggerSpawnPoint = Vector2.one * float.MaxValue;
                     _startTime = Time.time;
@@ -38,8 +39,8 @@ namespace PlayerAbilities
             {
                 if (Time.time - _startTime < _workingTime)
                 {
-                    var radius = _player.Radius;
-                    var pos = _player.BonesConnector.TransformPosition;
+                    var radius = _actor.Radius;
+                    var pos = _actor.BonesConnector.TransformPosition;
                     _trailRenderer.transform.position = pos;
                     _trailRenderer.widthMultiplier = radius * 2;
 
@@ -60,7 +61,7 @@ namespace PlayerAbilities
         {
             _lastTriggerSpawnPoint = pos;
             var trig = Instantiate(_triggerPrefab, pos, Quaternion.identity, null);
-            trig.Init(radius, _triggerDestroyTime, _player.TeamNumber, _player.Health);
+            trig.Init(radius, _triggerDestroyTime, _actor.TeamNumber, _actor.Health);
         }
-    }
+    }*/
 }

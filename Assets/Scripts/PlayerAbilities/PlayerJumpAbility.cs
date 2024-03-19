@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
+    /*
     public class PlayerJumpAbility : AbilitiesContainer.Ability, TimeScaleController.ITimeScaleMultiplyer
     {
         [SerializeField] private float _placeSelectTime = 0.5f;
@@ -69,8 +70,8 @@ namespace PlayerAbilities
                         if (_jumpPointSelector.CanJump)
                         {
                             ChangeState(State.Jumping);
-                            _player.SetFlyingState(true);
-                            _startPosition = _player.Position;
+                            _actor.SetFlyingState(true);
+                            _startPosition = _actor.Position;
                             _targetPosition = _jumpPointSelector.transform.position;
                         }
                         else
@@ -85,14 +86,14 @@ namespace PlayerAbilities
                     if(timeSinceStart >= _jumpTime)
                     {
                         DoDamageInRadius();
-                        _player.SetFlyingState(false);
+                        _actor.SetFlyingState(false);
                         ChangeState(State.Waiting);
                         ResetTimer();
                     }
                     else
                     {
-                        _player.SetFlyingSizeMult(_slimeSizeCurve.Evaluate(timeSinceStart / _jumpTime));
-                        _player.Position = Vector3.Lerp(_startPosition, _targetPosition, _jumpProgressCurve.Evaluate(timeSinceStart / _jumpTime));
+                        _actor.SetFlyingSizeMult(_slimeSizeCurve.Evaluate(timeSinceStart / _jumpTime));
+                        _actor.Position = Vector3.Lerp(_startPosition, _targetPosition, _jumpProgressCurve.Evaluate(timeSinceStart / _jumpTime));
                     }
                     break;
             }
@@ -103,8 +104,8 @@ namespace PlayerAbilities
 
         private void DoDamageInRadius()
         {
-            var damageRadius = _player.Radius;
-            var position = _player.Position;
+            var damageRadius = _actor.Radius;
+            var position = _actor.Position;
 
             var colliders = Physics2D.OverlapCircleAll(position, damageRadius);
 
@@ -122,7 +123,7 @@ namespace PlayerAbilities
             _currentState = newState;
             _lastStateChangeTime = Time.unscaledTime;
             _jumpPointSelector.gameObject.SetActive(newState == State.Selecting);
-            _jumpPointSelector.SetRadius(_player.Radius * _overlapRadiusMult);
+            _jumpPointSelector.SetRadius(_actor.Radius * _overlapRadiusMult);
             _jumpPointSelector.PositionProvider = _usePointerEvents ? EventDataPositionProvider : MousePositionProvider;
         }
 
@@ -145,5 +146,5 @@ namespace PlayerAbilities
             Selecting,
             Jumping
         }
-    }
+    }*/
 }

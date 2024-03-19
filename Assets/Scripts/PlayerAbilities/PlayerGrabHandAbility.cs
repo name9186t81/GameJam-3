@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
+    /*
     public class PlayerGrabHandAbility : AbilitiesContainer.Ability
     {
         [SerializeField] private float _maxGrabDist;
@@ -18,7 +19,7 @@ namespace PlayerAbilities
         [SerializeField] private float _returnBackTime = 3f;
         [SerializeField] private BoneJointsConnector.SpringJointSettings _springJointSettings;
 
-        private float _currentWidth => _player.Scale * _widthOverScale;
+        private float _currentWidth => _actor.Scale * _widthOverScale;
         private State _currentState = State.Waiting;
         private Vector2 _startGrabDirection;
         private Vector2 _currentPosition;
@@ -31,7 +32,7 @@ namespace PlayerAbilities
 
         private protected override void update()
         {
-            var playerPos = _player.Position;
+            var playerPos = _actor.Position;
 
             switch (_currentState)
             {
@@ -62,9 +63,9 @@ namespace PlayerAbilities
 
                 case State.Trying:
 
-                    _currentPosition += _startGrabDirection * _grabSpeed * Time.deltaTime * _player.Scale;
+                    _currentPosition += _startGrabDirection * _grabSpeed * Time.deltaTime * _actor.Scale;
 
-                    if (Vector2.Distance(_currentPosition, playerPos) > _maxGrabDist * _player.Scale)
+                    if (Vector2.Distance(_currentPosition, playerPos) > _maxGrabDist * _actor.Scale)
                     {
                         ChangeState(State.Waiting);
                     }
@@ -73,7 +74,7 @@ namespace PlayerAbilities
 
                     for (int i = 0; i < overlap.Length; i++)
                     {
-                        if (overlap[i].transform.root != _player.transform.root)
+                        if (overlap[i].transform.root != _actor.transform.root)
                         {
                             _grabbedCollider = overlap[i].collider;
                             ChangeState(State.Grabbed);
@@ -89,7 +90,7 @@ namespace PlayerAbilities
 
                             _grabbedLocalPoint = _grabbedCollider.transform.InverseTransformPoint(overlap[i].point);
 
-                            _addedComponents.Add(_player.BonesConnector.GrabObject(body, _startGrabDirection, _springJointSettings, _grabbedLocalPoint));
+                            _addedComponents.Add(_actor.BonesConnector.GrabObject(body, _startGrabDirection, _springJointSettings, _grabbedLocalPoint));
                             if (bodyAdded)
                                 _addedComponents.Add(body);
 
@@ -139,5 +140,5 @@ namespace PlayerAbilities
             Trying,
             Grabbed
         }
-    }
+    }*/
 }

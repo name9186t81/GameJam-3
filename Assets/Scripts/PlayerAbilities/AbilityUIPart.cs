@@ -45,7 +45,7 @@ namespace PlayerAbilities
 
         private void Update()
         {
-            var reload = _ability.GetReloadProgress();
+            var reload = _ability.Readiness;
             var state = _smoothState.Update(reload >= 1 ? 1 : 0);
             _loadingIndicator.color = new Color(_loadingIndicator.color.r, _loadingIndicator.color.g, _loadingIndicator.color.b, 1 - state);
             _loadingIndicator.fillAmount = reload;

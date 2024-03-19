@@ -18,25 +18,16 @@ namespace GameLogic
         [SerializeField] private SpriteRenderer _bodySprite;
         [SerializeField] private int _flyingSpriteSortingLayer;
 
-        [SerializeField] private CameraSizeAbstraction _camera;
-        [SerializeField] private AnimationCurve _cameraSize;
-        [SerializeField] private float _cameraSizeMult = 5;
-        [SerializeField] private float _cameraSizeSmoothTime = 0.1f;
-
         [SerializeField] private float _moveForce = 5000;
         [SerializeField] private float _moveForcePerCombo = 100;
         [SerializeField] private float _moveForceComboLimit = 3000;
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
-        [SerializeField] private float _startBodySize;
-        [SerializeField] private float _slimeMergeForcePerScore = 1f;
 
-        private float _cameraSizeVelocity = 0f;
         private float _startFlyingSize;
         private int _defaultSpriteSortingLayer;
 
         public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
-        Vector2 IActor.Position { get => _body.TransformPosition; } //da
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
         public float Radius => Health.Radius;
@@ -68,11 +59,6 @@ namespace GameLogic
             OnInit?.Invoke();
         }
 
-        private void Start()
-        {
-            _body.Size = _startBodySize;
-        }
-
         private void FixedUpdate()
         {
             var direction = (this as IActor).DesiredMoveDirection;
@@ -81,20 +67,6 @@ namespace GameLogic
                 _lastActualDesiredMoveDirection = direction;
 
             _body.AddForce(direction * (_moveForce + MathF.Min(_moveForceComboLimit, _moveForcePerCombo * ComboUI.ComboCount)) * Time.fixedDeltaTime);
-        }
-
-        private void Update()
-        {
-            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _cameraSize.Evaluate(_body.Size) * _cameraSizeMult, ref _cameraSizeVelocity, _cameraSizeSmoothTime);
-        }
-
-        public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)
-        {
-            if(PlayerPetSlimesAbility.TryReturnSlime(body, _body))
-            {
-                _body.AddForceToNearestBone(collisionPoint, (body.Position - Position).normalized * _slimeMergeForcePerScore * CurrentScore);
-                Destroy(slime.gameObject); //прощай слаймик!!
-            }
         }
 
         public void SetFlyingState(bool flying)
