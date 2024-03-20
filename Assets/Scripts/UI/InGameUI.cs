@@ -8,10 +8,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using PlayerInput;
 using Core;
+using PlayerAbilities;
 
 public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
 {
     [SerializeField] private SlimeActior _player;
+    [SerializeField] private AbilitiesContainer _abilitiesContainer;
 
     [Header("Main UI")]
     [SerializeField] private Text _playerScore;
@@ -40,6 +42,7 @@ public class InGameUI : MonoBehaviour, TimeScaleController.ITimeScaleMultiplyer
     public float TimeScale => _pause ? 0 : 1;
 
     public SlimeActior CurrentPlayer => _player;
+    public AbilitiesContainer AbilitiesContainer => _abilitiesContainer;
 
     private float _maxScore = 0;
 

@@ -57,6 +57,7 @@ namespace Movement
 				if (_forces[i].State == ForceState.Finished)
 				{
 					_forces.RemoveAt(i);
+					length--;
 					--i;
 				}
 			}

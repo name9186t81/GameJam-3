@@ -17,7 +17,7 @@ public class ComboUI : MonoBehaviour
 
     private ComboCounter _currentCounter => _inGameUI.CurrentPlayer.ComboCounter;
 
-    public static int ComboCount { get; private set; } //TODO: delete
+    public static int ComboCount { get; private set; } //TODO: delete?
     public float NewScoreCount { get; private set; }
 
     private FloatSmoothDamp _scoreSmooth;

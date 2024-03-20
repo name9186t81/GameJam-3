@@ -53,7 +53,7 @@ namespace PlayerInput
         public abstract float Horizontal { get; }
         public abstract float Vertical { get; }
 
-        public abstract event Action<int, PointerEventData> AbilityUsed;
+        public abstract event Action<int, IPointerData> AbilityUsed;
         public abstract event Action<ActionType> Action;
 
         public abstract void Init();
@@ -66,6 +66,13 @@ namespace PlayerInput
         public enum ActionType
         {
             Pause
+        }
+
+        public interface IPointerData
+        {
+            public bool Active { get; }
+            public bool WasUsed { get; set; }
+            public Vector2 Position { get; }
         }
     }
 }

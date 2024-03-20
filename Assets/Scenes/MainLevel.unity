@@ -3259,7 +3259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _part: {fileID: 1637594085}
-  _container: {fileID: 734339848}
+  _container: {fileID: 449432741}
 --- !u!222 &419529801
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3391,6 +3391,7 @@ GameObject:
   - component: {fileID: 449432736}
   - component: {fileID: 449432735}
   - component: {fileID: 449432734}
+  - component: {fileID: 449432741}
   - component: {fileID: 449432733}
   m_Layer: 3
   m_Name: Player
@@ -3547,6 +3548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d4fe2956c1a86440a699e1f7165df79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerSlime: {fileID: 449432736}
 --- !u!114 &449432736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3561,7 +3563,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _body: {fileID: 449432738}
   _health: {fileID: 449432734}
-  _baseMovementSpeed: 5000
+  _bodySprite: {fileID: 449432739}
+  _flyingSpriteSortingLayer: 20
+  _baseMovementSpeed: 4500
   _baseRotationSpeed: 1000
   _slowdownFactor: 75
   _slimeMergeForcePerScore: 5
@@ -3879,6 +3883,21 @@ Transform:
   - {fileID: 1046832041}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &449432741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449432732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b99a2eaf9490ed4d9a96f3d63d32b8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 11400000, guid: b5c22f2b62bad1b43a34745434d166d7, type: 2}
+  _player: {fileID: 449432736}
+  _jumpPointSelector: {fileID: 1430875197}
 --- !u!1 &449485825
 GameObject:
   m_ObjectHideFlags: 0
@@ -4721,7 +4740,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -15, y: 0}
-  m_SizeDelta: {x: 105, y: -20}
+  m_SizeDelta: {x: 0, y: -20}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &547830524
 MonoBehaviour:
@@ -5885,7 +5904,6 @@ GameObject:
   m_Component:
   - component: {fileID: 734339850}
   - component: {fileID: 734339849}
-  - component: {fileID: 734339848}
   - component: {fileID: 734339847}
   - component: {fileID: 734339846}
   - component: {fileID: 734339845}
@@ -5910,42 +5928,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df308ac885ad36c46acb80cb74742888, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIData:
-    Name:
-      Key: Slime Road
-      CurrentText: 
-      CurrentTextEng: 
-      CurrentObjectName: ' (duplicate)'
-      ID: 11
-      isInited: 0
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Description:
-      Key: NALL7S
-      CurrentText: 
-      CurrentTextEng: 
-      CurrentObjectName: ' (duplicate)'
-      ID: 12
-      isInited: 0
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Preview: {fileID: 1170473891, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
-  <_player>k__BackingField: {fileID: 0}
-  <_selected>k__BackingField: 0
-  _usingMobileInput: 0
   _reloadTime: 15
-  _timerReload: 0
-  _lastTryUseTime: -1000
   _workingTime: 10
   _triggerDestroyTime: 10
   _trailRenderer: {fileID: 982713918}
   _triggerSpawnDistanceRadiusMult: 1
   _triggerPrefab: {fileID: 371974154}
-  _startTime: 0
-  _working: 0
-  _lastTriggerSpawnPoint: {x: 0, y: 0}
 --- !u!114 &734339844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5958,38 +5946,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e84317c06e7d44d8cbf727dae2414f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIData:
-    Name:
-      Key: Reproduction
-      CurrentText: "\u041C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E\u0435
-        \u0443\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u0435 \u0432 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0438
-        WASD"
-      CurrentTextEng: Instant acceleration in WASD direction
-      CurrentObjectName: ' (duplicate)'
-      ID: 9
-      isInited: 0
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Description:
-      Key: SOF4H1
-      CurrentText: "\u041C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E\u0435
-        \u0443\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u0435 \u0432 \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0438
-        WASD"
-      CurrentTextEng: Instant acceleration in WASD direction
-      CurrentObjectName: ' (duplicate)'
-      ID: 10
-      isInited: 0
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Preview: {fileID: -926858485, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
-  <_player>k__BackingField: {fileID: 0}
-  <_selected>k__BackingField: 0
-  _usingMobileInput: 0
   _reloadTime: 30
-  _timerReload: 0
-  _lastTryUseTime: -1000
   _petSlimePrefab: {fileID: 1562418976}
   _slimesCount: 3
   _radiusSpawnOffset: 0
@@ -6008,48 +5965,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457ffc896ca83ef44bedbde1b6d58a05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIData:
-    Name:
-      Key: Tentacle
-      CurrentText: 
-      CurrentTextEng: 
-      CurrentObjectName: 
-      ID: 7
-      isInited: 1
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Description:
-      Key: NRVP98
-      CurrentText: "\u0429\u0443\u043F\u0430\u043B\u044C\u0446\u0435"
-      CurrentTextEng: Tentacle
-      CurrentObjectName: ' (duplicate)'
-      ID: 8
-      isInited: 0
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Preview: {fileID: -1379589973, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
-  <_player>k__BackingField: {fileID: 0}
-  <_selected>k__BackingField: 0
-  _usingMobileInput: 0
   _reloadTime: 2.5
-  _timerReload: 0
-  _lastTryUseTime: -1000
   _maxGrabDist: 15
   _grabSpeed: 70
   _grabTime: 0.5
   _lineRenderer: {fileID: 1736323577}
   _widthOverScale: 0.5
   _layerMask:
+    serializedVersion: 2
     m_Bits: 4294967295
   _returnBackTime: 0.35
   _springJointSettings:
     _damperMult: 1
     _frequencyMult: 4
     _damperOverSize:
+      serializedVersion: 2
       m_Curve:
-      - time: 0
+      - serializedVersion: 3
+        time: 0
         value: 1
         inSlope: 0
         outSlope: 0
@@ -6057,7 +5990,8 @@ MonoBehaviour:
         weightedMode: 0
         inWeight: 0
         outWeight: 0
-      - time: 1
+      - serializedVersion: 3
+        time: 1
         value: 1
         inSlope: 0
         outSlope: 0
@@ -6069,8 +6003,10 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _frequencyOverSize:
+      serializedVersion: 2
       m_Curve:
-      - time: 0
+      - serializedVersion: 3
+        time: 0
         value: 1
         inSlope: -0.5
         outSlope: -0.5
@@ -6078,7 +6014,8 @@ MonoBehaviour:
         weightedMode: 0
         inWeight: 0
         outWeight: 0.33333334
-      - time: 1
+      - serializedVersion: 3
+        time: 1
         value: 0.5
         inSlope: -0.5
         outSlope: -0.5
@@ -6089,17 +6026,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  _currentState: 0
-  _startGrabDirection: {x: 0, y: 0}
-  _currentPosition: {x: 0, y: 0}
-  _lastStateChangeTime: -1000
-  _lrPoses:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  _grabbedCollider: {fileID: 0}
-  _grabbedLocalPoint: {x: 0, y: 0}
-  _addedComponents: []
-  _smoothDampVel: {x: 0, y: 0, z: 0}
 --- !u!114 &734339846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6112,42 +6038,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3688da2ec1a814458683fc16b2731df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIData:
-    Name:
-      Key: Dash (duplicate)
-      CurrentText: 
-      CurrentTextEng: 
-      CurrentObjectName: 
-      ID: 5
-      isInited: 1
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Description:
-      Key: MI63KY
-      CurrentText: 
-      CurrentTextEng: 
-      CurrentObjectName: 
-      ID: 6
-      isInited: 1
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Preview: {fileID: -13209910, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
-  <_player>k__BackingField: {fileID: 0}
-  <_selected>k__BackingField: 0
-  _usingMobileInput: 0
   _reloadTime: 10
-  _timerReload: 0
-  _lastTryUseTime: -1000
-  _placeSelectTime: 0.5
-  _timePauseSmoothTime: 0.1
-  _jumpPointSelector: {fileID: 1430875197}
-  _overlapRadiusMult: 0.6
   _jumpTime: 0.5
   _jumpProgressCurve:
+    serializedVersion: 2
     m_Curve:
-    - time: 0.4
+    - serializedVersion: 3
+      time: 0.4
       value: 0
       inSlope: -0
       outSlope: -0
@@ -6155,7 +6052,8 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0.38588527
-    - time: 0.6508322
+    - serializedVersion: 3
+      time: 0.6508322
       value: 0.5607365
       inSlope: 2.603809
       outSlope: 2.603809
@@ -6163,7 +6061,8 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
-    - time: 1
+    - serializedVersion: 3
+      time: 1
       value: 1
       inSlope: -0
       outSlope: -0
@@ -6175,8 +6074,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _slimeSizeCurve:
+    serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 3
+      time: 0
       value: 1
       inSlope: -1.2704905
       outSlope: -1.2704905
@@ -6184,7 +6085,8 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
-    - time: 0.18201752
+    - serializedVersion: 3
+      time: 0.18201752
       value: 0.76874846
       inSlope: -0.104809225
       outSlope: -0.104809225
@@ -6192,7 +6094,8 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
-    - time: 0.4
+    - serializedVersion: 3
+      time: 0.4
       value: 1
       inSlope: 2.200061
       outSlope: 2.200061
@@ -6200,7 +6103,8 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0.75299764
       outWeight: 0.18465394
-    - time: 1
+    - serializedVersion: 3
+      time: 1
       value: 0.9867096
       inSlope: -0.56822115
       outSlope: -0.56822115
@@ -6211,11 +6115,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _currentState: 0
-  _lastStateChangeTime: 0
-  _startPosition: {x: 0, y: 0}
-  _targetPosition: {x: 0, y: 0}
-  <TimeScale>k__BackingField: 1
 --- !u!114 &734339847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6228,59 +6127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 424c7c0586a246943bc5f93de4d8e3bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIData:
-    Name:
-      Key: Dash
-      CurrentText: 
-      CurrentTextEng: 
-      CurrentObjectName: 
-      ID: 3
-      isInited: 1
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Description:
-      Key: C0WU2X
-      CurrentText: E
-      CurrentTextEng: Dash
-      CurrentObjectName: Dash (duplicate)
-      ID: 4
-      isInited: 0
-      DontShowKey: 0
-      returnOther: 0
-      other: 
-    Preview: {fileID: 1547051842, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
-  <_player>k__BackingField: {fileID: 0}
-  <_selected>k__BackingField: 0
-  _usingMobileInput: 0
   _reloadTime: 2
-  _timerReload: 0
-  _lastTryUseTime: -1000
---- !u!114 &734339848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734339842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b99a2eaf9490ed4d9a96f3d63d32b8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _abilities:
-  - NeededScore: 1.5
-    LeftAbility: {fileID: 0}
-    RightAbility: {fileID: 0}
-  - NeededScore: 5
-    LeftAbility: {fileID: 0}
-    RightAbility: {fileID: 0}
-  _player: {fileID: 931070912}
-  _selectPanel: {fileID: 1618877023}
-  _reloadSpeedBonusPerCombo: 0.03
-  _reloadSpeedPerComboLimit: 1.8
-  _selectedAbilities:
-  - {fileID: 0}
 --- !u!114 &734339849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6792,7 +6639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _part: {fileID: 338249419}
-  _container: {fileID: 734339848}
+  _container: {fileID: 449432741}
 --- !u!222 &790933036
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7219,7 +7066,7 @@ MonoBehaviour:
     Key: OZJLDL
     CurrentText: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u043F\u043E\u0441\u043E\u0431\u043D\u043E\u0441\u0442\u044C:"
     CurrentTextEng: 
-    CurrentObjectName: ' (duplicate)'
+    CurrentObjectName: Title
     ID: 23
     isInited: 0
     DontShowKey: 0
@@ -7676,6 +7523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d4fe2956c1a86440a699e1f7165df79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerSlime: {fileID: 0}
 --- !u!114 &931070912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8069,10 +7917,10 @@ RectTransform:
   - {fileID: 547830523}
   m_Father: {fileID: 553987263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 540, y: -5}
-  m_SizeDelta: {x: 540, y: 125}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!225 &946643365
 CanvasGroup:
@@ -11023,10 +10871,10 @@ RectTransform:
   - {fileID: 1553254107}
   m_Father: {fileID: 553987263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 560, y: -5}
-  m_SizeDelta: {x: 540, y: 125}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!225 &1417437486
 CanvasGroup:
@@ -11222,6 +11070,7 @@ MonoBehaviour:
   _overlapLayers:
     serializedVersion: 2
     m_Bits: 311
+  _radiusMult: 0.6
 --- !u!212 &1430875198
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11965,6 +11814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 449432736}
+  _abilitiesContainer: {fileID: 449432741}
   _playerScore: {fileID: 156608880}
   _visualScoreMult: 100
   _scoreSmoothTime: 0.15
@@ -12171,7 +12021,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 15, y: -0.000030517578}
-  m_SizeDelta: {x: 105, y: -20}
+  m_SizeDelta: {x: 0, y: -20}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1553254108
 MonoBehaviour:
@@ -12472,6 +12322,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _body: {fileID: 1562418982}
   _health: {fileID: 449432734}
+  _bodySprite: {fileID: 0}
+  _flyingSpriteSortingLayer: 20
   _baseMovementSpeed: 5000
   _baseRotationSpeed: 1000
   _slowdownFactor: 75
@@ -13307,7 +13159,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1618877023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13320,6 +13172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2dea02e4f13adc48bb214f904afdb21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inGameUI: {fileID: 1530417012}
   _leftPart: {fileID: 946643369}
   _rightPart: {fileID: 1417437483}
   _canvasGroup: {fileID: 1618877024}
@@ -13768,7 +13621,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1645072612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15012,6 +14865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _elements:
   - {fileID: 11400000, guid: 31d57b299c252484fa91088847fdd3dd, type: 2}
+  - {fileID: 11400000, guid: f3bea2e0d01ff8c48bb7eb505e7dd161, type: 2}
 --- !u!4 &1772165914
 Transform:
   m_ObjectHideFlags: 0

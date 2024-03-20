@@ -1,3 +1,4 @@
+using Abilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,20 +21,20 @@ namespace PlayerAbilities
         public void Init()
         {
             gameObject.SetActive(true);
-            _container.OnAbilitySelected += OnAbilitySelected;
+            _container.AbilitySelected += OnAbilitySelected;
         }
 
-        private void OnAbilitySelected(AbilitiesContainer.Ability ability, int id)
+        private void OnAbilitySelected(IAbility ability, AbilitySelectPanel.AbilityUIData data, int id)
         {
-            var part = SpawnNewPart(ability);
+            var part = SpawnNewPart(ability, data);
             OnPartSpawned?.Invoke(part, id);
         }
 
-        private AbilityUIPart SpawnNewPart(AbilitiesContainer.Ability ability)
+        private AbilityUIPart SpawnNewPart(IAbility ability, AbilitySelectPanel.AbilityUIData data)
         {
             var part = Instantiate(_part, _part.transform.parent);
 
-            part.Init(ability);
+            part.Init(ability, data);
 
             return part;
         }

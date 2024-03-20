@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
-    /*
+    
     public class PlayerGrabHandAbility : AbilitiesContainer.Ability
     {
         [SerializeField] private float _maxGrabDist;
@@ -20,7 +20,7 @@ namespace PlayerAbilities
         [SerializeField] private BoneJointsConnector.SpringJointSettings _springJointSettings;
 
         private float _currentWidth => _actor.Scale * _widthOverScale;
-        private State _currentState = State.Waiting;
+        //private State _currentState = State.Waiting;
         private Vector2 _startGrabDirection;
         private Vector2 _currentPosition;
         private float _lastStateChangeTime = -1000;
@@ -30,115 +30,125 @@ namespace PlayerAbilities
         private List<Object> _addedComponents = new List<Object>();
         private Vector3 _smoothDampVel;
 
-        private protected override void update()
+        private protected override void update(float dt)
         {
-            var playerPos = _actor.Position;
-
-            switch (_currentState)
-            {
-                case State.Waiting:
-                    if (CanUse(false))
-                    {
-                        if (_usingMobileInput)
-                        {
-                            var prov = ServiceLocator.Get<InputProvider>();
-                            _startGrabDirection = new Vector2(prov.Horizontal, prov.Vertical).normalized;
-                        }
-                        else
-                        {
-                            _startGrabDirection = (_cursorWorldPos - playerPos).normalized;
-                        }
-
-                        _currentPosition = playerPos;
-                        ChangeState(State.Trying);
-                        _lineRenderer.gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        var time = Mathf.Clamp01((Time.time - _lastStateChangeTime) / _returnBackTime);
-                        _lineRenderer.gameObject.SetActive(time != 1);
-                        _currentPosition = Vector3.SmoothDamp(_currentPosition, playerPos, ref _smoothDampVel, (1 - time) * _returnBackTime);
-                    }
-                    break;
-
-                case State.Trying:
-
-                    _currentPosition += _startGrabDirection * _grabSpeed * Time.deltaTime * _actor.Scale;
-
-                    if (Vector2.Distance(_currentPosition, playerPos) > _maxGrabDist * _actor.Scale)
-                    {
-                        ChangeState(State.Waiting);
-                    }
-
-                    var overlap = Physics2D.LinecastAll(_currentPosition, playerPos, _layerMask); //_currentWidth
-
-                    for (int i = 0; i < overlap.Length; i++)
-                    {
-                        if (overlap[i].transform.root != _actor.transform.root)
-                        {
-                            _grabbedCollider = overlap[i].collider;
-                            ChangeState(State.Grabbed);
-
-                            bool bodyAdded = false;
-                            if (!_grabbedCollider.TryGetComponent<Rigidbody2D>(out Rigidbody2D body))
-                            {
-                                body = _grabbedCollider.gameObject.AddComponent<Rigidbody2D>();
-                                body.bodyType = RigidbodyType2D.Static;
-                                body.mass = 10; //мб не нужно а мб сделать настройку в инспекторе
-                                bodyAdded = true;
-                            }
-
-                            _grabbedLocalPoint = _grabbedCollider.transform.InverseTransformPoint(overlap[i].point);
-
-                            _addedComponents.Add(_actor.BonesConnector.GrabObject(body, _startGrabDirection, _springJointSettings, _grabbedLocalPoint));
-                            if (bodyAdded)
-                                _addedComponents.Add(body);
-
-                            break;
-                        }
-                    }
-
-                    break;
-
-                case State.Grabbed:
-                    if (Time.time - _lastStateChangeTime > _grabTime || _grabbedCollider == null)
-                    {
-                        foreach (var item in _addedComponents)
-                        {
-                            Destroy(item);
-                        }
-
-                        ResetTimer();
-
-                        _addedComponents.Clear();
-
-                        ChangeState(State.Waiting);
-                    }
-                    else
-                    {
-                        _currentPosition = _grabbedCollider.transform.TransformPoint(_grabbedLocalPoint);
-                    }
-                    break;
-            }
-
-            _lrPoses[0] = playerPos;
-            _lrPoses[1] = _currentPosition;
-            _lineRenderer.SetPositions(_lrPoses);
-            _lineRenderer.widthMultiplier = _currentWidth;
+            throw new System.NotImplementedException();
         }
 
-        private void ChangeState(State newState)
+        public override void Use()
         {
-            _currentState = newState;
-            _lastStateChangeTime = Time.time;
-            //_lineRenderer.gameObject.SetActive(newState != State.Waiting);
+            throw new System.NotImplementedException();
         }
+        /*
+private protected override void update()
+{
+   var playerPos = _actor.Position;
 
-        private enum State
-        {
-            Waiting,
-            Trying,
-            Grabbed
-        }
-    }*/
+   switch (_currentState)
+   {
+       case State.Waiting:
+           if (CanUse(false))
+           {
+               if (_usingMobileInput)
+               {
+                   var prov = ServiceLocator.Get<InputProvider>();
+                   _startGrabDirection = new Vector2(prov.Horizontal, prov.Vertical).normalized;
+               }
+               else
+               {
+                   _startGrabDirection = (_cursorWorldPos - playerPos).normalized;
+               }
+
+               _currentPosition = playerPos;
+               ChangeState(State.Trying);
+               _lineRenderer.gameObject.SetActive(true);
+           }
+           else
+           {
+               var time = Mathf.Clamp01((Time.time - _lastStateChangeTime) / _returnBackTime);
+               _lineRenderer.gameObject.SetActive(time != 1);
+               _currentPosition = Vector3.SmoothDamp(_currentPosition, playerPos, ref _smoothDampVel, (1 - time) * _returnBackTime);
+           }
+           break;
+
+       case State.Trying:
+
+           _currentPosition += _startGrabDirection * _grabSpeed * Time.deltaTime * _actor.Scale;
+
+           if (Vector2.Distance(_currentPosition, playerPos) > _maxGrabDist * _actor.Scale)
+           {
+               ChangeState(State.Waiting);
+           }
+
+           var overlap = Physics2D.LinecastAll(_currentPosition, playerPos, _layerMask); //_currentWidth
+
+           for (int i = 0; i < overlap.Length; i++)
+           {
+               if (overlap[i].transform.root != _actor.transform.root)
+               {
+                   _grabbedCollider = overlap[i].collider;
+                   ChangeState(State.Grabbed);
+
+                   bool bodyAdded = false;
+                   if (!_grabbedCollider.TryGetComponent<Rigidbody2D>(out Rigidbody2D body))
+                   {
+                       body = _grabbedCollider.gameObject.AddComponent<Rigidbody2D>();
+                       body.bodyType = RigidbodyType2D.Static;
+                       body.mass = 10; //мб не нужно а мб сделать настройку в инспекторе
+                       bodyAdded = true;
+                   }
+
+                   _grabbedLocalPoint = _grabbedCollider.transform.InverseTransformPoint(overlap[i].point);
+
+                   _addedComponents.Add(_actor.BonesConnector.GrabObject(body, _startGrabDirection, _springJointSettings, _grabbedLocalPoint));
+                   if (bodyAdded)
+                       _addedComponents.Add(body);
+
+                   break;
+               }
+           }
+
+           break;
+
+       case State.Grabbed:
+           if (Time.time - _lastStateChangeTime > _grabTime || _grabbedCollider == null)
+           {
+               foreach (var item in _addedComponents)
+               {
+                   Destroy(item);
+               }
+
+               ResetTimer();
+
+               _addedComponents.Clear();
+
+               ChangeState(State.Waiting);
+           }
+           else
+           {
+               _currentPosition = _grabbedCollider.transform.TransformPoint(_grabbedLocalPoint);
+           }
+           break;
+   }
+
+   _lrPoses[0] = playerPos;
+   _lrPoses[1] = _currentPosition;
+   _lineRenderer.SetPositions(_lrPoses);
+   _lineRenderer.widthMultiplier = _currentWidth;
+}
+
+private void ChangeState(State newState)
+{
+   _currentState = newState;
+   _lastStateChangeTime = Time.time;
+   //_lineRenderer.gameObject.SetActive(newState != State.Waiting);
+}
+
+private enum State
+{
+   Waiting,
+   Trying,
+   Grabbed
+}*/
+    }
 }

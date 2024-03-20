@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
-    /*
     public class PlayerTrailAbility : AbilitiesContainer.Ability
     {
         [SerializeField] private float _workingTime;
@@ -17,51 +16,62 @@ namespace PlayerAbilities
         private bool _working;
         private Vector2 _lastTriggerSpawnPoint;
 
-        private void Start()
+        public override void Use()
         {
-            _trailRenderer.time = _triggerDestroyTime;
+            throw new System.NotImplementedException();
         }
 
-        private protected override void update()
+        private protected override void update(float dt)
         {
-            if(!_working)
+            throw new System.NotImplementedException();
+        }
+
+        /*
+    private void Start()
+    {
+        _trailRenderer.time = _triggerDestroyTime;
+    }
+
+    private protected override void update()
+    {
+        if(!_working)
+        {
+            if (CanUse(false))
             {
-                if (CanUse(false))
+                _working = true;
+                _trailRenderer.transform.position = _actor.BonesConnector.TransformPosition;
+                _trailRenderer.Clear();
+                _lastTriggerSpawnPoint = Vector2.one * float.MaxValue;
+                _startTime = Time.time;
+            }
+        }
+        else
+        {
+            if (Time.time - _startTime < _workingTime)
+            {
+                var radius = _actor.Radius;
+                var pos = _actor.BonesConnector.TransformPosition;
+                _trailRenderer.transform.position = pos;
+                _trailRenderer.widthMultiplier = radius * 2;
+
+                if (Vector2.Distance(_lastTriggerSpawnPoint, pos) > _triggerSpawnDistanceRadiusMult * radius)
                 {
-                    _working = true;
-                    _trailRenderer.transform.position = _actor.BonesConnector.TransformPosition;
-                    _trailRenderer.Clear();
-                    _lastTriggerSpawnPoint = Vector2.one * float.MaxValue;
-                    _startTime = Time.time;
+                    SpawnTrigger(pos, radius);
                 }
             }
             else
             {
-                if (Time.time - _startTime < _workingTime)
-                {
-                    var radius = _actor.Radius;
-                    var pos = _actor.BonesConnector.TransformPosition;
-                    _trailRenderer.transform.position = pos;
-                    _trailRenderer.widthMultiplier = radius * 2;
-
-                    if (Vector2.Distance(_lastTriggerSpawnPoint, pos) > _triggerSpawnDistanceRadiusMult * radius)
-                    {
-                        SpawnTrigger(pos, radius);
-                    }
-                }
-                else
-                {
-                    _working = false;
-                    ResetTimer();
-                }
+                _working = false;
+                ResetTimer();
             }
         }
+    }
 
-        private void SpawnTrigger(Vector2 pos, float radius)
-        {
-            _lastTriggerSpawnPoint = pos;
-            var trig = Instantiate(_triggerPrefab, pos, Quaternion.identity, null);
-            trig.Init(radius, _triggerDestroyTime, _actor.TeamNumber, _actor.Health);
-        }
+    private void SpawnTrigger(Vector2 pos, float radius)
+    {
+        _lastTriggerSpawnPoint = pos;
+        var trig = Instantiate(_triggerPrefab, pos, Quaternion.identity, null);
+        trig.Init(radius, _triggerDestroyTime, _actor.TeamNumber, _actor.Health);
     }*/
+    }
 }

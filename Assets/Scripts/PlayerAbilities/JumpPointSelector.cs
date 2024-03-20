@@ -13,6 +13,7 @@ namespace PlayerAbilities
         [SerializeField] private Color _restrictedColor;
         [SerializeField] private float _colorSmoothTime = 0.1f;
         [SerializeField] private LayerMask _overlapLayers = -1;
+        [SerializeField] private float _radiusMult = 0.6f;
 
         public Func<Vector2> PositionProvider;
 
@@ -29,6 +30,8 @@ namespace PlayerAbilities
 
         public void SetRadius(float radius)
         {
+            radius *= _radiusMult;
+
             _currentRadius = radius;
             transform.localScale = Vector3.one * (radius / _spriteRadius);
 

@@ -16,8 +16,10 @@ namespace PlayerInput
         public override float Horizontal => Input.GetAxis("Horizontal");
         public override float Vertical => Input.GetAxis("Vertical");
 
-        public override event Action<int, PointerEventData> AbilityUsed;
+        public override event Action<int, IPointerData> AbilityUsed;
         public override event Action<ActionType> Action;
+
+        private Stack<PCPointerData> _activePointers = new Stack<PCPointerData>();
 
         [System.Serializable]
         private class Key
@@ -54,13 +56,38 @@ namespace PlayerInput
                 }
             }
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                while (_activePointers.Count > 0)
+                {
+                    var pointer = _activePointers.Pop();
+                    pointer.Active = false;
+                    AbilityUsed?.Invoke(pointer.AbilityIndexToInvoke, pointer);
+                }
+            }
+
             for (int i = 0; i < _abilitiesKeys.Length; i++)
             {
                 if (Input.GetKeyDown(_abilitiesKeys[i].KeyCode))
                 {
-                    AbilityUsed?.Invoke(i, null);
+                    var data = new PCPointerData();
+                    data.AbilityIndexToInvoke = i;
+                    AbilityUsed?.Invoke(i, data);
+                    if(data.WasUsed)
+                        _activePointers.Push(data);
                 }
             }
+        }
+
+        public class PCPointerData : IPointerData
+        {
+            public bool Active { get; set; } = true;
+
+            public bool WasUsed { get; set; } = false;
+
+            public int AbilityIndexToInvoke;
+
+            public Vector2 Position => Input.mousePosition;
         }
     }
 }

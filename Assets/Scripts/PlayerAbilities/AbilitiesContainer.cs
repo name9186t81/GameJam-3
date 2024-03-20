@@ -12,47 +12,119 @@ namespace PlayerAbilities
 {
     public class AbilitiesContainer : MonoBehaviour
     {
-        [SerializeField] private AbilitySelection[] _abilities;
-        [SerializeField] private PlayerActor _player;
-        [SerializeField] private AbilitySelectPanel _selectPanel;
+        [SerializeField] private AbilitiesConfiguration _config;
+        [SerializeField] private SlimeActior _player;
+        [SerializeField] private JumpPointSelector _jumpPointSelector;
 
-        [SerializeField] private float _reloadSpeedBonusPerCombo = 0.02f;
-        [SerializeField][Min(1)] private float _reloadSpeedPerComboLimit = 1.5f;
-
-        [SerializeField] private List<Ability> _selectedAbilities = new List<Ability>();
+        private List<IAbility> _selectedAbilities = new List<IAbility>();
 
         private int alreadySelectedAbilitiesIndex = -1;
-        private int _selectionsPendingCount = 0; //чтобы не показывать следующий выбор способности пока предыдущий еще не выбран
-        private float _reloadSpeedMult => Mathf.Min(1 + ComboUI.ComboCount * _reloadSpeedBonusPerCombo, _reloadSpeedPerComboLimit);
+        private float _reloadSpeedMult => _player.ComboCounter.Config.AbilityReloadSpeedMultipler.GetValue(_player.ComboCounter.ComboCount);
 
-        public event Action<Ability, int> OnAbilitySelected;
+        public event Action<IAbility, AbilitySelectPanel.AbilityUIData, int> AbilitySelected;
+
+        public TrySelectAbility SelectAbility { private get; set; }
+        public delegate bool TrySelectAbility(AbilitiesConfiguration.AbilitySelection selection, Action<AbilitiesConfiguration.AbilityData> onSelected);
 
         private InputProvider _inputProvider;
+
+        private void Awake()
+        {
+            SelectAbility = SelectAbilityPlaceholder;
+        }
+
+        private bool SelectAbilityPlaceholder(AbilitiesConfiguration.AbilitySelection selection, Action<AbilitiesConfiguration.AbilityData> onSelected)
+        {
+            onSelected?.Invoke(UnityEngine.Random.Range(0, 1) > 0.5f ? selection.LeftAbility : selection.RightAbility);
+            return true;
+        }
 
         private void Start()
         {
             _inputProvider = ServiceLocator.Get<InputProvider>();
-            _inputProvider.AbilityUsed += OnTryUseAbility;
+            _inputProvider.AbilityUsed += OnPlayerTryUseAbility;
 
-            for (int i = 0; i < _selectedAbilities.Count; i++)
+            for (int i = 0; i < _config.DefaultAbilities.Length; i++)
             {
-                _selectedAbilities[i]._usingMobileInput = _inputProvider.UsingMobileInput;
-                _selectedAbilities[i].Init(_player);
-                OnAbilitySelected?.Invoke(_selectedAbilities[i], i);
+                var ability = _config.DefaultAbilities[i];
+                BuildAndAddAbility(ability);
             }
+        }
+
+        private void BuildAndAddAbility(AbilitiesConfiguration.AbilityData data)
+        {
+            var ability = data.Builder.Build(_player);
+            _selectedAbilities.Add(ability);
+            AbilitySelected?.Invoke(ability, data.UIData, _selectedAbilities.Count - 1);
         }
 
         private void OnDestroy()
         {
-            _inputProvider.AbilityUsed -= OnTryUseAbility;
+            _inputProvider.AbilityUsed -= OnPlayerTryUseAbility;
         }
 
-        private void OnTryUseAbility(int id, PointerEventData data)
+        private void OnPlayerTryUseAbility(int id, InputProvider.IPointerData pointerData)
         {
             if (id >= _selectedAbilities.Count)
                 return;
 
-            _selectedAbilities[id].OnTryUse(data);
+            bool canUse = true;
+
+            var ability = _selectedAbilities[id];
+
+            if(ability is IDirectionalAbility)
+            {
+                (ability as IDirectionalAbility).Direction = new Vector2(_inputProvider.Horizontal, _inputProvider.Vertical).normalized;
+            }
+
+            if(ability is ISlimeAbility)
+            {
+                (ability as ISlimeAbility).Slime = _player;
+            }
+
+            if(ability is IPositionalAbility)
+            {
+                bool selectingPosition = pointerData.Active;
+
+                _jumpPointSelector.gameObject.SetActive(selectingPosition);
+
+                if (selectingPosition)
+                {
+                    canUse = false;
+                    _jumpPointSelector.SetRadius(_player.Radius);
+                    _jumpPointSelector.PositionProvider = new TouchWorldPositionProvider(pointerData, Camera.main).Provide;
+                }
+                else
+                {
+                    (ability as IPositionalAbility).WorldPosition = _jumpPointSelector.transform.position;
+                    canUse &= _jumpPointSelector.CanJump;
+                }
+
+                pointerData.WasUsed = true;
+            }
+
+            if(canUse && ability.CanUse())
+            {
+                ability.Use();
+            }
+            //_selectedAbilities[id].OnTryUse(data);
+        }
+
+        private class TouchWorldPositionProvider
+        {
+            private InputProvider.IPointerData _data;
+            private Camera _camera;
+
+            public TouchWorldPositionProvider(InputProvider.IPointerData data, Camera camera)
+            {
+                _data = data;
+                _camera = camera;
+            }
+
+            public Vector2 Provide()
+            {
+                return _camera.ScreenToWorldPoint(_data.Position);
+            }
         }
 
         private void Update()
@@ -60,129 +132,89 @@ namespace PlayerAbilities
             var enoughScoreSelectionIndex = -1;
             var score = _player.CurrentScore;
 
-            for (int i = 0; i < _abilities.Length; i++)
+            for (int i = 0; i < _config.SelectableAbilities.Length; i++)
             {
-                if (_abilities[i].NeededScore <= score)
+                if (_config.SelectableAbilities[i].NeededScore <= score)
                     enoughScoreSelectionIndex = i;
                 else
                     break;
             }
 
-            if (enoughScoreSelectionIndex > alreadySelectedAbilitiesIndex && _selectionsPendingCount == 0 && _selectPanel.CanInit)
+            if (enoughScoreSelectionIndex > alreadySelectedAbilitiesIndex)
             {
-                alreadySelectedAbilitiesIndex++;
-                _abilities[alreadySelectedAbilitiesIndex].Show(_selectPanel, _onAbilitySelected, _player, _inputProvider);
-                _selectionsPendingCount++;
+                if (SelectAbility(_config.SelectableAbilities[alreadySelectedAbilitiesIndex + 1], _onAbilitySelected))
+                {
+                    alreadySelectedAbilitiesIndex++;
+                }
             }
 
             for (int i = 0; i < _selectedAbilities.Count; i++)
             {
-                _selectedAbilities[i].ReloadSpeedMultipler = _reloadSpeedMult;
-                _selectedAbilities[i].Update(Time.deltaTime);
+                //_selectedAbilities[i].ReloadSpeedMultipler = _reloadSpeedMult;
+                _selectedAbilities[i].Update(Time.deltaTime * _reloadSpeedMult);
             }
         }
 
-        private void _onAbilitySelected(Ability ability)
+        private void _onAbilitySelected(AbilitiesConfiguration.AbilityData data)
         {
-            _selectedAbilities.Add(ability);
-            _selectionsPendingCount--;
-            OnAbilitySelected?.Invoke(ability, _selectedAbilities.Count - 1);
+            BuildAndAddAbility(data);
         }
 
-        [System.Serializable]
-        public class AbilitySelection
+        public abstract class Ability : MonoBehaviour, IAbility //TODO убрать монобех
         {
-            public float NeededScore;
-            public Ability LeftAbility;
-            public Ability RightAbility;
-
-            public void Show(AbilitySelectPanel panel, Action<Ability> OnAbilitySelected, PlayerActor player, InputProvider provider)
-            {
-                panel.TryInit(LeftAbility.UIData, RightAbility.UIData, delegate (AbilitySelectPanel.AbilityUIData data)
-                {
-                    //да, говно, но лучше не придумал
-                    if (data.Equals(LeftAbility.UIData))
-                    {
-                        LeftAbility._usingMobileInput = provider.UsingMobileInput;
-                        LeftAbility.Init(player);
-                        OnAbilitySelected?.Invoke(LeftAbility);
-                    }
-                    else if (data.Equals(RightAbility.UIData))
-                    {
-                        RightAbility._usingMobileInput = provider.UsingMobileInput;
-                        RightAbility.Init(player);
-                        OnAbilitySelected?.Invoke(RightAbility);
-                    }
-                });
-            }
-        }
-
-        public abstract class Ability : MonoBehaviour, IAbility
-        {
-            [SerializeField] private AbilityType AbilityType;
-            public AbilitySelectPanel.AbilityUIData UIData;
+            //public AbilitySelectPanel.AbilityUIData UIData; //TODO: удалить
             private protected IActor _actor { get; private set; }
-            private protected PointerEventData _lastPointerEventData { get; private set; } = null;
-            private protected Vector2 _cursorWorldPos => Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            [SerializeField] private float _reloadTime = 0.1f;
-            private float _timerReload;
+            [SerializeField] private protected float _reloadTime = 0.1f;
 
-            private float _lastTryUseTime = -1000;
-            private const float _useThresholdSeconds = 0.1f;
+            private float _reloadTimer;
+            private protected AbilityType AbilityType;
 
             public event Action OnActivate;
             public event Action OnDeactivate;
 
-            [HideInInspector] public float ReloadSpeedMultipler = 1;
-            [HideInInspector] public bool _usingMobileInput = false; //TODO: удалить
-
             public IAIAbilityInstruction AIAbilityInstruction => null;
-            public float Readiness => Mathf.Clamp01(_timerReload / _reloadTime);
+            public float Readiness => Mathf.Clamp01(_reloadTimer / _reloadTime);
+            public bool Ready => _reloadTimer >= _reloadTime;
 
             AbilityType IAbility.Type => AbilityType;
 
-            public void OnTryUse(PointerEventData data)
-            {
-                _lastPointerEventData = data;
-                _lastTryUseTime = Time.unscaledTime;
-            }
-
             private protected bool CanUse(bool autoReset = true)
             {
-                if (Time.unscaledTime - _lastTryUseTime > _useThresholdSeconds)
-                    return false;
-
-                bool result = _timerReload > _reloadTime;
-                if (result && autoReset)
+                if (Ready && autoReset)
                     ResetTimer();
 
-                return result;
+                return Ready;
             }
 
             private protected void ResetTimer()
             {
-                _timerReload = 0;
+                _reloadTimer = 0;
             }
 
             public void Init(IActor actor)
             {
                 _actor = actor;
-                _timerReload = _reloadTime; //абилка будет заряжена сразу при получении, можно закомментить тогда не будет
+                _reloadTimer = _reloadTime; //абилка будет заряжена сразу при получении, можно закомментить тогда не будет
+                init();
             }
 
             public void Update(float dt)
             {
-                _timerReload += dt * ReloadSpeedMultipler;
-                update();
+                _reloadTimer += dt;
+                update(dt);
             }
-
-            private protected abstract void update();
 
             public bool CanUse()
             {
-                return CanUse(false);
+                return Ready && canUse();
             }
+
+            private protected virtual void init() { }
+
+            private protected abstract void update(float dt);
+
+            private protected virtual bool canUse() => true;
 
             public abstract void Use();
         }

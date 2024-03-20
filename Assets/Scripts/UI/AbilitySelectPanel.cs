@@ -1,3 +1,4 @@
+using PlayerAbilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using UnityEngine;
 
 public class AbilitySelectPanel : MonoBehaviour
 {
+    [SerializeField] private InGameUI _inGameUI;
     [SerializeField] private AbilitySelectPart _leftPart;
     [SerializeField] private AbilitySelectPart _rightPart;
     [SerializeField] private CanvasGroup _canvasGroup;
@@ -14,23 +16,43 @@ public class AbilitySelectPanel : MonoBehaviour
     private float _targetAlpha = 0;
 
     private bool pressed = false;
-    private Action<AbilityUIData> _onSelected;
 
     public bool CanInit => !gameObject.activeSelf;
 
-    public bool TryInit(AbilityUIData left, AbilityUIData right, Action<AbilityUIData> onSelected)
+    private void Awake()
+    {
+        _inGameUI.AbilitiesContainer.SelectAbility = SelectAbility;
+        gameObject.SetActive(false);
+    }
+
+    private bool SelectAbility(AbilitiesConfiguration.AbilitySelection selection, Action<AbilitiesConfiguration.AbilityData> onSelected)
+    {
+        if (!CanInit)
+            return false;
+
+        return TryInit(
+            selection.LeftAbility.UIData, selection.RightAbility.UIData, 
+            delegate {  onSelected?.Invoke(selection.LeftAbility); FinishSelecting(); }, delegate { onSelected?.Invoke(selection.RightAbility); FinishSelecting(); });
+    }
+
+    void FinishSelecting()
+    {
+        _targetAlpha = 0;
+        pressed = true;
+    }
+
+    public bool TryInit(AbilityUIData left, AbilityUIData right, Action onSelectedLeft, Action onSelectedRight)
     {
         if (gameObject.activeSelf)
             return false;
 
-        _leftPart.Init(left, OnPress);
-        _rightPart.Init(right, OnPress);
+        _leftPart.Init(left, onSelectedLeft);
+        _rightPart.Init(right, onSelectedRight);
         _alphaVel = 0;
         _targetAlpha = 1;
         _canvasGroup.alpha = 0;
         gameObject.SetActive(true);
         pressed = false;
-        _onSelected = onSelected;
 
         return true;
     }
@@ -42,13 +64,6 @@ public class AbilitySelectPanel : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-    }
-
-    private void OnPress(AbilityUIData data)
-    {
-        _targetAlpha = 0;
-        pressed = true;
-        _onSelected?.Invoke(data);
     }
 
     [System.Serializable]

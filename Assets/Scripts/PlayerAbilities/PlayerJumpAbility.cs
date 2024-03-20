@@ -1,3 +1,5 @@
+using Abilities;
+using Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,101 +7,141 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
-    /*
-    public class PlayerJumpAbility : AbilitiesContainer.Ability, TimeScaleController.ITimeScaleMultiplyer
+    [CreateAssetMenu(fileName = "Jump ability", menuName = "GameJam/Jump")]
+    public class PlayerJumpAbilityBuilder : AbilityBuilder
     {
-        [SerializeField] private float _placeSelectTime = 0.5f;
-        [SerializeField] private float _timePauseSmoothTime = 0.1f;
-        [SerializeField] private JumpPointSelector _jumpPointSelector;
-        [SerializeField] private float _overlapRadiusMult = 0.6f;
+        [SerializeField] private protected float _reloadTime = 0.1f;
+        [SerializeField] private float _jumpTime = 0.7f;
+        [SerializeField] private AnimationCurve _jumpProgressCurve;
+        [SerializeField] private AnimationCurve _slimeSizeCurve;
+
+        public override IAbility Build(IActor owner)
+        {
+            var ability = new PlayerJumpAbility(_jumpTime, _jumpProgressCurve, _slimeSizeCurve, _reloadTime);
+            ability.Init(owner);
+            return ability;
+        }
+    }
+
+    public class PlayerJumpAbility : AbilitiesContainer.Ability, TimeScaleController.ITimeScaleMultiplyer, IPositionalAbility, ISlimeAbility
+    {
+        //[SerializeField] private float _placeSelectTime = 0.5f;
+        //[SerializeField] private float _timePauseSmoothTime = 0.1f;
 
         [SerializeField] private float _jumpTime = 0.7f;
         [SerializeField] private AnimationCurve _jumpProgressCurve;
         [SerializeField] private AnimationCurve _slimeSizeCurve;
 
-        State _currentState;
-        FloatSmoothDamp _timeSmooth;
-        float _lastStateChangeTime = 0;
+        //FloatSmoothDamp _timeSmooth;
         Vector2 _startPosition;
         Vector2 _targetPosition;
 
         public float TimeScale { get; private set; } = 1;
 
-        private bool _usePointerEvents => _usingMobileInput;
+        public Vector2 WorldPosition { set; private get; }
+        public SlimeActior Slime { set; private get; }
 
-        void Start()
+        private float _useTimer;
+        private float _useProgressUnclamped => _useTimer / _jumpTime;
+
+        bool _jumping;
+
+        public PlayerJumpAbility(float jumpTime, AnimationCurve jumpProgressCurve, AnimationCurve slimeSizeCurve, float reloadTime)
         {
-            _timeSmooth = new FloatSmoothDamp(_timePauseSmoothTime, 1);
-            TimeScaleController.Add(this);
+            _jumpTime = jumpTime;
+            _jumpProgressCurve = jumpProgressCurve;
+            _slimeSizeCurve = slimeSizeCurve;
+            _reloadTime = reloadTime;
+
+            AbilityType = AbilityType.Instant;
         }
 
-        void OnDestroy()
+        private protected override void init()
         {
-            TimeScaleController.Remove(this);
+            //_timeSmooth = new FloatSmoothDamp(_timePauseSmoothTime, 1);
+            //TimeScaleController.Add(this);
         }
 
-        void FixedUpdate()
+        private protected override void update(float dt)
         {
-            switch (_currentState)
+            _useTimer += dt;
+
+            if(_jumping && _useProgressUnclamped >= 1)
             {
-                case State.Jumping:
-                    var timeSinceStart = Time.unscaledTime - _lastStateChangeTime;
-
-                    if (timeSinceStart < _jumpTime)
-                    {
-                        //_player.Position = Vector3.Lerp(_startPosition, _targetPosition, _jumpProgressCurve.Evaluate(timeSinceStart / _jumpTime));
-                    }
-                    break;
+                EndJumping();
             }
-        }
 
-        private protected override void update()
-        {
-            switch(_currentState)
+            if(_jumping)
             {
-                case State.Waiting:
-                    if (CanUse(false))
-                    {
-                        ChangeState(State.Selecting);
-                    }
-                    break;
-                case State.Selecting:
-                    _jumpPointSelector.Update();
-                    if((_usePointerEvents ? (_lastPointerEventData != null && _lastPointerEventData.used) : Input.GetMouseButtonDown(0)))
-                    {
-                        if (_jumpPointSelector.CanJump)
+                ResetTimer();
+                Slime.SetFlyingSizeMult(_slimeSizeCurve.Evaluate(_useProgressUnclamped));
+                Slime.Position = Vector3.Lerp(_startPosition, _targetPosition, _jumpProgressCurve.Evaluate(_useProgressUnclamped));
+            }
+
+            //bool timeStopState = _currentState == State.Selecting && Time.unscaledTime - _lastStateChangeTime < _placeSelectTime;
+            //TimeScale = _timeSmooth.Update(timeStopState ? 0 : 1);
+
+            {
+                /*
+                switch(_currentState)
+                {
+                    case State.Waiting:
+                        if (CanUse(false))
                         {
-                            ChangeState(State.Jumping);
-                            _actor.SetFlyingState(true);
-                            _startPosition = _actor.Position;
-                            _targetPosition = _jumpPointSelector.transform.position;
+                            ChangeState(State.Selecting);
+                        }
+                        break;
+                    case State.Selecting:
+                        _jumpPointSelector.Update();
+                        if((_usePointerEvents ? (_lastPointerEventData != null && _lastPointerEventData.used) : Input.GetMouseButtonDown(0)))
+                        {
+                            if (_jumpPointSelector.CanJump)
+                            {
+                                ChangeState(State.Jumping);
+                                //_actor.SetFlyingState(true);
+                                _startPosition = _actor.Position;
+                                _targetPosition = _jumpPointSelector.transform.position;
+                            }
+                            else
+                            {
+                                ChangeState(State.Waiting);
+                            }
+                        }
+                        break;
+                    case State.Jumping:
+                        var timeSinceStart = Time.unscaledTime - _lastStateChangeTime;
+
+                        if(timeSinceStart >= _jumpTime)
+                        {
+                            DoDamageInRadius();
+                            //_actor.SetFlyingState(false);
+                            ChangeState(State.Waiting);
+                            ResetTimer();
                         }
                         else
                         {
-                            ChangeState(State.Waiting);
+                            //_actor.SetFlyingSizeMult(_slimeSizeCurve.Evaluate(timeSinceStart / _jumpTime));
+                            //_actor.Position = Vector3.Lerp(_startPosition, _targetPosition, _jumpProgressCurve.Evaluate(timeSinceStart / _jumpTime));
                         }
-                    }
-                    break;
-                case State.Jumping:
-                    var timeSinceStart = Time.unscaledTime - _lastStateChangeTime;
-
-                    if(timeSinceStart >= _jumpTime)
-                    {
-                        DoDamageInRadius();
-                        _actor.SetFlyingState(false);
-                        ChangeState(State.Waiting);
-                        ResetTimer();
-                    }
-                    else
-                    {
-                        _actor.SetFlyingSizeMult(_slimeSizeCurve.Evaluate(timeSinceStart / _jumpTime));
-                        _actor.Position = Vector3.Lerp(_startPosition, _targetPosition, _jumpProgressCurve.Evaluate(timeSinceStart / _jumpTime));
-                    }
-                    break;
+                        break;
+                }
+                */
             }
+        }
 
-            bool timeStopState = _currentState == State.Selecting && Time.unscaledTime - _lastStateChangeTime < _placeSelectTime;
-            TimeScale = _timeSmooth.Update(timeStopState ? 0 : 1);
+        void StartJumping()
+        {
+            _jumping = true;
+            Slime.SetFlyingState(true);
+            _startPosition = _actor.Position;
+            _targetPosition = WorldPosition;
+        }
+
+        void EndJumping()
+        {
+            _jumping = false;
+            DoDamageInRadius();
+            Slime.SetFlyingState(false);
         }
 
         private void DoDamageInRadius()
@@ -118,33 +160,10 @@ namespace PlayerAbilities
             //ноуп мне лень
         }
 
-        private void ChangeState(State newState)
+        public override void Use()
         {
-            _currentState = newState;
-            _lastStateChangeTime = Time.unscaledTime;
-            _jumpPointSelector.gameObject.SetActive(newState == State.Selecting);
-            _jumpPointSelector.SetRadius(_actor.Radius * _overlapRadiusMult);
-            _jumpPointSelector.PositionProvider = _usePointerEvents ? EventDataPositionProvider : MousePositionProvider;
+            _useTimer = 0;
+            StartJumping();
         }
-
-        private Vector2 EventDataPositionProvider()
-        {
-            if(_lastPointerEventData == null)
-                return MousePositionProvider();
-
-            return Camera.main.ScreenToWorldPoint(_lastPointerEventData.position);
-        }
-
-        private Vector2 MousePositionProvider()
-        {
-            return _cursorWorldPos;
-        }
-
-        private enum State
-        {
-            Waiting,
-            Selecting,
-            Jumping
-        }
-    }*/
+    }
 }

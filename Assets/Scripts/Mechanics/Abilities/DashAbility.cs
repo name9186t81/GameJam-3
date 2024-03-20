@@ -63,7 +63,8 @@ namespace Abilities
 				Debug.LogWarning("Actor " + actor + " is not movable");
 			}
 
-			_instruction.SetAbility(this);
+			if(_instruction != null)
+				_instruction.SetAbility(this);
 		}
 
 		public void Update(float dt)

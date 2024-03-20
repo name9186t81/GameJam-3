@@ -11,6 +11,8 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
 {
     [SerializeField] private BoneJointsConnector _body;
     [SerializeField] private SlimeHealth _health;
+    [SerializeField] private SpriteRenderer _bodySprite;
+    [SerializeField] private int _flyingSpriteSortingLayer = 20;
 
     [SerializeField] private float _baseMovementSpeed = 5000;
     [SerializeField] private float _baseRotationSpeed = 1000;
@@ -24,7 +26,23 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
     public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
     Vector2 IActor.Position { get => _body.TransformPosition; } //da
     public Vector2 TransformPosition { get => _body.TransformPosition; }
-    public Vector2 Velocity { get { return _body.Velocity; } set { _body.AddForce(value * _comboCounter.Config.SpeedMultipler.GetValue(_comboCounter.ComboCount)); } } //ага да вот текущая скорость да да конечно скорость будет как ты хочешь мотор
+    public Vector2 Velocity { get { return _body.Velocity; } set 
+        {
+            var mult = _comboCounter.Config.SpeedMultipler.GetValue(_comboCounter.ComboCount);
+            var force = value * mult;
+
+            var magnitude = force.magnitude;
+            var clampedMagnitude = MathF.Min(magnitude, _baseMotorForce * 4f); // * mult
+
+            //Debug.Log(magnitude + " - " + _baseMotorForce);
+
+            if (magnitude != 0)
+            {
+                _body.AddForce(force * (clampedMagnitude / magnitude));
+                _body.AddForceToAll(force * (magnitude - clampedMagnitude) / magnitude);
+            }
+        } 
+    } //ага да вот текущая скорость да да конечно скорость будет как ты хочешь мотор
     public float Rotation { get { return 0; } set { } }
 
     public IController Controller { get; private set; }
@@ -52,6 +70,10 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
     public event Action<int, int> OnTeamNumberChange;
 
     private Motor _motor;
+    private float _startFlyingSize;
+    private int _defaultSpriteSortingLayer;
+    private float _baseMotorForce;
+
 
     public bool TryChangeController(in IController controller)
     {
@@ -74,7 +96,10 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
         _health.OnSlimeCollision += OnSlimeCollision;
         _health.OnAddScore += OnAddScore;
 
-        _motor = new Motor(_baseMovementSpeed * Time.fixedDeltaTime, _baseRotationSpeed, this, Actor);
+        _defaultSpriteSortingLayer = _bodySprite.sortingOrder;
+
+        _baseMotorForce = _baseMovementSpeed * Time.fixedDeltaTime;
+        _motor = new Motor(_baseMotorForce, _baseRotationSpeed, this, Actor);
         /*
          * R.I.P. Костыль
          * 06.03.2024 - 08.03.2024
@@ -102,6 +127,23 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
                ||
                []
         */
+    }
+
+
+    public void SetFlyingState(bool flying)
+    {
+        if (flying)
+            _startFlyingSize = _body.Size;
+        else
+            _body.Size = _startFlyingSize;
+
+        _body.SetIgnoreWorldCollision(flying);
+        _bodySprite.sortingOrder = flying ? _flyingSpriteSortingLayer : _defaultSpriteSortingLayer;
+    }
+
+    public void SetFlyingSizeMult(float mult)
+    {
+        _body.Size = _startFlyingSize * mult;
     }
 
     public void OnAddScore(float score)

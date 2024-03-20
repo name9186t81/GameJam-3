@@ -4,15 +4,19 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
-    /*
     public class PlayerDashAbility : AbilitiesContainer.Ability
     {
-        private protected override void update()
+        public override void Use()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private protected override void update(float dt)
         {
             if (CanUse())
             {
-                _actor.Act(Core.ControllerAction.Dash);
+                //_actor.Act(Core.ControllerAction.Dash);
             }
         }
-    }*/
+    }
 }

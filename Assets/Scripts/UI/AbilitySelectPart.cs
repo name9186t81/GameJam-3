@@ -16,12 +16,12 @@ public class AbilitySelectPart : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private Action _onPress;
     //private bool _pointerOnThis = false;
 
-    public void Init(AbilitySelectPanel.AbilityUIData data, Action<AbilitySelectPanel.AbilityUIData> onPress)
+    public void Init(AbilitySelectPanel.AbilityUIData data, Action onPress)
     {
         _nameText.text = data.Name;
         _descText.text = data.Description;
         _preview.sprite = data.Preview;
-        _onPress = delegate { onPress?.Invoke(data); };
+        this._onPress = onPress;
     }
 
     private void OnEnable()

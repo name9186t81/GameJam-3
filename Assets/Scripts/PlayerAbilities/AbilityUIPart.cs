@@ -1,3 +1,4 @@
+using Abilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,18 +18,18 @@ namespace PlayerAbilities
         public EventTrigger Events;
 
         private FloatSmoothDamp _smoothState;
-        private AbilitiesContainer.Ability _ability;
+        private IAbility _ability;
 
         public event Action OnPress;
 
         private string _startName;
 
-        public void Init(AbilitiesContainer.Ability ability)
+        public void Init(IAbility ability, AbilitySelectPanel.AbilityUIData abilityUIData)
         {
             _ability = ability;
 
-            _preview.sprite = ability.UIData.Preview;
-            _startName = ability.UIData.Name;
+            _preview.sprite = abilityUIData.Preview;
+            _startName = abilityUIData.Name;
 
             _smoothState = new FloatSmoothDamp(_smoothStateTime);
 

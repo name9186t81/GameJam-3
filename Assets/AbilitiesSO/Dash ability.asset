@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8459d23e8fe3b23429be10c78743648c, type: 3}
   m_Name: Dash ability
   m_EditorClassIdentifier: 
-  _dashLength: 20
+  _dashLength: 70
   _dashDuration: 0.1
   _dashCooldown: 2
   _lengthMax: 1
