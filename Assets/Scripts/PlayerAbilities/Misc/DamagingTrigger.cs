@@ -20,11 +20,15 @@ namespace PlayerAbilities
         private int _lastFrameIndex = -1;
         private float _lastDamageMadeTime;
         private SlimeHealth _slimeHealth;
+        private float _startRadius = -1;
 
         public void Init(float radius, float time, int team, SlimeHealth health)
         {
+            if(_startRadius == -1)
+                _startRadius = _collider.radius;
+
             gameObject.SetActive(true);
-            _collider.radius = radius;
+            transform.localScale = Vector3.one * radius / _startRadius;
             _teamNumber = team;
             _slimeHealth = health;
             _damageArgs = new DamageArgs(null, _damage, DamageFlags.Fire);

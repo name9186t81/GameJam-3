@@ -90,6 +90,8 @@ namespace Spawning
 			if (avaible.Count == 0)
 				avaible.AddRange(_spawnPoints); //где то надо спавнить ж
 
+			//TODO: проверять что рандом точка тоже за пределами экрана
+
 			var randomPoint = avaible[UnityEngine.Random.Range(0, avaible.Count)];
 			_totalSpawned++;
 			var obj = Instantiate(unit, randomPoint.Position + UnityEngine.Random.insideUnitCircle * 10, Quaternion.identity, null);

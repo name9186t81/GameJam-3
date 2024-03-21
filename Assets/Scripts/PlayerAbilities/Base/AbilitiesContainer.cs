@@ -163,64 +163,6 @@ namespace PlayerAbilities
             BuildAndAddAbility(data);
         }
 
-        public abstract class Ability : MonoBehaviour, IAbility //TODO удалить
-        {
-            private protected IActor _actor { get; private set; }
-
-            [SerializeField] private protected float _reloadTime = 0.1f;
-
-            private float _reloadTimer;
-            private protected AbilityType AbilityType;
-
-            public event Action OnActivate;
-            public event Action OnDeactivate;
-
-            public IAIAbilityInstruction AIAbilityInstruction => null;
-            public float Readiness => Mathf.Clamp01(_reloadTimer / _reloadTime);
-            public bool Ready => _reloadTimer >= _reloadTime;
-
-            AbilityType IAbility.Type => AbilityType;
-
-            private protected bool CanUse(bool autoReset = true)
-            {
-                if (Ready && autoReset)
-                    ResetTimer();
-
-                return Ready;
-            }
-
-            private protected void ResetTimer()
-            {
-                _reloadTimer = 0;
-            }
-
-            public void Init(IActor actor)
-            {
-                _actor = actor;
-                _reloadTimer = _reloadTime; //абилка будет заряжена сразу при получении, можно закомментить тогда не будет
-                init();
-            }
-
-            public void Update(float dt)
-            {
-                _reloadTimer += dt;
-                update(dt);
-            }
-
-            public bool CanUse()
-            {
-                return Ready && canUse();
-            }
-
-            private protected virtual void init() { }
-
-            private protected abstract void update(float dt);
-
-            private protected virtual bool canUse() => true;
-
-            public abstract void Use();
-        }
-
         public abstract class CooldownAbility : IAbility
         {
             private protected IActor _actor { get; private set; }
