@@ -60,6 +60,7 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
     Motor IProvider<Motor>.Value => _motor;
     public SlimeHealth Health => _health;
     public ComboCounter ComboCounter => _comboCounter;
+    public BoneJointsConnector BonesConnector => _body;
 
     public event Action<ControllerAction> OnAction;
      

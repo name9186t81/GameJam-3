@@ -24,9 +24,6 @@ namespace GameLogic
         [SerializeField] private float _dashForceMult = 80;
         [SerializeField] private AnimationCurve _dashForce;
 
-        private float _startFlyingSize;
-        private int _defaultSpriteSortingLayer;
-
         public Vector2 Position { get => _body.Position; set { _body.Position = value; } }
         public Vector2 Velocity { get => _body.Velocity; set { _body.Velocity = value; } }
         public float Rotation { get => 0; set { } }
@@ -55,7 +52,6 @@ namespace GameLogic
         {
             Health = GetComponent<SlimeHealth>();
             OnAction += OnControllerAction;
-            _defaultSpriteSortingLayer = _bodySprite.sortingOrder;
             OnInit?.Invoke();
         }
 
@@ -67,22 +63,6 @@ namespace GameLogic
                 _lastActualDesiredMoveDirection = direction;
 
             _body.AddForce(direction * (_moveForce + MathF.Min(_moveForceComboLimit, _moveForcePerCombo * ComboUI.ComboCount)) * Time.fixedDeltaTime);
-        }
-
-        public void SetFlyingState(bool flying)
-        {
-            if (flying)
-                _startFlyingSize = _body.Size;
-            else
-                _body.Size = _startFlyingSize;
-
-            _body.SetIgnoreWorldCollision(flying);
-            _bodySprite.sortingOrder = flying ? _flyingSpriteSortingLayer : _defaultSpriteSortingLayer;
-        }
-
-        public void SetFlyingSizeMult(float mult)
-        {
-            _body.Size = _startFlyingSize * mult;
         }
 
         private void OnControllerAction(ControllerAction action)

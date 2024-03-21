@@ -47,9 +47,11 @@ namespace Abilities
 		public event Action OnActivate;
 		public event Action OnDeactivate;
 
+		public IDirectionalAbility.PrefferedDirectionSource DirectionSource => IDirectionalAbility.PrefferedDirectionSource.MoveDirection;
+
 		public bool CanUse()
 		{
-			return !(_isActive || _cooling);
+			return !(_isActive || _cooling) && _direction.magnitude > 0.5f;
 		}
 
 		public void Init(IActor actor)

@@ -7,23 +7,7 @@ using UnityEngine;
 
 namespace PlayerAbilities
 {
-    [CreateAssetMenu(fileName = "Jump ability", menuName = "GameJam/Jump")]
-    public class PlayerJumpAbilityBuilder : AbilityBuilder
-    {
-        [SerializeField] private protected float _reloadTime = 0.1f;
-        [SerializeField] private float _jumpTime = 0.7f;
-        [SerializeField] private AnimationCurve _jumpProgressCurve;
-        [SerializeField] private AnimationCurve _slimeSizeCurve;
-
-        public override IAbility Build(IActor owner)
-        {
-            var ability = new PlayerJumpAbility(_jumpTime, _jumpProgressCurve, _slimeSizeCurve, _reloadTime);
-            ability.Init(owner);
-            return ability;
-        }
-    }
-
-    public class PlayerJumpAbility : AbilitiesContainer.Ability, TimeScaleController.ITimeScaleMultiplyer, IPositionalAbility, ISlimeAbility
+    public class JumpAbility : AbilitiesContainer.CooldownAbility, TimeScaleController.ITimeScaleMultiplyer, IPositionalAbility, ISlimeAbility
     {
         //[SerializeField] private float _placeSelectTime = 0.5f;
         //[SerializeField] private float _timePauseSmoothTime = 0.1f;
@@ -46,7 +30,7 @@ namespace PlayerAbilities
 
         bool _jumping;
 
-        public PlayerJumpAbility(float jumpTime, AnimationCurve jumpProgressCurve, AnimationCurve slimeSizeCurve, float reloadTime)
+        public JumpAbility(float jumpTime, AnimationCurve jumpProgressCurve, AnimationCurve slimeSizeCurve, float reloadTime)
         {
             _jumpTime = jumpTime;
             _jumpProgressCurve = jumpProgressCurve;

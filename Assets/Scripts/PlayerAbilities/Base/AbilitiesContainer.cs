@@ -55,6 +55,10 @@ namespace PlayerAbilities
         {
             var ability = data.Builder.Build(_player);
             _selectedAbilities.Add(ability);
+            if (ability is ISlimeAbility)
+            {
+                (ability as ISlimeAbility).Slime = _player;
+            }
             AbilitySelected?.Invoke(ability, data.UIData, _selectedAbilities.Count - 1);
         }
 
@@ -68,18 +72,20 @@ namespace PlayerAbilities
             if (id >= _selectedAbilities.Count)
                 return;
 
+            var camera = Camera.main;
+
             bool canUse = true;
 
             var ability = _selectedAbilities[id];
 
             if(ability is IDirectionalAbility)
             {
-                (ability as IDirectionalAbility).Direction = new Vector2(_inputProvider.Horizontal, _inputProvider.Vertical).normalized;
-            }
-
-            if(ability is ISlimeAbility)
-            {
-                (ability as ISlimeAbility).Slime = _player;
+                var dirAbility = ability as IDirectionalAbility;
+                dirAbility.Direction = new Vector2(_inputProvider.Horizontal, _inputProvider.Vertical).normalized;
+                switch (dirAbility.DirectionSource)
+                {
+                    case IDirectionalAbility.PrefferedDirectionSource.CursorDirection: if(!_inputProvider.UsingMobileInput) dirAbility.Direction = (TouchWorldPositionProvider.Provide(pointerData, camera) - _player.Position).normalized; break;
+                }
             }
 
             if(ability is IPositionalAbility)
@@ -92,7 +98,7 @@ namespace PlayerAbilities
                 {
                     canUse = false;
                     _jumpPointSelector.SetRadius(_player.Radius);
-                    _jumpPointSelector.PositionProvider = new TouchWorldPositionProvider(pointerData, Camera.main).Provide;
+                    _jumpPointSelector.PositionProvider = new TouchWorldPositionProvider(pointerData, camera).Provide;
                 }
                 else
                 {
@@ -107,7 +113,6 @@ namespace PlayerAbilities
             {
                 ability.Use();
             }
-            //_selectedAbilities[id].OnTryUse(data);
         }
 
         private class TouchWorldPositionProvider
@@ -121,10 +126,9 @@ namespace PlayerAbilities
                 _camera = camera;
             }
 
-            public Vector2 Provide()
-            {
-                return _camera.ScreenToWorldPoint(_data.Position);
-            }
+            public Vector2 Provide() => Provide(_data, _camera);
+
+            public static Vector2 Provide(InputProvider.IPointerData data, Camera camera) => camera.ScreenToWorldPoint(data.Position);
         }
 
         private void Update()
@@ -150,7 +154,6 @@ namespace PlayerAbilities
 
             for (int i = 0; i < _selectedAbilities.Count; i++)
             {
-                //_selectedAbilities[i].ReloadSpeedMultipler = _reloadSpeedMult;
                 _selectedAbilities[i].Update(Time.deltaTime * _reloadSpeedMult);
             }
         }
@@ -160,9 +163,66 @@ namespace PlayerAbilities
             BuildAndAddAbility(data);
         }
 
-        public abstract class Ability : MonoBehaviour, IAbility //TODO убрать монобех
+        public abstract class Ability : MonoBehaviour, IAbility //TODO удалить
         {
-            //public AbilitySelectPanel.AbilityUIData UIData; //TODO: удалить
+            private protected IActor _actor { get; private set; }
+
+            [SerializeField] private protected float _reloadTime = 0.1f;
+
+            private float _reloadTimer;
+            private protected AbilityType AbilityType;
+
+            public event Action OnActivate;
+            public event Action OnDeactivate;
+
+            public IAIAbilityInstruction AIAbilityInstruction => null;
+            public float Readiness => Mathf.Clamp01(_reloadTimer / _reloadTime);
+            public bool Ready => _reloadTimer >= _reloadTime;
+
+            AbilityType IAbility.Type => AbilityType;
+
+            private protected bool CanUse(bool autoReset = true)
+            {
+                if (Ready && autoReset)
+                    ResetTimer();
+
+                return Ready;
+            }
+
+            private protected void ResetTimer()
+            {
+                _reloadTimer = 0;
+            }
+
+            public void Init(IActor actor)
+            {
+                _actor = actor;
+                _reloadTimer = _reloadTime; //абилка будет заряжена сразу при получении, можно закомментить тогда не будет
+                init();
+            }
+
+            public void Update(float dt)
+            {
+                _reloadTimer += dt;
+                update(dt);
+            }
+
+            public bool CanUse()
+            {
+                return Ready && canUse();
+            }
+
+            private protected virtual void init() { }
+
+            private protected abstract void update(float dt);
+
+            private protected virtual bool canUse() => true;
+
+            public abstract void Use();
+        }
+
+        public abstract class CooldownAbility : IAbility
+        {
             private protected IActor _actor { get; private set; }
 
             [SerializeField] private protected float _reloadTime = 0.1f;
