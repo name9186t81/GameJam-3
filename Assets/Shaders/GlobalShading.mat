@@ -37,12 +37,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Affinity: 0.16751029
-    - _Angle: 1.681851
+    - _Affinity: 0.23322864
+    - _Angle: 5.1868253
     - _Iterations: 8
-    - _Length: 0.036819678
+    - _Length: 0.04832789
     - _Strength: 0.7
     m_Colors:
-    - _MapColor: {r: 0.9316357, g: 0.7009456, b: 0.49120057, a: 1}
-    - _ShadowColor: {r: 0.016652659, g: 0.08192596, b: 0.2999194, a: 1}
+    - _MapColor: {r: 0.4635142, g: 0.39908367, b: 0.41791436, a: 1}
+    - _ShadowColor: {r: 0.06256594, g: 0.053405646, b: 0.34381098, a: 1}
   m_BuildTextureStacks: []

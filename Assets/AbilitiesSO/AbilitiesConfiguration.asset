@@ -76,7 +76,7 @@ MonoBehaviour:
         Preview: {fileID: -1379589973, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
   - NeededScore: 5
     LeftAbility:
-      Builder: {fileID: 11400000, guid: dc2296ddd2eadd442914defbf1635df5, type: 2}
+      Builder: {fileID: 11400000, guid: e6506d2742ab41a46a682c868523781e, type: 2}
       UIData:
         Name:
           Key: Reproduction
@@ -100,7 +100,7 @@ MonoBehaviour:
           DontShowKey: 0
         Preview: {fileID: -926858485, guid: aebc05fa6daf0fa458e8f8fe5e6b0789, type: 3}
     RightAbility:
-      Builder: {fileID: 11400000, guid: dc2296ddd2eadd442914defbf1635df5, type: 2}
+      Builder: {fileID: 11400000, guid: f577bf1d2fc0bca4b8e1efb13cbfd258, type: 2}
       UIData:
         Name:
           Key: Slime Road

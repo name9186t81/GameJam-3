@@ -2,6 +2,7 @@ using Core;
 using GameLogic;
 using Health;
 using Movement;
+using PlayerAbilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -70,6 +71,9 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
 
     public event Action<int, int> OnTeamNumberChange;
 
+    public PetSlimesAbility.SlimeReturnData PetSlimeReturnData;
+    public bool IsPetSlime => PetSlimeReturnData != null;
+
     private Motor _motor;
     private float _startFlyingSize;
     private int _defaultSpriteSortingLayer;
@@ -93,7 +97,6 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
 
     private void Awake()
     {
-        OnInit?.Invoke();
         _health.OnSlimeCollision += OnSlimeCollision;
         _health.OnAddScore += OnAddScore;
 
@@ -130,6 +133,10 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
         */
     }
 
+    private void Start()
+    {
+        OnInit?.Invoke();
+    }
 
     public void SetFlyingState(bool flying)
     {
@@ -169,13 +176,16 @@ public class SlimeActior : MonoBehaviour, IProvider<Motor>, IActor, IMovable, IT
         return _health.TryChangeTeamNumber(newTeamNumber);
     }
 
-    public void OnSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)
+    public void OnSlimeCollision(SlimeActior slime, Vector2 collisionPoint)
     {
-        Debug.LogError("TODO");
-        //if(PlayerPetSlimesAbility.TryReturnSlime(body, _body))
+        if(!IsPetSlime && slime.IsPetSlime && slime.PetSlimeReturnData.TryReturn(BonesConnector, slime.BonesConnector))
         {
-            _body.AddForceToNearestBone(collisionPoint, (body.Position - Position).normalized * _slimeMergeForcePerScore * CurrentScore);
+            _body.AddForceToNearestBone(collisionPoint, (slime.Position - Position).normalized * _slimeMergeForcePerScore * CurrentScore);
             Destroy(slime.gameObject); //прощай слаймик!!
+        }
+        else if(!IsPetSlime && !slime.IsPetSlime)
+        {
+            Debug.LogError("TODO");
         }
     }
 }

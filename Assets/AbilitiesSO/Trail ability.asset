@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccaccf1b128e8b94c9b54fdd96788bff, type: 3}
+  m_Name: Trail ability
+  m_EditorClassIdentifier: 
+  _reloadTime: 15
+  _workingTime: 14
+  _triggerDestroyTime: 14
+  _trailRenderer: {fileID: 2735413639920041444, guid: e1d08764cd0273e46906b497001fda2d, type: 3}
+  _triggerSpawnDistanceRadiusMult: 1
+  _triggerPrefab: {fileID: 8088603795443246597, guid: d58f06cd7cd646440b64c42d3003166d, type: 3}

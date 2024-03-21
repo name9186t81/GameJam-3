@@ -20,7 +20,7 @@ MonoBehaviour:
   _widthOverScale: 0.5
   _layerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 328
   _returnBackTime: 0.35
   _springJointSettings:
     _damperMult: 1

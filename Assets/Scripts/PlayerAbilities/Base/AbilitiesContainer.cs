@@ -239,14 +239,6 @@ namespace PlayerAbilities
 
             AbilityType IAbility.Type => AbilityType;
 
-            private protected bool CanUse(bool autoReset = true)
-            {
-                if (Ready && autoReset)
-                    ResetTimer();
-
-                return Ready;
-            }
-
             private protected void ResetTimer()
             {
                 _reloadTimer = 0;

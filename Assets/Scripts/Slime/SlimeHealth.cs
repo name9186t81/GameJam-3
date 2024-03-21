@@ -42,7 +42,7 @@ namespace GameLogic
         public event Action<float> OnAddScore;
         public event SlimeCollision OnSlimeCollision;
 
-        public delegate void SlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint);
+        public delegate void SlimeCollision(SlimeActior slime, Vector2 collisionPoint);
 
         private float _startRadius = 1;
         private float _lastDamageHitTime;
@@ -60,18 +60,13 @@ namespace GameLogic
             OnInit?.Invoke();
         }
 
-        private void onSlimeCollision(SlimeHealth slime, BoneJointsConnector body, Vector2 collisionPoint)
-        {
-            OnSlimeCollision?.Invoke(slime, body, collisionPoint);
-        }
-
         private void OnBodyCollisionEnter(Collision2D collision)
         {
             var raycast = collision.collider.transform.root;
 
-            if(raycast != transform && raycast.TryGetComponent(out SlimeHealth slime))
+            if(raycast != transform && raycast.TryGetComponent(out SlimeActior slime))
             {
-                slime.onSlimeCollision(this, _body, collision.contacts[0].point);
+                OnSlimeCollision?.Invoke(slime, collision.contacts[0].point);
             }
             else if (raycast.TryGetComponent(out IDamageReactable act) && raycast.TryGetComponent(out IProvider<IHealth> healthProvider) && healthProvider.Value.CurrentHealth > 0)
             {

@@ -129,10 +129,13 @@ namespace PlayerAbilities
                     break;
             }
 
-            _lrPoses[0] = playerPos;
-            _lrPoses[1] = _currentPosition;
-            _lineRenderer.SetPositions(_lrPoses);
-            _lineRenderer.widthMultiplier = _currentWidth;
+            if (_lineRendererSpawned)
+            {
+                _lrPoses[0] = playerPos;
+                _lrPoses[1] = _currentPosition;
+                _lineRenderer.SetPositions(_lrPoses);
+                _lineRenderer.widthMultiplier = _currentWidth;
+            }
         }
 
         private protected override bool canUse()
