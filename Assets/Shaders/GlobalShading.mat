@@ -37,10 +37,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Affinity: 0.12819712
-    - _Angle: 4.244012
+    - _Affinity: 0.07678491
+    - _Angle: 3.6481795
     - _Iterations: 8
-    - _Length: 0.02994146
+    - _Length: 0.020939257
     - _Strength: 0.7
     m_Colors:
     - _MapColor: {r: 0.9960785, g: 0.9333334, b: 0.7372549, a: 1}
