@@ -9,6 +9,7 @@ namespace Spawning
 			{
 				var point = Camera.main.WorldToViewportPoint(Position);
 				return (point.x < 0 || point.x > 1) || (point.y < 0 || point.y > 1);
-			} }
+			} 
+		}
 	}
 }
