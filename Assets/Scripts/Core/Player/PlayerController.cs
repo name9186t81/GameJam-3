@@ -23,12 +23,12 @@ public class PlayerController : MonoBehaviour, IController
     {
         _actor = GetComponent<IActor>();
         _actor.TryChangeController(this);
+        ServiceLocator.Get<PlayerTrackerService>().Bind(this);
     }
 
     void Start()
     {
         _inputProvider = ServiceLocator.Get<InputProvider>();
-        ServiceLocator.Get<PlayerTrackerService>().Bind(this);
     }
 
     private void Update()
